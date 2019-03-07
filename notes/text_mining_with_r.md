@@ -1,5 +1,7 @@
 # Text Mining with R Overview Notes
 
+[TOC]
+
 ## 1 The tidy text format
 
 The base data structure to work with is a [tidy](../reading/Wickham2014 - Tidy Data.pdf) dataframe. Other potential formats include char vectors, Corpus[^1], and Document-term matrix[^2] .

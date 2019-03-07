@@ -6,7 +6,7 @@
 
 ### UX Resources:
 
-- [Wikipedia - User Experience Design](User experience design)
+- [Wikipedia - User Experience Design](https://en.wikipedia.org/wiki/User_experience_design)
 - [UX Glossary](https://uxplanet.org/ux-glossary-task-flows-user-flows-flowcharts-and-some-new-ish-stuff-2321044d837d)
 
 ### UX: Inputting data
