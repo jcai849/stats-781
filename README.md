@@ -1,4 +1,4 @@
-This is the repository for research and communication relating to the Text Analytics Research Project (STATS 781) by Jason Cairns, supervised by Chris Wild.
+This is the repository for research and communication relating to the Text Analytics Research Project (STATS 781) for Jason Cairns, supervised by Chris Wild.
 
-[Meeting notes](./meetings/meeting_notes.md) (link) are the central location for notes, given that they drive and inform research, linking to individual notes within.
+The [Journal](./notes/journal.md) serves as the nucleus for the project notes, recording the account of research, as well as providing links to research and meeting notes
 
