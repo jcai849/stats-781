@@ -15,6 +15,6 @@
 
 - [x] Set notes in neat summary form (organise file structure to match)
 - [x] Push to a private github repository
-- [ ] Give access to Chris
+- [x] Give access to Chris
 - [ ] Create twitter developer account
 - [ ] Get twitter api access token
