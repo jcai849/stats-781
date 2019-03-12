@@ -18,3 +18,32 @@
 - [x] Give access to Chris
 - [ ] Create twitter developer account
 - [ ] Get twitter api access token
+
+## 2019-03-13
+
+- [ ] Determine what text analysis really is at base, and how it relates to the primary question [^1]
+
+- [ ] find if subtitles can be attained easily enough
+
+- [ ] See similar papers in stats printing room
+
+- [ ] formal critique of Cassidy's project, integration w/ iNZight
+- [ ] scope reduction
+- [ ] interface (w. respect to above)
+- [ ] lit review of twitter analysis (esp. discourse)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[^1]: What are people talking about, and how do they feel about it

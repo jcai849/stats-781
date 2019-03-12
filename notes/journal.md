@@ -9,6 +9,7 @@
 ### Meetings
 
 - [2019-03-06](./meeting_notes.md#2019-03-06)
+- [2019-03-13](./meeting_notes.md#2019-03-13)
 
 ### Prescribed Reading
 
