@@ -27,7 +27,7 @@ The form of analysis will vary enormously with different forms of text. There ar
 
 Twitter data looks particularly interesting, as it is a constantly updating, rich source of information. I wrote up some notes on text mining twitter [here](./text_mining_twitter.md). It would be particularly interesting to view twitter data in the context of discourse analysis.
 
-Data structures will change based on the text type, and the packages used. With a tidy dataframe as our base structure, it is easy enough to convert to specific objects required by various packages, harder to convert back
+Data structures will change based on the text type, and the packages used. With a tidy dataframe as our base structure, it is easy enough to convert to specific objects required by various packages, harder to convert back.
 
 There is a natural link between text analysis and Linguistics, and a significant amount of the terminology in the field reflects that. Our application requires far more market share than one that a mention in a third year linguistics paper provides, and so linguistics is not going to be our primary focus. Regardless, many forms of analysis require some linguistic theory, such as those dependent on Part of Speech tagging, so it is still worthwhile to keep in mind
 
