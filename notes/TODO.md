@@ -16,23 +16,25 @@
 - [x] Set notes in neat summary form (organise file structure to match)
 - [x] Push to a private github repository
 - [x] Give access to Chris
-- [ ] Create twitter developer account
-- [ ] Get twitter api access token
+- [ ] ~~Create twitter developer account~~
+- [ ] ~~Get twitter api access token~~
 
 ## 2019-03-13
 
-- [ ] Determine what text analysis really is at base, and how it relates to the primary question [^1]
+- [x] Determine what text analysis really is at base, and how it relates to the primary question [^1]
 
-- [ ] find if subtitles can be attained easily enough
+- [x] find if subtitles can be attained easily enough
 
 - [ ] See similar papers in stats printing room
 
-- [ ] formal critique of Cassidy's project, integration w/ iNZight
-- [ ] scope reduction
+- [x] formal critique of Cassidy's project, integration w/ iNZight
+- [x] scope reduction
 - [ ] interface (w. respect to above)
-- [ ] lit review of twitter analysis (esp. discourse)
+- [ ] ~~lit review of twitter analysis (esp. discourse)~~
 
+## 2019-03-20
 
+- [ ] 
 
 
 

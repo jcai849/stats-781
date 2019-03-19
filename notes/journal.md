@@ -58,3 +58,18 @@ Packages for obtaining text:
 - [gutenbergr](https://cran.r-project.org/web/packages/gutenbergr/index.html) - from Project Gutenberg
 - [rtweet](https://rtweet.info/) - from Twitter
 - [wikipediar](https://cran.r-project.org/web/packages/WikipediaR/index.html) - from Wikipedia
+
+### Scope Determination
+
+The scope of the project is naturally limited by the amount of time available to do it. As such, exploration of topics such as discourse analysis, while interesting, is beyond the scope of the project. Analysis of text must be limited to regular texts, and comparisons between them. The application must give the greatest amount of insight to a regular user, in the shortest amount of time, into what the text is actually about.
+
+[Cassidy's project](http://usresp-student.shinyapps.io/text_analysis) was intended to create this, and I have written notes on it [here](./cassidy_notes.md).
+
+Ultimately, I am not completely sold on the idea that term frequencies and other base-level statistics really give that clear a picture of what a text is about. It can give some direction, and it can allow for broad classification of works (eg. a novel will usually have character names at the highest frequency ranks, scientific works usually have domain specific terms), but I think word frequencies are less useful to the analyst than to the algorithms they feed into, such as tf-idf, that may be more useful. As such, I don't think valuable screen space should be taken up by low-level statistics such as term frequencies. To me, the situation is somewhat akin to [Anscombe's Quartet](https://en.wikipedia.org/wiki/Anscombe%27s_quartet), where the base statistics leave a good deal of information out, term frequencies being analogous to the modal values.
+
+Additionally, sentiment is really just one part of determining the semantics of a text. I think too much focus is put on sentiment, which in practice is something of a "happiness meter". I would like to include other measurement schemes, such as readability, formality, etc.
+
+Some kind of context in relation to the universal set of texts would be ideal as well, I think a lot of this analysis occurs in a vacuum, and insights are hard to come by - something like Google n-grams would be ideal.
+
+I'm picturing a single page, where the analyst can take one look and have a fair idea of what a text is about. In reality it will have to be more complex than that, but that is my lead at the moment. With this in mind, I want to see keywords, more on *structure* of a text, context, and clear, punchy graphics showing not *just* sentiment, but several other key measurements.
+
