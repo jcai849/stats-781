@@ -29,12 +29,13 @@
 
 - [x] formal critique of Cassidy's project, integration w/ iNZight
 - [x] scope reduction
-- [ ] interface (w. respect to above)
+- [ ] ~~interface (w. respect to above)~~
 - [ ] ~~lit review of twitter analysis (esp. discourse)~~
 
 ## 2019-03-20
 
-- [ ] 
+- [ ] Create an example corpus for testing
+- [ ] Assess textrank performance on the example corpus
 
 
 

@@ -37,17 +37,8 @@ This meeting took place while seeing what packages exist already to complete var
 
 ## 2019-03-20
 
+### Summary
 
+Close assessment of textrank package and background algorithm - on the right track for scope. Chris noted to check for survey response data etc. from those involved with it.
 
-
-
-
-
-
-
-
-
-
-
-
-
+### [Actions](./TODO.md#2019-03-20)
