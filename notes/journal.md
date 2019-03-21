@@ -16,6 +16,8 @@
 
 [Text Mining with R](https://www.tidytextmining.com): [notes](./text_mining_with_r.md)
 
+[Text Analysis with R](https://m-clark.github.io/text-analysis-with-R/)
+
 ### Consideration of Application Features
 
 **UX/UI** must be intuitive, modelling the inherently non-linear workflow, while fitting in with the iNZight / lite environment. I wrote some notes on UX/UI [here](./ux_ui.md).
@@ -61,6 +63,8 @@ Additionally, there are some packages that may not necessarily be useful for the
 - [udpipe](https://github.com/bnosac/udpipe) performs tokenisation, parts of speech tagging (which serves as the foundation for textrank), and more, based on the well-recognised C++ [udpipe library](http://ufal.mff.cuni.cz/udpipe), using the [Universal Treebank](https://universaldependencies.org)
 - [BTM](https://github.com/bnosac/BTM) performs Biterm Topic Modelling, which is useful for "finding topics in short texts (as occurs in short survey answers or twitter data)". It uses a somewhat complex sampling procedure, and like LDA topic modelling, requires a corpus for comparison. Based on [C++ BTM](https://github.com/xiaohuiyan/BTM)
 - [crfsuite](https://github.com/bnosac/crfsuite) provides a modelling framework, which is currently outside our current scope, but could be useful later
+- In the analysis / removal of names, an important component of a text, [humaniformat](https://github.com/ironholds/humaniformat/) is likely to be useful
+- [CRAN Task View: Web Technologies and Services](https://cran.r-project.org/web/views/WebTechnologies.html) for importing texts from the internet
 
 ### Other Text Analytics Applications
 
@@ -83,3 +87,32 @@ Some kind of context in relation to the universal set of texts would be ideal as
 
 I'm picturing a single page, where the analyst can take one look and have a fair idea of what a text is about. In reality it will have to be more complex than that, but that is my lead at the moment. With this in mind, I want to see keywords, more on *structure* of a text, context, and clear, punchy graphics showing not *just* sentiment, but several other key measurements.
 
+### Canon
+
+It is essential to test on a broad variety of texts in order to create the most general base application, so a "test set" will have to be developed. The list could include:
+
+- article
+  - journal (scientific, social)
+  - news
+  - blog
+  - wikipedia
+- discourse
+  - interview
+  - subtitles
+  - tweets
+- documentation
+  - product manual
+  - technical user guide
+- literature
+  - novel
+  - play
+  - poetry
+- sports commentary
+
+- survey response data
+
+  - reviews
+
+- textbook
+
+  
