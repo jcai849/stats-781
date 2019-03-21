@@ -115,4 +115,8 @@ It is essential to test on a broad variety of texts in order to create the most 
 
 - textbook
 
-  
+## Text Summarisation
+
+Text summarisation creates enormous insight, especially from a long text. There are a variety of different techniques, of varying effectiveness and efficiency.
+
+[textrank](https://github.com/bnosac/textrank) has the unique idea of extracting keywords automatically from a text using the pagerank algorithm (pagerank studied in depth in STATS 320) - my exploration of the package is documented [here](./textrank_exploration.Rmd). At present, the R implementation of it creates errors for large text files, but it is worth exploring more into it - whether it is the implementation, or if it is the algorithm itself.
