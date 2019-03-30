@@ -42,3 +42,15 @@ This meeting took place while seeing what packages exist already to complete var
 Close assessment of textrank package and background algorithm - on the right track for scope. Chris noted to check for survey response data etc. from those involved with it.
 
 ### [Actions](./TODO.md#2019-03-20)
+## 2019-03-28
+
+### Summary
+
+Presentation of further package discoveries, for development purposes, as well as end-user. Demonstrated the benefits and drawbacks of using textRank, discussed the possibility of lexRank. Presented draft of feature space - including the usefulness of categorisation of text analytics as within- and between- texts. Much discussion dedicated to summarisation.
+
+### Actions
+
+- [ ] Development of a test-corpus; Chris has emailed some free-form patient responses
+- [ ] Further testing of textRank (try tidy-style) on corpus
+- [ ] Testing lexRank on on test corpus
+- [ ] Formalise feature-space as list

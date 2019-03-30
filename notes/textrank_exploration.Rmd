@@ -1,4 +1,8 @@
-```{r}
+Original Attempt below:
+
+---
+
+```{r eval=FALSE}
 library(tidyverse)
 library(gutenbergr)
 library(udpipe)
@@ -7,7 +11,7 @@ library(textrank)
 
 We can load in a broad variety of literary texts with gutenbergr - the package
 follows the rules for robots by default, so we don't have to worry about pauses etc.
-```{r input}
+```{r input, eval=FALSE}
 iliad <-
   gutenberg_download(6130)
 alice <-
@@ -34,19 +38,19 @@ tidytext seems to require the parts of speech to be tagged, recommending udpipe.
 Udpipe works based on an intelligent model, and takes a long time to run, but there
 are other options such as an inner join with a preclassified dictionary, or the openNLP
 package, which seems more generally favoured.
-```{r udpipe}
+```{r udpipe, eval=FALSE}
 # x_char <-
 #   paste(style$text, collapse = " ")
 # 
-# udmodel <-
-#   udpipe_download_model(language = "english")
+ udmodel <-
+   udpipe_download_model(language = "english")
 x <-
   udpipe(test, object = udmodel) # v. slow
 ```
 
 We can perform keyword extraction with textrank as follows:
 
-```{r keyword extraction}
+```{r keyword extraction, eval=FALSE}
 keyw  <-
     textrank_keywords(x$lemma, relevant = x$upos %in% c("NOUN", "VERB", "ADJ"))
 subset(keyw$keywords, ngram > 1 & freq > 1)
@@ -55,7 +59,7 @@ subset(keyw$keywords, ngram > 1 & freq > 1)
 Fairly boring results - stopword removal may help, but I want to see how well it
 works without that process
 
-```{r define sentences}
+```{r define sentences, eval=FALSE}
 x$textrank_id <- unique_identifier(x, c("doc_id", "paragraph_id", "sentence_id"))
 sentences <- unique(x[, c("textrank_id", "sentence")])
 terminology <- subset(x, upos %in% c("NOUN", "ADJ"))
@@ -66,7 +70,7 @@ head(terminology)
 the textrank function is fairly slow as well - impossibly so, with this volume of sentences.
 The Minhash algorithm is intended to speed things up, implemented below
 
-```{r applying textrank_sentences}
+```{r applying textrank_sentences, eval=FALSE}
 textreuse::lsh_probability(h = 1000, b = 500, s = 0.1)
 minhash <-
   textreuse::minhash_generator(n = 1000, seed = 123)
@@ -76,7 +80,7 @@ candidates <- textrank_candidates_lsh(x = terminology$lemma,
                                       bands = 500)
 ```
 
-```{r}
+```{r eval=FALSE}
 tr <- textrank_sentences(data = sentences, terminology = terminology, textrank_candidates = candidates)
 s <- summary(tr, n = 4, keep.sentence.order = TRUE)
 cat(s, sep = "\n")

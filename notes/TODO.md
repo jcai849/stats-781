@@ -25,7 +25,7 @@
 
 - [x] find if subtitles can be attained easily enough
 
-- [ ] See similar papers in stats printing room
+- [x] See similar papers in stats printing room
 
 - [x] formal critique of Cassidy's project, integration w/ iNZight
 - [x] scope reduction
@@ -35,8 +35,15 @@
 ## 2019-03-20
 
 - [ ] Create an example corpus for testing
-- [ ] Assess textrank performance on the example corpus
+- [x] Assess textrank performance on the example corpus
 
+## 2019-03-28
+
+- [ ] Development of a test-corpus; Chris has emailed some free-form patient responses
+- [ ] Further testing of textRank (try tidy-style) on corpus
+- [ ] Testing lexRank on on test corpus
+- [ ] Formalise feature-space as list
+- [ ] Explain lexRank and textRank and their differences, in short summary paragraph
 
 
 
