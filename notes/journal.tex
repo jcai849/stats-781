@@ -1,7 +1,7 @@
-% Created 2019-04-10 Wed 02:52
+% Created 2019-04-10 Wed 05:05
 % Intended LaTeX compiler: pdflatex
 \documentclass[11pt]{article}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage{grffile}
@@ -27,30 +27,20 @@
 
 \tableofcontents
 
-\section{\href{./TODO.md\#2019-03-06}{TODO}}
-\label{sec:org6f229bb}
-
-\section{Meetings}
-\label{sec:org195fba5}
-\begin{itemize}
-\item \href{./meeting\_notes.md\#2019-03-06}{2019-03-06}
-\item \href{./meeting\_notes.md\#2019-03-13}{2019-03-13}
-\item \href{./meeting\_notes.md\#2019-03-20}{2019-03-20}
-\item \href{./meeting\_notes.md\#2019-03-28}{2019-03-28}
-\item \href{./meeting\_notes.md\#2019-04-03}{2019-04-03}
-\end{itemize}
+\section{\href{meeting\_notes.org}{Meetings}}
+\label{sec:orgb48adf5}
 
 \section{Initial Survey}
-\label{sec:org4476a5d}
+\label{sec:orga3c451c}
 \subsection{Prescribed Reading}
-\label{sec:org09aad24}
+\label{sec:orgfe7562a}
 \begin{itemize}
 \item \href{https://www.tidytextmining.com}{Text Mining with R}: \href{./text\_mining\_with\_r.org}{notes}
 \item \href{https://m-clark.github.io/text-analysis-with-R/}{Text Analysis with R}
 \end{itemize}
 
 \subsection{Consideration of Application Features}
-\label{sec:orgd9675e5}
+\label{sec:org28a2ffa}
 
 \textbf{UX/UI} must be intuitive, modelling the inherently non-linear workflow,
 while fitting in with the iNZight / lite environment. I wrote some notes
@@ -86,7 +76,7 @@ linguistic theory, such as those dependent on Part of Speech tagging, so
 it is still worthwhile to keep in mind
 
 \subsection{Twitter}
-\label{sec:org8444a95}
+\label{sec:org39a3be4}
 Twitter data looks particularly interesting, as it is a constantly
 updating, rich source of information. I wrote up some notes on text
 mining twitter \href{./text\_mining\_twitter.org}{here}. It would be
@@ -94,7 +84,7 @@ particularly interesting to view twitter data in the context of
 discourse analysis.
 
 \subsection{Subtitles}
-\label{sec:orgf916aac}
+\label{sec:org7961e81}
 Subtitles are a unique form of text that would be very interesting to
 analyse. Subtitles for films and TV Series can be obtained easily from
 the site \href{https://www.opensubtitles.org/en/search/subs}{opensubtitles}, though
@@ -106,7 +96,7 @@ obtained, it's easy enough to import and work with it in R with the
 package \href{https://github.com/fkeck/subtools}{subtools}.
 
 \subsection{R Packages}
-\label{sec:org4c32989}
+\label{sec:orgc024ee3}
 \href{https://quanteda.io/articles/pkgdown/comparison.html}{Here} is a useful comparison between the major text mining packages. CRAN also has
 a \href{https://cran.r-project.org/web/views/NaturalLanguageProcessing.html}{task view} specifically for Natural Language Processing, offering many
 packages relevant to this project. Interestingly, they are split by
@@ -190,7 +180,7 @@ useful later
 internet
 
 \subsection{Other Text Analytics Applications}
-\label{sec:org7d0c701}
+\label{sec:org11df7d1}
 The field of text analytics applications is rather diverse, with most
 being general analytics applications with text analytics as a feature of
 the application. Some of the applications (general and specific) are
@@ -204,7 +194,7 @@ researcher"
 \end{itemize}
 
 \subsection{Scope Determination}
-\label{sec:org9c502de}
+\label{sec:org7b193fc}
 The scope of the project is naturally limited by the amount of time
 available to do it. As such, exploration of topics such as discourse
 analysis, while interesting, is beyond the scope of the project.
@@ -248,18 +238,18 @@ and clear, punchy graphics showing not \emph{just} sentiment, but several
 other key measurements.
 
 \section{Feature Implementations}
-\label{sec:org0a78bd3}
+\label{sec:org0874674}
 \subsection{Introduction}
-\label{sec:org4b7876d}
+\label{sec:org88e1533}
 The application essentially consists of a feature-space, with the area
-being divided in three; \hyperref[sec:org55af2a7]{Processing}, \hyperref[sec:org24a30ef]{Within-Text Analytics}, and
-\hyperref[sec:org986fc5c]{Between-Text Analytics}o. This follows the general format of much of
+being divided in three; \hyperref[sec:org503efeb]{Processing}, \hyperref[sec:orgd9057cd]{Within-Text Analytics}, and
+\hyperref[sec:org1272b59]{Between-Text Analytics}o. This follows the general format of much of
 what is capable in text analysis, and what is of interest to us and our
 end users. The UI will likely reflect this, dividing into seperate
 windows/panes/tabs to accomodate. Let's look at them in turn:
 
 \subsubsection{Processing}
-\label{sec:org55af2a7}
+\label{sec:org503efeb}
 In order for text to be analysed, it must be imported and processed. A
 lot of this is an iterative process, coming back for further processing
 after analysis etc. Importing will have a "type" selection ability for
@@ -304,7 +294,7 @@ tab holding the processing tasks for each individual document, however
 this won't scale well to large corpus imports.
 
 \subsubsection{Within-Text Analytics}
-\label{sec:org24a30ef}
+\label{sec:orgd9057cd}
 Within-text analytics should have options to look at the whole text as
 it is, whether to look by division, or whether to look at the entire
 imported corpus as a whole.
@@ -332,7 +322,7 @@ text analytics, seeing a broad variety of uses. here, it would be worth
 examining sentiment, by word and over the length of the text overall.
 
 \subsubsection{Between-Text Analytics}
-\label{sec:org986fc5c}
+\label{sec:org1272b59}
 As in within-text analytics, between-text analytics should have options
 for specifying the component of the text that is of interest; here, the
 two major categories would be comparisons between divisions within an
@@ -348,53 +338,8 @@ texts.
 
 Summarisation between all texts would also be enormously useful.
 
-\subsection{Test Corpus}
-\label{sec:org5521762}
-It is essential to test on a broad variety of texts in order to create
-the most general base application, so a "test set" will have to be
-developed. All data is stored in the folder \href{data}{data}
-
-\textbf{Must have}
-
-\begin{itemize}
-\item Literature (eg. Dante's Divine Comedy)
-\item Survey response data (eg. nzqhs, Cancer Society)
-\item Transcript; lack of punctuation may cause difficulties in processing
-sentences.
-\item Twitter
-\end{itemize}
-
-\textbf{Would be nice}
-
-\begin{itemize}
-\item article
-\begin{itemize}
-\item journal (scientific, social)
-\item news
-\item blog
-\item wikipedia
-\end{itemize}
-\item discourse
-\begin{itemize}
-\item interview
-\item subtitles
-\end{itemize}
-\item documentation
-\begin{itemize}
-\item product manual
-\item technical user guide
-\end{itemize}
-\item literature
-\begin{itemize}
-\item novel
-\item play
-\item poetry
-\end{itemize}
-\item textbook
-\end{itemize}
-
 \subsection{Text Summarisation}
-\label{sec:orgfd5b6b1}
+\label{sec:org6d9eb1e}
 
 \href{https://en.wikipedia.org/wiki/Automatic\_summarization}{Wikipedia: Automatic Summarisation}
 
@@ -445,7 +390,7 @@ LexRank and textRank appear to exist complimentarily to one another.
 Below is a brief summary of how they work
 
 \subsubsection{TextRank}
-\label{sec:orgf9ac5fd}
+\label{sec:orgc2b638a}
 
 TextRank essentially finds the most representative sentence of a text
 based on some similarity measure to other sentence.
@@ -463,9 +408,63 @@ In the generation of keywords, the same process described is typically
 run on unigrams, with the similarity measure being co-occurance.
 
 \subsubsection{LexRank}
-\label{sec:org01a57cc}
+\label{sec:org2e1c9ea}
 LexRank is essentially the same as textRank, however uses
 \href{https://en.wikipedia.org/wiki/Cosine\_similarity}{cosine similarity} of tf-idf vectors as it's measure of similarity. LexRank is better at
 working across multiple texts, due to the inclusion of a heuristic known
 as "Cross-Sentence Information Subsumption (CSIS)"
+\section{Data Types}
+\label{sec:orgd8f78a2}
+
+The application requires the capacity to smoothly work with diverse data types. For this to occur, a test corpus must be developed, and some important data types picked out.
+
+\subsection{Test Corpus}
+\label{sec:org430bccb}
+It is essential to test on a broad variety of texts in order to create
+the most general base application, so a "test set" will have to be
+developed. All data is stored in the folder \href{data}{data}
+
+\textbf{Must have}
+
+\begin{itemize}
+\item Literature (eg. Dante's Divine Comedy)
+\item Survey response data (eg. nzqhs, Cancer Society)
+\item Transcript; lack of punctuation may cause difficulties in processing
+sentences.
+\item Twitter
+\end{itemize}
+
+\textbf{Would be nice}
+
+\begin{itemize}
+\item article
+\begin{itemize}
+\item journal (scientific, social)
+\item news
+\item blog
+\item wikipedia
+\end{itemize}
+\item discourse
+\begin{itemize}
+\item interview
+\item subtitles
+\end{itemize}
+\item documentation
+\begin{itemize}
+\item product manual
+\item technical user guide
+\end{itemize}
+\item literature
+\begin{itemize}
+\item novel
+\item play
+\item poetry
+\end{itemize}
+\item textbook
+\end{itemize}
+
+
+\subsection{Free-Response Data}
+\label{sec:orged92e7b}
+Free Response Data (as in survey forms etc.) has been identified as an area of high potential for the application. Two datasets have been used to run typical text analyses upon, with the exploration \href{free-response.Rmd}{here}
 \end{document}
