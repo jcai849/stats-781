@@ -10,6 +10,7 @@ Text Analytics Journal
 - [2019-03-13](./meeting_notes.md#2019-03-13)
 - [2019-03-20](./meeting_notes.md#2019-03-20)
 - [2019-03-28](./meeting_notes.md#2019-03-28)
+- [2019-04-03](./meeting_notes.md#2019-04-03)
 
 # Initial Survey
 
@@ -158,7 +159,7 @@ It is essential to test on a broad variety of texts in order to create the most 
 
 ![Wikipedia Link](https://en.wikipedia.org/wiki/Automatic_summarization)
 
-Text summarisation creates enormous insight, especially from a long text. There are a variety of different techniques, of varying effectiveness and efficiency. A famous example of automatic text summarisation comes from ![autotldr](https://www.reddit.com/user/autotldr), a bot on reddit that automatically generates summaries of news articles in 4-5 sentences. Autotldr is powered by ![SMMRY](https://smmry.com/about), which explains it's algorithm as working through the following steps:
+Text summarisation creates enormous insight, especially from a long text. There are a variety of different techniques, of varying effectiveness and efficiency. A famous example of automatic text summarisation comes from ![autotldr](https://www.reddit.com/user/autotldr), a bot on reddit that automatically generates summaries of news articles in 4-5 sentences. Autotldr is powered by [SMMRY](https://smmry.com/about), which explains it's algorithm as working through the following steps:
 
 1. Associate words with their grammatical counterparts. (e.g. "city" and "cities")
 2. Calculate the occurrence of each word in the text.
@@ -179,7 +180,6 @@ Further summarisation experimentation is continued ![here](summarisation_experim
 ---
 
 LexRank and textRank appear to exist complimentarily to one another. Below is a brief summary of how they work
-	
 ### TextRank 
 
 TextRank essentially finds the most representative sentence of a text based on some similarity measure to other sentence.
@@ -190,4 +190,4 @@ In the generation of keywords, the same process described is typically run on un
 
 ### LexRank 
 
-LexRank is essentially the same as textRank, however uses ![cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) of tf-idf vectors as it's measure of similarity. LexRank is better at working across multiple texts, due to the inclusion of a heuristic known as "Cross-Sentence Information Subsumption (CSIS)"
+LexRank is essentially the same as textRank, however uses [cosine similarity](https://en.wikipedia.org/wiki/Cosine_similarity) of tf-idf vectors as it's measure of similarity. LexRank is better at working across multiple texts, due to the inclusion of a heuristic known as "Cross-Sentence Information Subsumption (CSIS)"

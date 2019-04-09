@@ -100,7 +100,7 @@ article_summary
 
 ```{r}
 article_lexsentences <-
-  lexRank(article_sentences$sentence, sentencesAsDocs = TRUE, n = 5)
+  lexRank(article_sentences$sentence, sentencesAsDocs = TRUE, n = 8)
 article_lexsummary <-
   article_lexsentences %>%
   arrange(docId) %>%
