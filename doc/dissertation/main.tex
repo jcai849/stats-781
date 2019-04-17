@@ -1,0 +1,44 @@
+\documentclass[a4paper, 11pt, oneside]{report}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{framed}
+\usepackage{dsfont}
+\usepackage[usenames]{color}
+\usepackage[left=3cm,top=3cm,right=3cm]{geometry}
+\usepackage{caption}
+\usepackage{parskip}
+
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\textfraction}{0.1}
+\parindent=0cm
+\parskip=\baselineskip 
+
+\title{\Huge{Title of my dissertation}}
+\author{\Large{Firstname M. Lastname}}
+
+\date
+{
+    \vspace{3cm}
+    \includegraphics[scale=0.4]{figures/logo.jpg}\\
+    \vspace{1cm}
+    % Change to Masters if applicable
+    Bachelor of Science (Honours)\\
+    Department of Statistics\\
+    The University of Auckland\\
+    New Zealand
+}
+
+\begin{document}
+\maketitle
+
+\include{acknowledgements}
+\tableofcontents
+
+\include{chapter1}
+\include{chapter2}
+\include{chapter3}
+\include{conclusion}
+\include{bibliography}
+
+\end{document}
+

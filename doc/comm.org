@@ -1,0 +1,171 @@
+* 2019-03-06
+  :PROPERTIES:
+  :CUSTOM_ID: section
+  :END:
+
+** Preparation
+   :PROPERTIES:
+   :CUSTOM_ID: preparation
+   :END:
+
+*Question*: How should this dissertation relate to Cassidy's
+[[../reading/CassidyStuff/CassidyStuff/Our%20text%20analytics%20project.docx][project
+outline]]?
+
+Thoughts on data structures:
+
+- dataframe seems ok for tidy text style data
+- nested dataframe may be best for survey response data
+- look at other styles (incl. non-tidy), maybe trees, as per parse trees
+  etc
+- Document-term matrix for tf-idf (PCA would be interesting here due to
+  massive dimension)
+
+*Reading*: [[https://www.tidytextmining.com][Text Mining with R]]:
+[[../notes/text_mining_with_r.org][notes]]
+
+- [X] Read Text Mining with R
+- [X] Assess Twitter api
+- [X] Play with iNZight/lite, Cassidy's Project
+- [X] Consider UI
+- [X] Consider Survey Responses
+- [X] Draft UI Depictions
+
+** Minutes / Summary
+   :PROPERTIES:
+   :CUSTOM_ID: minutes-summary
+   :END:
+
+#+BEGIN_QUOTE
+  UI is something that will have to be organically developed as we go.
+#+END_QUOTE
+
+Meeting was mainly demonstration from Jason to Chris about the
+preparation done, as well as Chris demonstrating to Jason the current
+iNZight UX. Research so far is good, but too broad to demonstrate in the
+confines of a weekly meeting - Chris suggested a [[#actions][solution]];
+to set notes in a neat summary format and publish to a github repository
+
+** Actions
+   :PROPERTIES:
+   :CUSTOM_ID: actions
+   :END:
+
+- [X] Set notes in neat summary form (organise file structure to match)
+- [X] Push to a private github repository
+- [X] Give access to Chris
+- [ ] +Create twitter developer account+
+- [ ] +Get twitter api access token+
+
+* 2019-03-13
+  :PROPERTIES:
+  :CUSTOM_ID: section-1
+  :END:
+
+** Minutes / Summary
+   :PROPERTIES:
+   :CUSTOM_ID: minutes-summary-1
+   :END:
+
+This meeting took place while seeing what packages exist already to
+complete various tasks. We looked though the various packages I have
+found. Determined that we needed to reel in and pick specific features
+that we want, according to the heuristic; if it isn't obvious
+immediately, get rid of it. The primary question we seek to answer with
+this text analytics program is, what are people talking about, and how
+do they feel about it. With this in mind, analysis for e.g. writing
+styles are not to be considered (who wrote shakespeare etc.).
+
+
+** Actions
+- [ ] +interface (w. respect to above)+
+- [ ] +lit review of twitter analysis (esp. discourse)+
+- [X] Determine what text analysis really is at base, and how it relates
+ to the primary question
+- [X] find if subtitles can be attained easily enough
+- [X] formal critique of Cassidy's project, integration w/ iNZight
+- [X] scope reduction
+- [X] See similar papers in stats printing room
+
+* 2019-03-20
+  :PROPERTIES:
+  :CUSTOM_ID: section-2
+  :END:
+
+** Summary
+   :PROPERTIES:
+   :CUSTOM_ID: summary
+   :END:
+
+Close assessment of textrank package and background algorithm - on the
+right track for scope. Chris noted to check for survey response data
+etc. from those involved with it.
+
+** Actions
+
+- [X] Create an example corpus for testing
+- [X] Assess textrank performance on the example corpus
+
+* 2019-03-28
+  :PROPERTIES:
+  :CUSTOM_ID: section-3
+  :END:
+
+** Summary
+   :PROPERTIES:
+   :CUSTOM_ID: summary-1
+   :END:
+
+Presentation of further package discoveries, for development purposes,
+as well as end-user. Demonstrated the benefits and drawbacks of using
+textRank, discussed the possibility of lexRank. Presented draft of
+feature space - including the usefulness of categorisation of text
+analytics as within- and between- texts. Much discussion dedicated to
+summarisation.
+
+** Actions
+   :PROPERTIES:
+   :CUSTOM_ID: actions-3
+   :END:
+
+- [X] Development of a test-corpus; Chris has emailed some free-form
+  patient responses
+- [X] Further testing of textRank (try tidy-style) on corpus
+- [X] Testing lexRank on on test corpus
+- [X] Formalise feature-space as list
+
+* 2019-04-03
+  :PROPERTIES:
+  :CUSTOM_ID: section-4
+  :END:
+
+** Summary
+   :PROPERTIES:
+   :CUSTOM_ID: summary-2
+   :END:
+
+Demonstration of summarisation systems, confirmation of use of lexRank,
+discussion of case of free-form response data - much interest in these
+capabilities
+
+** Actions
+   :PROPERTIES:
+   :CUSTOM_ID: actions-4
+   :END:
+
+- [X] Testing of standard text analysis tools on free-response data - see
+  what is useful
+- [X] Summarisation of Free responses using the two example datasets;
+  indiv. response as token?
+- [ ] Test grouping variables such as survey group in the analysis
+- [X] LexRank for keywords - Not possible
+
+* DONE 2019-04-10
+  CLOSED: [2019-04-16 Tue 23:31] SCHEDULED: <2019-04-10 Wed>
+
+** TODO Look into pairwise_cor function to determine order and remove repetition
+
+** TODO Complete previous week's tasks
+
+* Meeting Chris @his-office
+  SCHEDULED: <2019-04-17 Wed>

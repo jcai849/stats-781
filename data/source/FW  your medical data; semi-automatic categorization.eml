@@ -1,0 +1,2648 @@
+Delivered-To: jcai849@aucklanduni.ac.nz
+Received: by 2002:a9d:7686:0:0:0:0:0 with SMTP id j6csp118762otl;
+        Wed, 27 Mar 2019 19:19:50 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzKs5m8GB/dQl+sy3dXNRreGR3ei71OUMx1DDa7LqoNUw0OkoCWWwBnxduZ237Z12z1Lw5F
+X-Received: by 2002:a63:384:: with SMTP id 126mr8385327pgd.341.1553739590258;
+        Wed, 27 Mar 2019 19:19:50 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; t=1553739590; cv=none;
+        d=google.com; s=arc-20160816;
+        b=ESkBRTgmcgTznnP4vjCa6UKZLpMnOyiWUOBFZtH+n2LYfCY53EtRwPIf/orbixsnQZ
+         ASxqPjja+qHTzeFBc1Z55aix0v6pS0ufBAJKDhBa5mJ6KyFBJcif28rComRqQBRoTwZ+
+         YOSm04KSkbETztNTOAUgsrNvJApFQkS/aXYuocR5+dEB/VlDvIH8TRAxTsd+9U5WwFnR
+         ihXTgnuYxOPACgEpLfYUsXAVXyz25c1qYIAkah7+ytEZy8E40KFR8vn1GCO0PZ6yKdYf
+         GF0isjtAJPPyIy5nYiUX+C6EhGp3H9VCKiL+kWGIdjEbNSRW7MVT5YgXkBtyYCUFHcqJ
+         tX+w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20160816;
+        h=mime-version:content-language:accept-language:in-reply-to
+         :references:message-id:date:thread-index:thread-topic:subject:to
+         :from:dkim-signature;
+        bh=fNBvnvdUlTT3W7vOjAokkNHMbF6Nxk0PKuNCj94QExs=;
+        b=BUjT0FaEnTQ9bPFgDxQEt9UTe7quGSaxrlXRqPAo0nbTLBTFeCj+hG358Uv2QjTNYU
+         Vm/S+09e395UliiIc35gkBNpmGiLR5eLQIvlLjs/BP9mwZnSOh/PnDGKKCU6aTCiK1Ly
+         x6i38aEIbLio5i9CwSdFRLmaXk3LUhoDS5vXTCrAaXJQACDlYY5hZ694RKnvcwYn3+ZX
+         uNih+AjLljI068Ol1BN7gHo0chfWQxdczgDRxDjVgYzI/pj8+4pEp5oWJ/MXw8oDCtWp
+         sagACPpKYPqaQPYn68+Wx9Iz4p4S7ehInWGcyFxrY73FbksZElrldZVpEQlkCkJ9OV0B
+         ENBA==
+ARC-Authentication-Results: i=1; mx.google.com;
+       dkim=pass header.i=@auckland.ac.nz header.s=mail header.b=ioY3AxZn;
+       spf=pass (google.com: domain of c.wild@auckland.ac.nz designates 130.216.125.246 as permitted sender) smtp.mailfrom=c.wild@auckland.ac.nz
+Return-Path: <c.wild@auckland.ac.nz>
+Received: from mx4-int.auckland.ac.nz (mx4-int.auckland.ac.nz. [130.216.125.246])
+        by mx.google.com with ESMTPS id v6si8924286pgk.320.2019.03.27.19.19.48
+        for <jcai849@aucklanduni.ac.nz>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 Mar 2019 19:19:50 -0700 (PDT)
+Received-SPF: pass (google.com: domain of c.wild@auckland.ac.nz designates 130.216.125.246 as permitted sender) client-ip=130.216.125.246;
+Authentication-Results: mx.google.com;
+       dkim=pass header.i=@auckland.ac.nz header.s=mail header.b=ioY3AxZn;
+       spf=pass (google.com: domain of c.wild@auckland.ac.nz designates 130.216.125.246 as permitted sender) smtp.mailfrom=c.wild@auckland.ac.nz
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=auckland.ac.nz; i=@auckland.ac.nz; q=dns/txt; s=mail;
+  t=1553739589; x=1585275589;
+  h=from:to:subject:date:message-id:references:in-reply-to:
+   mime-version;
+  bh=moh9PmgyqbyH+JgBUE7hKa75bv26MjB4bBZ9PPHhLN0=;
+  b=ioY3AxZnkdMJ/ulJGOm2043rx+06bNDC66+TN6uOGLIY8alDzZc6JDNn
+   0l7v/SzqQz6CgVX/0JsO3oiNesSXGbrBccu2eQZO2HDEcGHGd6AxV4y4Z
+   blKEcFzU8MYK5meOwTMsyq5zYvrtdq/5EGbc/AhQo+2QcI3b+Du2zRTyw
+   n0/Tt0xkjibBZzoXl3Ep9bLucmiGBv+e901WTuDJH+YnMSQ1Sw+2FDO+R
+   i/YVx4UD5wlQDOPvp6P2pMyqqbCvMheeS+CAcsgLHAt11DB0PzI6+iCWz
+   2tQBzqX1FEoK6Td8kl1oZcqAdHm3cSeSB/WZRi15zRtiZr+fMjV4aYr6B
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.60,278,1549882800"; 
+   d="xls'32?scan'32,208,217,32";a="53464299"
+X-Ironport-HAT: MAIL-SERVERS - $RELAYED
+X-Ironport-Source: 10.6.3.9 - Outgoing - Outgoing
+Received: from uxcn13-tdc-e.uoa.auckland.ac.nz ([10.6.3.9])
+  by mx4-int.auckland.ac.nz with ESMTP/TLS/AES256-SHA; 28 Mar 2019 15:19:46 +1300
+Received: from uxcn13-ogg-d.UoA.auckland.ac.nz (10.6.2.5) by
+ uxcn13-tdc-e.UoA.auckland.ac.nz (10.6.3.9) with Microsoft SMTP Server (TLS)
+ id 15.0.1395.4; Thu, 28 Mar 2019 15:19:45 +1300
+Received: from uxcn13-ogg-d.UoA.auckland.ac.nz ([10.6.2.5]) by
+ uxcn13-ogg-d.UoA.auckland.ac.nz ([10.6.2.5]) with mapi id 15.00.1395.000;
+ Thu, 28 Mar 2019 15:19:45 +1300
+From: Chris Wild <c.wild@auckland.ac.nz>
+To: "Jason Cairns (jcai849@aucklanduni.ac.nz)" <jcai849@aucklanduni.ac.nz>
+Subject: FW: your medical data; semi-automatic categorization
+Thread-Topic: your medical data; semi-automatic categorization
+Thread-Index: AdERv75N6IGqmhzDSxaUhHram545aQAAPD6AANTqV1AAAHSfYAAAR4rAAAGgIJoAADuGcAAAmXlqAAAttkAAKNeqMAAmRgRhAQW59xAAAck7awAAKFnwAACV+9AC+T8QgIdz9G8QAAeAiaIBJAp4AA==
+Date: Thu, 28 Mar 2019 02:19:45 +0000
+Message-ID: <b6168e80fdc348959245b9f44f34d402@uxcn13-ogg-d.UoA.auckland.ac.nz>
+References: <1017FDE93C64374D85678BA8916E0B3E7B10661E@connmbx03>
+ <BCF298A24BC71745A345FA78D0AE1B6EF6CC0610@uxcn10-6.UoA.auckland.ac.nz>
+ <1017FDE93C64374D85678BA8916E0B3E7B106D3E@connmbx03>
+ <BCF298A24BC71745A345FA78D0AE1B6EF6CC2783@uxcn10-6.UoA.auckland.ac.nz>,<919CCFE2F00F3048947E542F6008C6D1E3890A0E@uxcn10-6.UoA.auckland.ac.nz>
+ <BCF298A24BC71745A345FA78D0AE1B6EF6CC27D6@uxcn10-6.UoA.auckland.ac.nz>,<919CCFE2F00F3048947E542F6008C6D1E3890AE3@uxcn10-6.UoA.auckland.ac.nz>
+ <BCF298A24BC71745A345FA78D0AE1B6EF6CC2827@uxcn10-6.UoA.auckland.ac.nz>
+ <919CCFE2F00F3048947E542F6008C6D1E3890B20@uxcn10-6.UoA.auckland.ac.nz>,<BCF298A24BC71745A345FA78D0AE1B6EF6CC2F48@uxcn10-6.UoA.auckland.ac.nz>
+ <BCF298A24BC71745A345FA78D0AE1B6EF6CC31FA@uxcn10-6.UoA.auckland.ac.nz>,<1017FDE93C64374D85678BA8916E0B3E7B1077DA@connmbx03>
+ <BCF298A24BC71745A345FA78D0AE1B6EF6CC64C3@uxcn10-6.UoA.auckland.ac.nz>
+ <919CCFE2F00F3048947E542F6008C6D1E389234B@uxcn10-6.UoA.auckland.ac.nz>
+ <1017FDE93C64374D85678BA8916E0B3E7B107828@connmbx03>
+ <919CCFE2F00F3048947E542F6008C6D1E389ED36@uxcn10-6.UoA.auckland.ac.nz>,<1455e56477cf417c9844b7b156df528c@uxcn13-ogg-e.UoA.auckland.ac.nz>
+ <1553238058797.67132@auckland.ac.nz>
+In-Reply-To: <1553238058797.67132@auckland.ac.nz>
+Accept-Language: en-GB, en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [130.216.158.4]
+Content-Type: multipart/mixed;
+	boundary="_004_b6168e80fdc348959245b9f44f34d402uxcn13oggdUoAaucklandac_"
+MIME-Version: 1.0
+
+--_004_b6168e80fdc348959245b9f44f34d402uxcn13oggdUoAaucklandac_
+Content-Type: multipart/alternative;
+	boundary="_000_b6168e80fdc348959245b9f44f34d402uxcn13oggdUoAaucklandac_"
+
+--_000_b6168e80fdc348959245b9f44f34d402uxcn13oggdUoAaucklandac_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+
+
+From: Peter Davis
+Sent: Friday, 22 March 2019 8:01 p.m.
+To: Chris Wild
+Subject: Fw: your medical data; semi-automatic categorization
+
+
+Hi Chris. Here is an e-mail trail from the time we started with Matthias al=
+l of 3.5 years ago, together with the data set for him to work on. The idea=
+ was to use the text descriptions of hospital files with full medical descr=
+iptions to see if we could predict which ones were adverse events. peter
+
+From: Roy Lay-Yee
+Sent: Tuesday, 24 November 2015 4:24 PM
+To: 'Matthias Schonlau' <schonlau@uwaterloo.ca<mailto:schonlau@uwaterloo.ca=
+>>
+Cc: Peter Davis <pb.davis@auckland.ac.nz<mailto:pb.davis@auckland.ac.nz>>
+Subject: RE: your medical data; semi-automatic categorization
+
+Hi Matthias,
+
+How're you doing? I've finally got on to this - have collated the relevant =
+data variables (see below) required in an Excel file (attached). There are =
+50 records where we have information on both Experts and Reviewers.
+
+VARIABLES:
+Record ID
+Expert clinical summary: the Expert's summary of the patient's clinical not=
+es (up to 1700 characters long).
+Expert ID
+Expert AE causation score: this is the Expert's judgement of the degree of =
+certainty that an AE has been detected - values range from 1 (slight eviden=
+ce) to 6 (certain evidence).
+Expert AE detected: if the AE causation score is >=3D2 then the value is 1 =
+(i.e. an AE has been detected), otherwise 0.
+Reviewer clinical summary: this contains the Medical Reviewer's summary of =
+the patient's clinical notes (up to 2600 characters long).
+Reviewer ID
+Reviewer AE causation score: this is the Medical Reviewer's judgement of th=
+e degree of certainty that an AE has been detected - values range from 1 (s=
+light evidence) to 6 (certain evidence).
+Reviewer AE detected: if the AE causation score is >=3D2 then the value is =
+1 (i.e. an AE has been detected), otherwise 0.
+
+SOURCE:
+NZ Quality of Healthcare Study (NZQHS) - Expert and Medical Reviewers data =
+- their clinical summaries and their AE scores.
+
+POSSIBLE RESEARCH QUESTIONS?
+- what text in Expert clinical summary predicts their AE score?
+- what text in Reviewer clinical summary predicts their AE score?
+- what text in Reviewer clinical summary predicts Expert's AE score? (where=
+ Expert is the gold standard)
+
+Let me know if you have any queries. Look forward to hearing how you get on=
+.
+
+Thanks, Roy
+
+From: Matthias Schonlau [mailto:schonlau@uwaterloo.ca]
+Sent: Monday, 9 November 2015 12:50 p.m.
+To: Roy Lay-Yee; Peter Davis
+Subject: RE: your medical data; semi-automatic categorization
+
+Hi Roy,
+
+I will convert into Stata  (the new version has unlimited strings, the olde=
+r versions are limited to 144 characters).
+
+Excel or some ASCII delimited version might be easiest.
+If you have it in SAS XPORT format there  is a function " import sasxport" =
+ to read this file into Stata.
+
+Thanks,
+
+Matthias
+
+
+
+Matthias Schonlau, Ph.D.
+Professor, Department of Statistics a. Act.Sci.
+Co-director, Survey Research Centre
+University of Waterloo
+
+On sabbatical at the
+University of Auckland, New Zealand
++64 9 373 7599 ext. 88457
+5pm EST is 11am New Zealand the next day
+
+From: Roy Lay-Yee [mailto:r.layyee@auckland.ac.nz]
+Sent: Monday, November 9, 2015 12:29 PM
+To: Peter Davis <pb.davis@auckland.ac.nz<mailto:pb.davis@auckland.ac.nz>>; =
+Matthias Schonlau <schonlau@uwaterloo.ca<mailto:schonlau@uwaterloo.ca>>
+Subject: RE: your medical data; semi-automatic categorization
+
+Hi Matthias,
+
+I will investigate our data archives and see if I can extract what you need=
+. What data file format would be suitable for you to use?
+
+Cheers, Roy
+
+From: Peter Davis
+Sent: Monday, 9 November 2015 12:23 p.m.
+To: Matthias Schonlau
+Cc: Roy Lay-Yee
+Subject: RE: your medical data; semi-automatic categorization
+
+
+I am hoping that Roy can check this out. It is some time since we have look=
+ed at the data of course, but actually I am pretty sure we had it in the fo=
+rm I mention because that was part of the data capture process. peter
+
+________________________________
+From: Matthias Schonlau [schonlau@uwaterloo.ca]
+Sent: Monday, 9 November 2015 11:49 a.m.
+To: Peter Davis
+Cc: Roy Lay-Yee; Matthias Schonlau
+Subject: RE: your medical data; semi-automatic categorization
+Hi Peter  and Roy,
+
+Sorry for the delayed reaction; I was a bit under the weather.
+
+This all sounds really good: 4000 texts, already categorized. The text bein=
+g a case summary might make this easier as it may be more structured. The o=
+utcome is binary or sliding scale (either would work.).  The second
+"expert" categorization is really useful. The expect categorization at 10% =
+is 400 texts and still large enough to do this sort of thing.
+
+As usual,  I would first generate numerical variables from the texts. Then =
+I'd run a learning algorithm. Interesting questions include:
+1) How well can this method predict the outcome (on test data)?
+   Related, is prediction based on the 10% expert sample better than the in=
+itial non-expert categorization?
+2) Can we get any insight in what the machine learning algorithm is doing? =
+(e.g. influential variables)
+3)  Can we get any insight into why/where the kappa was poor? This may be a=
+ little tricky.
+
+It sounds like fun.  Is the data accessible or do you have to do some diggi=
+ng?
+
+Best wishes,
+
+Matthias
+
+
+
+Matthias Schonlau, Ph.D.
+Professor, Department of Statistics a. Act.Sci.
+Co-director, Survey Research Centre
+University of Waterloo
+
+On sabbatical at the
+University of Auckland, New Zealand
++64 9 373 7599 ext. 88457
+5pm EST is 11am New Zealand the next day
+
+From: Peter Davis [mailto:pb.davis@auckland.ac.nz]
+Sent: Wednesday, November 4, 2015 6:44 AM
+To: Matthias Schonlau <schonlau@uwaterloo.ca<mailto:schonlau@uwaterloo.ca>>
+Cc: Roy Lay-Yee <r.layyee@auckland.ac.nz<mailto:r.layyee@auckland.ac.nz>>
+Subject: FW: your medical data; semi-automatic categorization
+
+
+Just a follow-up thought on this Matthias as you absorb this stuff! Of thos=
+e 4,000 admissions, fewer than ten per cent were actually classified as sho=
+wing evidence of patient harm (adverse event) - which is a good thing if yo=
+u are interested in reducing medical injury incurred in hospitals, but it d=
+oes mean that you do not have a lot of variation to play with for your exer=
+cise! At least, that is the case if you take on a binary definition of the =
+outcome (patient harm or not). In fact the reviewers classified the admissi=
+ons on a scale from "virtually no evidence of injury" through to "almost ce=
+rtain evidence". So, if you needed more case variation to play with in orde=
+r to make your text mining work better, you could adopt this scale as the o=
+utcome rather than just the binary decision. peter
+
+________________________________
+From: Peter Davis
+Sent: Tuesday, 3 November 2015 12:29 p.m.
+To: 'Matthias Schonlau'
+Cc: Roy Lay-Yee
+Subject: FW: your medical data; semi-automatic categorization
+Hello Matthias. I have conferred with my colleague, Roy Lay-Yee (whom I am =
+copying in), about the exact details in our patient safety study. It is ove=
+r ten years since we collected the data so we needed to refresh our memorie=
+s. My best estimate at this point is that the medical reviewers made case s=
+ummaries of about 4,000 admissions (after the initial screening process, wh=
+ich itself was administered on over 6,000 admissions). So, these are not th=
+e original patient notes, but case summaries made by medical reviewers. The=
+se case summaries were all entered as text files (in SAS), as we understand=
+ it. The decision as to whether or not an adverse event (patient safety iss=
+ue) was present came down eventually to a binary outcome (was it present wi=
+th reasonable certainty or not), although this in turn was based on a slidi=
+ng judgement scale (which we would need more time to think about and dig ou=
+t). Finally, one in ten of these judgements were subject to "blind" expert =
+review; namely, our principal reviewer - herself a senior doctor and a memb=
+er of the team. As far as we can remember, she did not rely on the case sum=
+maries of the medical reviewers, but created her own. She used this to make=
+ her judgement on an adverse event. So, what you could do is see which word=
+s best predicted her judgement, and then apply that algorithm to the others=
+. Our Kappa scores where poor, and you work might shed some light on why th=
+at might have been the case. ATB peter
+
+
+From: Matthias Schonlau [mailto:schonlau@uwaterloo.ca]
+Sent: Monday, 2 November 2015 3:28 p.m.
+To: Peter Davis
+Subject: RE: your medical data; semi-automatic categorization
+
+Hi Peter:
+
+This  sound interesting. I don't know the literature on text mining with me=
+dical notes but some work has been done there.
+
+It might be worth just running  the software on the data and see how far we=
+ get without too much work.  Then we can re-assess if any interesting probl=
+em emerges. My guess is the data from the medical injury study are in bette=
+r shape and would be easier to run; but the other one would work too.
+
+What do you think?
+
+matthias
+
+
+
+
+Matthias Schonlau, Ph.D.
+Professor, Department of Statistics a. Act.Sci.
+Co-director, Survey Research Centre
+University of Waterloo
+
+On sabbatical at the
+University of Auckland, New Zealand
++64 9 373 7599 ext. 88457
+5pm EST is 11am New Zealand the next day
+
+From: Peter Davis [mailto:pb.davis@auckland.ac.nz]
+Sent: Thursday, October 29, 2015 9:50 AM
+To: Matthias Schonlau <schonlau@uwaterloo.ca<mailto:schonlau@uwaterloo.ca>>
+Subject: RE: your medical data; semi-automatic categorization
+
+Thanks for getting touch. There are two aspects.
+
+One was the administrative task of coding hospital patient admission and di=
+scharge codes by clerks. Listening to you, and seeing the parallel with occ=
+upational coding, I thought that there might be something in automating the=
+ coding task. Indeed, when I googled that, I found a review paper on this. =
+I am not sure of the state of play, though. If there was potential, I can s=
+ee the authorities here co-funding a research proposal to see if it could w=
+ork. I do not know enough about the area to know whether this is an area th=
+at can be addressed in your way, and whether it has not been so to date.
+
+The second aspect is a study that I did which replicated the Harvard Medica=
+l Practice Study in which we recorded cases of medical injury (i.e. harm) a=
+mong in-hospital patients, using their medical notes. This was a big study =
+by NZ standards and involved a two-stage selection process, such that a sub=
+set of medical notes were set aside for medical review according to various=
+ criteria. Then the patient notes where transcribed in writing and then ent=
+ered as text into our records. The medical reviewers used those notes to ju=
+dge whether or not the patient had suffered harm due to the treatment. Abou=
+t ten per cent of all patients had.
+
+We had a senior reviewer how did a one in ten re-review of these medical re=
+views, and I would see that person as being the gold standard. One could th=
+en see which text items best predicted her judgements, and see where this d=
+iffered from the medical reviewers. At least that would be one way to use y=
+our approach. The kapas were low for us.
+
+Nowadays patient notes may be electronic already so it would be easier to a=
+nalyse them. There is a methodology of triggers for identifying hospital ha=
+rm. A colleague of mine at Christchurch medical school is more up on this a=
+nd could be brought in if necessary.
+
+Here is a link to the basic report on our study - https://www.health.govt.n=
+z/system/files/documents/publications/adverseevents.pdf. peter
+
+From: Matthias Schonlau [mailto:schonlau@uwaterloo.ca]
+Sent: Thursday, 29 October 2015 9:32 a.m.
+To: Peter Davis
+Subject: your medical data; semi-automatic categorization
+
+Hi Peter,
+
+I would be interested to talk more about your medical  data sometime at you=
+r convenience.
+
+Best wishes,
+
+matthias
+
+
+
+Matthias Schonlau, Ph.D.
+Professor, Department of Statistics a. Act.Sci.
+Co-director, Survey Research Centre
+University of Waterloo
+
+On sabbatical at the
+University of Auckland, New Zealand
++64 9 373 7599 ext. 88457
+5pm EST is 9am New Zealand the next day
+
+
+--_000_b6168e80fdc348959245b9f44f34d402uxcn13oggdUoAaucklandac_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii"=
+>
+<meta name=3D"Generator" content=3D"Microsoft Word 14 (filtered medium)">
+<!--[if !mso]><style>v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style><![endif]--><style><!--
+/* Font Definitions */
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:#954F72;
+	text-decoration:underline;}
+p
+	{mso-style-priority:99;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{mso-style-priority:99;
+	mso-style-link:"Balloon Text Char";
+	margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";}
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
+	{mso-style-priority:34;
+	margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:36.0pt;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";}
+p.msonormal0, li.msonormal0, div.msonormal0
+	{mso-style-name:msonormal0;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.msochpdefault, li.msochpdefault, div.msochpdefault
+	{mso-style-name:msochpdefault;
+	margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";}
+span.emailstyle17
+	{mso-style-name:emailstyle17;
+	font-family:"Calibri","sans-serif";
+	color:windowtext;}
+span.emailstyle18
+	{mso-style-name:emailstyle18;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle19
+	{mso-style-name:emailstyle19;
+	font-family:"Calibri","sans-serif";
+	color:windowtext;}
+span.emailstyle20
+	{mso-style-name:emailstyle20;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle21
+	{mso-style-name:emailstyle21;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle22
+	{mso-style-name:emailstyle22;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle25
+	{mso-style-name:emailstyle25;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle26
+	{mso-style-name:emailstyle26;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle27
+	{mso-style-name:emailstyle27;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle28
+	{mso-style-name:emailstyle28;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle31
+	{mso-style-name:emailstyle31;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle32
+	{mso-style-name:emailstyle32;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle33
+	{mso-style-name:emailstyle33;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.emailstyle34
+	{mso-style-name:emailstyle34;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.EmailStyle35
+	{mso-style-type:personal-reply;
+	font-family:"Calibri","sans-serif";
+	color:#1F497D;}
+span.BalloonTextChar
+	{mso-style-name:"Balloon Text Char";
+	mso-style-priority:99;
+	mso-style-link:"Balloon Text";
+	font-family:"Tahoma","sans-serif";}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-size:10.0pt;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body bgcolor=3D"white" lang=3D"EN-NZ" link=3D"#0563C1" vlink=3D"#954F72">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D"><o:p>&nbsp;</o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D"><o:p>&nbsp;</o:p></spa=
+n></p>
+<div>
+<div style=3D"border:none;border-top:solid #B5C4DF 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"font-size:10.0pt;fo=
+nt-family:&quot;Tahoma&quot;,&quot;sans-serif&quot;">From:</span></b><span =
+lang=3D"EN-US" style=3D"font-size:10.0pt;font-family:&quot;Tahoma&quot;,&qu=
+ot;sans-serif&quot;"> Peter Davis
+<br>
+<b>Sent:</b> Friday, 22 March 2019 8:01 p.m.<br>
+<b>To:</b> Chris Wild<br>
+<b>Subject:</b> Fw: your medical data; semi-automatic categorization<o:p></=
+o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p><span style=3D"font-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;co=
+lor:black">Hi Chris. Here is an e-mail trail from the time we started with =
+Matthias all of 3.5 years ago, together with the data set for him to work o=
+n. The idea was to use the text descriptions of hospital
+ files with&nbsp;full medical descriptions to see if we could predict which=
+ ones were adverse events. peter<o:p></o:p></span></p>
+<div>
+<div>
+<div>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"color:#212121">From=
+:</span></b><span lang=3D"EN-US" style=3D"color:#212121"> Roy Lay-Yee
+<br>
+<b>Sent:</b> Tuesday, 24 November 2015 4:24 PM<br>
+<b>To:</b> 'Matthias Schonlau' &lt;<a href=3D"mailto:schonlau@uwaterloo.ca"=
+>schonlau@uwaterloo.ca</a>&gt;<br>
+<b>Cc:</b> Peter Davis &lt;<a href=3D"mailto:pb.davis@auckland.ac.nz">pb.da=
+vis@auckland.ac.nz</a>&gt;<br>
+<b>Subject:</b> RE: your medical data; semi-automatic categorization</span>=
+<span style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span style=3D"color:#212121">&nbsp;<o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Hi Matthias,</span><sp=
+an style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">How&#8217;re you doing=
+? I&#8217;ve finally got on to this &#8211; have collated the relevant data=
+ variables (see below) required in an Excel file (attached). There are 50 r=
+ecords where we have information on both Experts and Reviewers.</span><span=
+ style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">VARIABLES:</span><span=
+ style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Record ID</span><span =
+style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Expert clinical summar=
+y: the Expert&#8217;s summary of the patient&#8217;s clinical notes (up to =
+1700 characters long).</span><span style=3D"color:#212121"><o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Expert ID</span><span =
+style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Expert AE causation sc=
+ore: this is the Expert&#8217;s judgement of the degree of certainty that a=
+n AE has been detected &#8211; values range from 1 (slight evidence) to 6 (=
+certain evidence). &nbsp;
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Expert AE detected: if=
+ the AE causation score is &gt;=3D2 then the value is 1 (i.e. an AE has bee=
+n detected), otherwise 0.&nbsp;&nbsp;
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Reviewer clinical summ=
+ary: this contains the Medical Reviewer&#8217;s summary of the patient&#821=
+7;s clinical notes (up to 2600 characters long).</span><span style=3D"color=
+:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Reviewer ID</span><spa=
+n style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Reviewer AE causation =
+score: this is the Medical Reviewer&#8217;s judgement of the degree of cert=
+ainty that an AE has been detected &#8211; values range from 1 (slight evid=
+ence) to 6 (certain evidence). &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&n=
+bsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Reviewer AE detected: =
+if the AE causation score is &gt;=3D2 then the value is 1 (i.e. an AE has b=
+een detected), otherwise 0.&nbsp;&nbsp;
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">SOURCE: </span><span s=
+tyle=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">NZ Quality of Healthca=
+re Study (NZQHS) - Expert and Medical Reviewers data - their clinical summa=
+ries and their AE scores.</span><span style=3D"color:#212121"><o:p></o:p></=
+span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">POSSIBLE RESEARCH QUES=
+TIONS? </span>
+<span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">- what text in Expert =
+clinical summary predicts their AE score?
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">- what text in Reviewe=
+r clinical summary predicts their AE score?</span><span style=3D"color:#212=
+121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">- what text in Reviewe=
+r clinical summary predicts Expert's AE score? (where Expert is the gold st=
+andard)</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Let me know if you hav=
+e any queries. Look forward to hearing how you get on.</span><span style=3D=
+"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Thanks, Roy</span><spa=
+n style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"color:#212121">From=
+:</span></b><span lang=3D"EN-US" style=3D"color:#212121"> Matthias Schonlau=
+ [<a href=3D"mailto:schonlau@uwaterloo.ca">mailto:schonlau@uwaterloo.ca</a>=
+]
+<br>
+<b>Sent:</b> Monday, 9 November 2015 12:50 p.m.<br>
+<b>To:</b> Roy Lay-Yee; Peter Davis<br>
+<b>Subject:</b> RE: your medical data; semi-automatic categorization</span>=
+<span style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span style=3D"color:#212121">&nbsp;<o:p></o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Hi Roy,
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&nbsp;</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">I will convert into Stata&nbsp; (the new version has unlimited str=
+ings, the older versions are limited to 144 characters).</span><span style=
+=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&nbsp;</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Excel or some ASCII delimited version might be easiest.
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">If you have it in SAS XPORT format there&nbsp; is a function &#822=
+0; import sasxport&#8221;&nbsp; to read this file into Stata.</span><span s=
+tyle=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&nbsp;</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Thanks,</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&nbsp;</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Matthias</span><span style=3D"color:#212121"><o:p></o:p></span></p=
+>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&nbsp;</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&nbsp;</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&nbsp;</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Matthias Schonlau, Ph.D.</span><span style=3D"color:#212121"><o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Professor, Department of Statistics a. Act.Sci.</span><span style=
+=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Co-director, Survey Research Centre</span><span style=3D"color:#21=
+2121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">University of Waterloo</span><span style=3D"color:#212121"><o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&nbsp;</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">On sabbatical at the
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">University of Auckland, New Zealand</span><span style=3D"color:#21=
+2121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&#43;64 9 373 7599 ext. 88457</span><span style=3D"color:#212121">=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">5pm EST is 11am New Zealand the next day</span><span style=3D"colo=
+r:#212121"><o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&nbsp;</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"color:#212121">From=
+:</span></b><span lang=3D"EN-US" style=3D"color:#212121"> Roy Lay-Yee [<a h=
+ref=3D"mailto:r.layyee@auckland.ac.nz">mailto:r.layyee@auckland.ac.nz</a>]
+<br>
+<b>Sent:</b> Monday, November 9, 2015 12:29 PM<br>
+<b>To:</b> Peter Davis &lt;<a href=3D"mailto:pb.davis@auckland.ac.nz">pb.da=
+vis@auckland.ac.nz</a>&gt;; Matthias Schonlau &lt;<a href=3D"mailto:schonla=
+u@uwaterloo.ca">schonlau@uwaterloo.ca</a>&gt;<br>
+<b>Subject:</b> RE: your medical data; semi-automatic categorization</span>=
+<span style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:#212121">&nbsp;<=
+/span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Hi Matthias,</span><sp=
+an style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">I will investigate our=
+ data archives and see if I can extract what you need. What data file forma=
+t would be suitable for you to use?
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Cheers, Roy</span><spa=
+n style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">&nbsp;</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"color:#212121">From=
+:</span></b><span lang=3D"EN-US" style=3D"color:#212121"> Peter Davis
+<br>
+<b>Sent:</b> Monday, 9 November 2015 12:23 p.m.<br>
+<b>To:</b> Matthias Schonlau<br>
+<b>Cc:</b> Roy Lay-Yee<br>
+<b>Subject:</b> RE: your medical data; semi-automatic categorization</span>=
+<span style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span style=3D"color:#212121">&nbsp;<o:p></o:p></spa=
+n></p>
+<p><span lang=3D"EN-US" style=3D"font-size:10.0pt;font-family:&quot;Tahoma&=
+quot;,&quot;sans-serif&quot;;color:black">I am hoping that Roy can check th=
+is out. It is some time since we have looked at the data of course, but act=
+ually I am pretty sure we had it in the form I mention because
+ that was part of the data capture process. peter</span><span style=3D"font=
+-family:&quot;Calibri&quot;,&quot;sans-serif&quot;;color:#212121"><o:p></o:=
+p></span></p>
+<div class=3D"MsoNormal" align=3D"center" style=3D"text-align:center"><span=
+ lang=3D"EN-US" style=3D"font-size:12.0pt;font-family:&quot;Times New Roman=
+&quot;,&quot;serif&quot;;color:black">
+<hr size=3D"3" width=3D"100%" align=3D"center">
+</span></div>
+<div id=3D"divRpF763541">
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><b><span lang=3D"EN-U=
+S" style=3D"font-size:10.0pt;font-family:&quot;Tahoma&quot;,&quot;sans-seri=
+f&quot;;color:black">From:</span></b><span lang=3D"EN-US" style=3D"font-siz=
+e:10.0pt;font-family:&quot;Tahoma&quot;,&quot;sans-serif&quot;;color:black"=
+> Matthias
+ Schonlau [schonlau@uwaterloo.ca]<br>
+<b>Sent:</b> Monday, 9 November 2015 11:49 a.m.<br>
+<b>To:</b> Peter Davis<br>
+<b>Cc:</b> Roy Lay-Yee; Matthias Schonlau<br>
+<b>Subject:</b> RE: your medical data; semi-automatic categorization</span>=
+<span style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Hi Peter &nbsp;and Roy,</span><span style=3D"color:#212121"><o:p><=
+/o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Sorry for the delayed reaction; I was a bit under the weather.</sp=
+an><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">This all sounds really good: 4000 texts, already categorized. The =
+text being a case summary might make this easier as it may be more structur=
+ed. The outcome is binary or sliding scale
+ (either would work.). &nbsp;The second </span><span style=3D"color:#212121=
+"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&#8220;expert&#8221; categorization is really useful. The expect c=
+ategorization at 10% is 400 texts and still large enough to do this sort of=
+ thing.
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">As usual, &nbsp;I would first generate numerical variables from th=
+e texts. Then I&#8217;d run a learning algorithm. Interesting questions inc=
+lude:
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">1) How well can this method predict the outcome (on test data)?</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&nbsp;&nbsp; Related, is prediction based on the 10% expert sample=
+ better than the initial non-expert categorization?</span><span style=3D"co=
+lor:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">2) Can we get any insight in what the machine learning algorithm i=
+s doing? (e.g. influential variables)</span><span style=3D"color:#212121"><=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">3) &nbsp;Can we get any insight into why/where the kappa was poor?=
+ This may be a little tricky.</span><span style=3D"color:#212121"><o:p></o:=
+p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">It sounds like fun. &nbsp;Is the data accessible or do you have to=
+ do some digging?</span><span style=3D"color:#212121"><o:p></o:p></span></p=
+>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Best wishes,
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D"><br>
+Matthias</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Matthias Schonlau, Ph.D.</span><span style=3D"color:#212121"><o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Professor, Department of Statistics a. Act.Sci.</span><span style=
+=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Co-director, Survey Research Centre</span><span style=3D"color:#21=
+2121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">University of Waterloo</span><span style=3D"color:#212121"><o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">On sabbatical at the
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">University of Auckland, New Zealand</span><span style=3D"color:#21=
+2121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&#43;64 9 373 7599 ext. 88457</span><span style=3D"color:#212121">=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">5pm EST is 11am New Zealand the next day</span><span style=3D"colo=
+r:#212121"><o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"color:black">From:<=
+/span></b><span lang=3D"EN-US" style=3D"color:black"> Peter Davis [<a href=
+=3D"mailto:pb.davis@auckland.ac.nz">mailto:pb.davis@auckland.ac.nz</a>]
+<br>
+<b>Sent:</b> Wednesday, November 4, 2015 6:44 AM<br>
+<b>To:</b> Matthias Schonlau &lt;<a href=3D"mailto:schonlau@uwaterloo.ca">s=
+chonlau@uwaterloo.ca</a>&gt;<br>
+<b>Cc:</b> Roy Lay-Yee &lt;<a href=3D"mailto:r.layyee@auckland.ac.nz">r.lay=
+yee@auckland.ac.nz</a>&gt;<br>
+<b>Subject:</b> FW: your medical data; semi-automatic categorization</span>=
+<span style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p><span style=3D"font-size:10.0pt;font-family:&quot;Tahoma&quot;,&quot;san=
+s-serif&quot;;color:black">Just a follow-up thought on this Matthias as you=
+ absorb this stuff! Of those 4,000 admissions, fewer than ten per cent were=
+ actually classified as showing evidence of patient harm
+ (adverse event) - which is a good thing if you are interested in reducing =
+medical injury incurred in hospitals, but it does mean that you do not have=
+ a lot of variation to play with for your exercise! At least, that is the c=
+ase if you take on a binary definition
+ of the outcome (patient harm or not). In fact the reviewers classified the=
+ admissions on a scale from &quot;virtually no evidence of injury&quot; thr=
+ough to &quot;almost certain evidence&quot;. So, if you needed more case va=
+riation to play with in order to make your text mining
+ work better, you could adopt this scale as the outcome rather than just th=
+e binary decision. peter</span><span style=3D"font-family:&quot;Calibri&quo=
+t;,&quot;sans-serif&quot;;color:#212121"><o:p></o:p></span></p>
+<div class=3D"MsoNormal" align=3D"center" style=3D"text-align:center"><span=
+ style=3D"font-size:12.0pt;font-family:&quot;Times New Roman&quot;,&quot;se=
+rif&quot;;color:black">
+<hr size=3D"2" width=3D"100%" align=3D"center">
+</span></div>
+<div id=3D"divRpF113221">
+<p class=3D"MsoNormal" style=3D"margin-bottom:12.0pt"><b><span style=3D"fon=
+t-size:10.0pt;font-family:&quot;Tahoma&quot;,&quot;sans-serif&quot;;color:b=
+lack">From:</span></b><span style=3D"font-size:10.0pt;font-family:&quot;Tah=
+oma&quot;,&quot;sans-serif&quot;;color:black"> Peter Davis<br>
+<b>Sent:</b> Tuesday, 3 November 2015 12:29 p.m.<br>
+<b>To:</b> 'Matthias Schonlau'<br>
+<b>Cc:</b> Roy Lay-Yee<br>
+<b>Subject:</b> FW: your medical data; semi-automatic categorization</span>=
+<span style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Hello Matthias. I have=
+ conferred with my colleague, Roy Lay-Yee (whom I am copying in), about the=
+ exact details in our patient safety study. It is over ten years since we c=
+ollected the data so we needed to refresh
+ our memories. My best estimate at this point is that the medical reviewers=
+ made case summaries of about 4,000 admissions (after the initial screening=
+ process, which itself was administered on over 6,000 admissions). So, thes=
+e are not the original patient notes,
+ but case summaries made by medical reviewers. These case summaries were al=
+l entered as text files (in SAS), as we understand it. The decision as to w=
+hether or not an adverse event (patient safety issue) was present came down=
+ eventually to a binary outcome
+ (was it present with reasonable certainty or not), although this in turn w=
+as based on a sliding judgement scale (which we would need more time to thi=
+nk about and dig out). Finally, one in ten of these judgements were subject=
+ to &#8220;blind&#8221; expert review; namely,
+ our principal reviewer &#8211; herself a senior doctor and a member of the=
+ team. As far as we can remember, she did not rely on the case summaries of=
+ the medical reviewers, but created her own. She used this to make her judg=
+ement on an adverse event. So, what you
+ could do is see which words best predicted her judgement, and then apply t=
+hat algorithm to the others. Our Kappa scores where poor, and you work migh=
+t shed some light on why that might have been the case. ATB peter</span><sp=
+an style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"color:black">From:<=
+/span></b><span lang=3D"EN-US" style=3D"color:black"> Matthias Schonlau [<a=
+ href=3D"mailto:schonlau@uwaterloo.ca" target=3D"_blank">mailto:schonlau@uw=
+aterloo.ca</a>]
+<br>
+<b>Sent:</b> Monday, 2 November 2015 3:28 p.m.<br>
+<b>To:</b> Peter Davis<br>
+<b>Subject:</b> RE: your medical data; semi-automatic categorization</span>=
+<span style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Hi Peter:
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">This &nbsp;sound interesting. I don&#8217;t know the literature on=
+ text mining with medical notes but some work has been done there.</span><s=
+pan style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">It might be worth just running &nbsp;the software on the data and =
+see how far we get without too much work. &nbsp;Then we can re-assess if an=
+y interesting problem emerges. My guess is the data
+ from the medical injury study are in better shape and would be easier to r=
+un; but the other one would work too.</span><span style=3D"color:#212121"><=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">What do you think?
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">matthias</span><span style=3D"color:#212121"><o:p></o:p></span></p=
+>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Matthias Schonlau, Ph.D.</span><span style=3D"color:#212121"><o:p>=
+</o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Professor, Department of Statistics a. Act.Sci.</span><span style=
+=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">Co-director, Survey Research Centre</span><span style=3D"color:#21=
+2121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">University of Waterloo</span><span style=3D"color:#212121"><o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">On sabbatical at the
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">University of Auckland, New Zealand</span><span style=3D"color:#21=
+2121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">&#43;64 9 373 7599 ext. 88457</span><span style=3D"color:#212121">=
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+#1F497D">5pm EST is 11am New Zealand the next day</span><span style=3D"colo=
+r:#212121"><o:p></o:p></span></p>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"color:black">From:<=
+/span></b><span lang=3D"EN-US" style=3D"color:black"> Peter Davis [<a href=
+=3D"mailto:pb.davis@auckland.ac.nz" target=3D"_blank">mailto:pb.davis@auckl=
+and.ac.nz</a>]
+<br>
+<b>Sent:</b> Thursday, October 29, 2015 9:50 AM<br>
+<b>To:</b> Matthias Schonlau &lt;<a href=3D"mailto:schonlau@uwaterloo.ca" t=
+arget=3D"_blank">schonlau@uwaterloo.ca</a>&gt;<br>
+<b>Subject:</b> RE: your medical data; semi-automatic categorization</span>=
+<span style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Thanks for getting tou=
+ch. There are two aspects.
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">One was the administra=
+tive task of coding hospital patient admission and discharge codes by clerk=
+s. Listening to you, and seeing the parallel with occupational coding, I th=
+ought that there might be something
+ in automating the coding task. Indeed, when I googled that, I found a revi=
+ew paper on this. I am not sure of the state of play, though. If there was =
+potential, I can see the authorities here co-funding a research proposal to=
+ see if it could work. I do not
+ know enough about the area to know whether this is an area that can be add=
+ressed in your way, and whether it has not been so to date.</span><span sty=
+le=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">The second aspect is a=
+ study that I did which replicated the Harvard Medical Practice Study in wh=
+ich we recorded cases of medical injury (i.e. harm) among in-hospital patie=
+nts, using their medical notes. This
+ was a big study by NZ standards and involved a two-stage selection process=
+, such that a subset of medical notes were set aside for medical review acc=
+ording to various criteria. Then the patient notes where transcribed in wri=
+ting and then entered as text into
+ our records. The medical reviewers used those notes to judge whether or no=
+t the patient had suffered harm due to the treatment. About ten per cent of=
+ all patients had.
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">We had a senior review=
+er how did a one in ten re-review of these medical reviews, and I would see=
+ that person as being the gold standard. One could then see which text item=
+s best predicted her judgements, and
+ see where this differed from the medical reviewers. At least that would be=
+ one way to use your approach. The kapas were low for us.
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Nowadays patient notes=
+ may be electronic already so it would be easier to analyse them. There is =
+a methodology of triggers for identifying hospital harm. A colleague of min=
+e at Christchurch medical school is
+ more up on this and could be brought in if necessary. </span><span style=
+=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D">Here is a link to the =
+basic report on our study -
+<a href=3D"https://www.health.govt.nz/system/files/documents/publications/a=
+dverseevents.pdf" target=3D"_blank">
+https://www.health.govt.nz/system/files/documents/publications/adverseevent=
+s.pdf</a>. peter</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<div>
+<div style=3D"border:none;border-top:solid #E1E1E1 1.0pt;padding:3.0pt 0cm =
+0cm 0cm">
+<p class=3D"MsoNormal"><b><span lang=3D"EN-US" style=3D"color:black">From:<=
+/span></b><span lang=3D"EN-US" style=3D"color:black"> Matthias Schonlau [<a=
+ href=3D"mailto:schonlau@uwaterloo.ca" target=3D"_blank">mailto:schonlau@uw=
+aterloo.ca</a>]
+<br>
+<b>Sent:</b> Thursday, 29 October 2015 9:32 a.m.<br>
+<b>To:</b> Peter Davis<br>
+<b>Subject:</b> your medical data; semi-automatic categorization</span><spa=
+n style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+</div>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black">Hi Peter,
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black"><br>
+I would be interested to talk more about your medical &nbsp;data sometime a=
+t your convenience.</span><span style=3D"color:#212121"><o:p></o:p></span><=
+/p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black"><br>
+Best wishes,</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black"><br>
+matthias</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black">Matthias Schonlau, Ph.D.</span><span style=3D"color:#212121"><o:p></=
+o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black">Professor, Department of Statistics a. Act.Sci.</span><span style=3D=
+"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black">Co-director, Survey Research Centre</span><span style=3D"color:#2121=
+21"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black">University of Waterloo</span><span style=3D"color:#212121"><o:p></o:=
+p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black">On sabbatical at the
+</span><span style=3D"color:#212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black">University of Auckland, New Zealand</span><span style=3D"color:#2121=
+21"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black">&#43;64 9 373 7599 ext. 88457</span><span style=3D"color:#212121"><o=
+:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"font-size:9.0pt;color:=
+black">5pm EST is 9am New Zealand the next day</span><span style=3D"color:#=
+212121"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span lang=3D"EN-US" style=3D"color:black">&nbsp;</s=
+pan><span style=3D"color:#212121"><o:p></o:p></span></p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
+
+--_000_b6168e80fdc348959245b9f44f34d402uxcn13oggdUoAaucklandac_--
+
+--_004_b6168e80fdc348959245b9f44f34d402uxcn13oggdUoAaucklandac_
+Content-Type: application/vnd.ms-excel; name="Schonlau1.xls"
+Content-Description: Schonlau1.xls
+Content-Disposition: attachment; filename="Schonlau1.xls"; size=79872;
+	creation-date="Tue, 24 Nov 2015 02:54:45 GMT";
+	modification-date="Tue, 24 Nov 2015 03:24:21 GMT"
+Content-Transfer-Encoding: base64
+
+0M8R4KGxGuEAAAAAAAAAAAAAAAAAAAAAPgADAP7/CQAGAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA
+EAAAmgAAAAEAAAD+////AAAAAAEAAAAKAAAA////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////9S
+AG8AbwB0ACAARQBuAHQAcgB5AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAFgAFAP//////////AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwiZXDYybR
+Af7///8AAAAAAAAAAFcAbwByAGsAYgBvAG8AawAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAASAAIB////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAACwAAAGQcAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD///////////////8AAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//////
+/////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP7/
+///9///////////////////////////////////////////////9////DAAAAA0AAAAOAAAADwAA
+ABAAAAARAAAAEgAAABMAAAAUAAAAFQAAABYAAAAXAAAAGAAAABkAAAAaAAAAGwAAABwAAAAdAAAA
+HgAAAB8AAAAgAAAAIQAAACIAAAAjAAAAJAAAACUAAAAmAAAAJwAAACgAAAApAAAAKgAAACsAAAAs
+AAAALQAAAC4AAAAvAAAAMAAAADEAAAAyAAAAMwAAADQAAAA1AAAANgAAADcAAAA4AAAAOQAAADoA
+AAA7AAAAPAAAAD0AAAA+AAAAPwAAAEAAAABBAAAAQgAAAEMAAABEAAAARQAAAEYAAABHAAAASAAA
+AEkAAABKAAAASwAAAEwAAABNAAAATgAAAE8AAABQAAAAUQAAAFIAAABTAAAAVAAAAFUAAABWAAAA
+VwAAAFgAAABZAAAAWgAAAFsAAABcAAAAXQAAAF4AAABfAAAAYAAAAGEAAABiAAAAYwAAAGQAAABl
+AAAAZgAAAGcAAABoAAAAaQAAAGoAAABrAAAAbAAAAG0AAABuAAAAbwAAAHAAAABxAAAAcgAAAHMA
+AAB0AAAAdQAAAHYAAAB3AAAAeAAAAHkAAAB6AAAAewAAAHwAAAB9AAAAfgAAAH8AAACAAAAAUgBv
+AG8AdAAgAEUAbgB0AHIAeQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAABYABQD//////////wEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAULqQqGMm0QH+
+////AAAAAAAAAABXAG8AcgBrAGIAbwBvAGsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAEgACAf///////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAsAAABkHAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////////////////AAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////////
+//////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD/////
+//////7////9/////////////////////////////////////f///wwAAAANAAAADgAAAA8AAAAQ
+AAAAEQAAABIAAAATAAAAFAAAABUAAAAWAAAAFwAAABgAAAAZAAAAGgAAABsAAAAcAAAAHQAAAB4A
+AAAfAAAAIAAAACEAAAAiAAAAIwAAACQAAAAlAAAAJgAAACcAAAAoAAAAKQAAACoAAAArAAAALAAA
+AC0AAAAuAAAALwAAADAAAAAxAAAAMgAAADMAAAA0AAAANQAAADYAAAA3AAAAOAAAADkAAAA6AAAA
+OwAAADwAAAA9AAAAPgAAAD8AAABAAAAAQQAAAEIAAABDAAAARAAAAEUAAABGAAAARwAAAEgAAABJ
+AAAASgAAAEsAAABMAAAATQAAAE4AAABPAAAAUAAAAFEAAABSAAAAUwAAAFQAAABVAAAAVgAAAFcA
+AABYAAAAWQAAAFoAAABbAAAAXAAAAF0AAABeAAAAXwAAAGAAAABhAAAAYgAAAGMAAABkAAAAZQAA
+AGYAAABnAAAAaAAAAGkAAABqAAAAawAAAGwAAABtAAAAbgAAAG8AAABwAAAAcQAAAHIAAABzAAAA
+dAAAAHUAAAB2AAAAdwAAAHgAAAB5AAAAegAAAHsAAAB8AAAAfQAAAH4AAAB/AAAAgAAAAAEAAAAC
+AAAAAwAAAAQAAAAFAAAABgAAAAcAAAAIAAAACQAAAAoAAAALAAAADAAAAA0AAAAOAAAADwAAABAA
+AAARAAAAEgAAABMAAAAUAAAAFQAAABYAAAAXAAAAGAAAABkAAAAaAAAAGwAAABwAAAAdAAAAHgAA
+AB8AAAAgAAAAIQAAACIAAAAjAAAAJAAAACUAAAAmAAAAJwAAAP7/////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////CQgIAAAG
+BQDXCcsH4QACALAEwQACAAAA4gAAAFwAOQA2AABBIHNhdGlzZmllZCBNaWNyb3NvZnQgT2ZmaWNl
+OSBVc2VyICAgICAgICAgICAgICAgICAgICBCAAIAsAQ9AQIAAQCcAAIADgAZAAIAAAASAAIAAAAT
+AAIAAACvAQIAAAA9ABIAaAFLAJ9CTio4AAAAAAABAFgCQAACAAAAjQACAAAAIgACAAAADgACAAEA
+twECAAAA2gACAAAAMQAqAMgAAAD/f5ABAAAAAgDMDQFNAFMAIABTAGEAbgBzACAAUwBlAHIAaQBm
+ADEAKgDIAAEA/3+8AgAAAAIAzA0BTQBTACAAUwBhAG4AcwAgAFMAZQByAGkAZgAxACoAyAACAP9/
+kAEAAAACAMwNAU0AUwAgAFMAYQBuAHMAIABTAGUAcgBpAGYAMQAqAMgAAwD/f7wCAAAAAgDMDQFN
+AFMAIABTAGEAbgBzACAAUwBlAHIAaQBmADEAKgDIAAAA/3+QAQAAAAIAzA0BTQBTACAAUwBhAG4A
+cwAgAFMAZQByAGkAZgAxACoAyAAEAAwAkAEAAAECAMwNAU0AUwAgAFMAYQBuAHMAIABTAGUAcgBp
+AGYAMQAqAMgABAAOAJABAAABAgDMDQFNAFMAIABTAGEAbgBzACAAUwBlAHIAaQBmAB4EGAAFABMA
+ACIkIiMsIyMwO1wtIiQiIywjIzAeBB0ABgAYAAAiJCIjLCMjMDtbUmVkXVwtIiQiIywjIzAeBB4A
+BwAZAAAiJCIjLCMjMC4wMDtcLSIkIiMsIyMwLjAwHgQjAAgAHgAAIiQiIywjIzAuMDA7W1JlZF1c
+LSIkIiMsIyMwLjAwHgQ1ACoAMAAAXy0iJCIqICMsIyMwXy07XC0iJCIqICMsIyMwXy07Xy0iJCIq
+ICItIl8tO18tQF8tHgQsACkAJwAAXy0qICMsIyMwXy07XC0qICMsIyMwXy07Xy0qICItIl8tO18t
+QF8tHgQ9ACwAOAAAXy0iJCIqICMsIyMwLjAwXy07XC0iJCIqICMsIyMwLjAwXy07Xy0iJCIqICIt
+Ij8/Xy07Xy1AXy0eBDQAKwAvAABfLSogIywjIzAuMDBfLTtcLSogIywjIzAuMDBfLTtfLSogIi0i
+Pz9fLTtfLUBfLeAAFAAAAAAA9f8gAAAAAAAAAAAAAADAIOAAFAABAAAA9f8gAAD0AAAAAAAAAADA
+IOAAFAABAAAA9f8gAAD0AAAAAAAAAADAIOAAFAACAAAA9f8gAAD0AAAAAAAAAADAIOAAFAACAAAA
+9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAA
+AAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAA
+FAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8g
+AAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAA
+AADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAAAQAgAAAAAAAAAAAAAADAIOAAFAAF
+ACsA9f8gAAD4AAAAAAAAAADAIOAAFAAFACkA9f8gAAD4AAAAAAAAAADAIOAAFAAFACwA9f8gAAD4
+AAAAAAAAAADAIOAAFAAFACoA9f8gAAD4AAAAAAAAAADAIOAAFAAHAAAA9f8gAAD0AAAAAAAAAADA
+IOAAFAAGAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAFAAkA9f8gAAD4AAAAAAAAAADAIJMCBAAQgAP/
+kwIEABGABv+TAgQAEoAE/5MCBAATgAf/kwIEABSACf+TAgQAFYAI/5MCBAAAgAD/kwIEABaABf9g
+AQIAAQCMAAQAQABAAPwACAAAAAAAAAAAAP8AAgQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAAAAAAAAAAIEAAACCAAAAgwAA
+AIQAAACFAAAAhgAAAIcAAACIAAAAiQAAAIoAAACLAAAAjAAAAI0AAACOAAAAjwAAAJAAAACRAAAA
+kgAAAJMAAACUAAAAlQAAAJYAAACXAAAAmAAAAJkAAAD+/////v//////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////CQgIAAAGBQDXCcsH
+4QACALAEwQACAAAA4gAAAFwAOQALAABSb3kgTGF5LVllZSBNaWNyb3NvZnQgT2ZmaWNlOSBVc2Vy
+ICAgICAgICAgICAgICAgICAgICBCAAIAsAQ9AQIAAQCcAAIADgAZAAIAAAASAAIAAAATAAIAAACv
+AQIAAAA9ABIAaAFLAJ9CTio4AAAAAAABAFgCQAACAAAAjQACAAAAIgACAAAADgACAAEAtwECAAAA
+2gACAAAAMQAqAMgAAAD/f5ABAAAAAgDMDQFNAFMAIABTAGEAbgBzACAAUwBlAHIAaQBmADEAKgDI
+AAEA/3+8AgAAAAIAzA0BTQBTACAAUwBhAG4AcwAgAFMAZQByAGkAZgAxACoAyAACAP9/kAEAAAAC
+AMwNAU0AUwAgAFMAYQBuAHMAIABTAGUAcgBpAGYAMQAqAMgAAwD/f7wCAAAAAgDMDQFNAFMAIABT
+AGEAbgBzACAAUwBlAHIAaQBmADEAKgDIAAAA/3+QAQAAAAIAzA0BTQBTACAAUwBhAG4AcwAgAFMA
+ZQByAGkAZgAxACoAyAAEAAwAkAEAAAECAMwNAU0AUwAgAFMAYQBuAHMAIABTAGUAcgBpAGYAMQAq
+AMgABAAOAJABAAABAgDMDQFNAFMAIABTAGEAbgBzACAAUwBlAHIAaQBmAB4EGAAFABMAACIkIiMs
+IyMwO1wtIiQiIywjIzAeBB0ABgAYAAAiJCIjLCMjMDtbUmVkXVwtIiQiIywjIzAeBB4ABwAZAAAi
+JCIjLCMjMC4wMDtcLSIkIiMsIyMwLjAwHgQjAAgAHgAAIiQiIywjIzAuMDA7W1JlZF1cLSIkIiMs
+IyMwLjAwHgQ1ACoAMAAAXy0iJCIqICMsIyMwXy07XC0iJCIqICMsIyMwXy07Xy0iJCIqICItIl8t
+O18tQF8tHgQsACkAJwAAXy0qICMsIyMwXy07XC0qICMsIyMwXy07Xy0qICItIl8tO18tQF8tHgQ9
+ACwAOAAAXy0iJCIqICMsIyMwLjAwXy07XC0iJCIqICMsIyMwLjAwXy07Xy0iJCIqICItIj8/Xy07
+Xy1AXy0eBDQAKwAvAABfLSogIywjIzAuMDBfLTtcLSogIywjIzAuMDBfLTtfLSogIi0iPz9fLTtf
+LUBfLeAAFAAAAAAA9f8gAAAAAAAAAAAAAADAIOAAFAABAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAB
+AAAA9f8gAAD0AAAAAAAAAADAIOAAFAACAAAA9f8gAAD0AAAAAAAAAADAIOAAFAACAAAA9f8gAAD0
+AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADA
+IOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA
+9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAA
+AAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAA9f8gAAD0AAAAAAAAAADAIOAA
+FAAAAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAAAAAAAQAgAAAAAAAAAAAAAADAIOAAFAAFACsA9f8g
+AAD4AAAAAAAAAADAIOAAFAAFACkA9f8gAAD4AAAAAAAAAADAIOAAFAAFACwA9f8gAAD4AAAAAAAA
+AADAIOAAFAAFACoA9f8gAAD4AAAAAAAAAADAIOAAFAAHAAAA9f8gAAD0AAAAAAAAAADAIOAAFAAG
+AAAA9f8gAAD0AAAAAAAAAADAIOAAFAAFAAkA9f8gAAD4AAAAAAAAAADAIJMCBAAQgAP/kwIEABGA
+Bv+TAgQAEoAE/5MCBAATgAf/kwIEABSACf+TAgQAFYAI/5MCBAAAgAD/kwIEABaABf9gAQIAAQCF
+ACIAeAEBAAAAGgBOWlFIU19hZHZlcnNlX2V2ZW50c19zdHVkea4BBAABAAEEFwAIAAEAAAAAAAAA
+GAA0AAAAABoLAAAAAAAAAAAAAE5aUUhTX2FkdmVyc2VfZXZlbnRzX3N0dWR5OwAAAAAyAAAACACM
+AAQAQABAAPwAICCfAAAAbgAAAAkAAHJlY29yZCBJRBcAAGV4cGVydCBjbGluaWNhbCBzdW1tYXJ5
+CQAAZXhwZXJ0IElEGQAAZXhwZXJ0IEFFIGNhdXNhdGlvbiBzY29yZRIAAGV4cGVydCBBRSBkZXRl
+Y3RlZBkAAHJldmlld2VyIGNsaW5pY2FsIHN1bW1hcnkLAAByZXZpZXdlciBJRBsAAHJldmlld2Vy
+IEFFIGNhdXNhdGlvbiBzY29yZRMAAHJldml3ZXIgQUUgZGV0ZWN0ZWT9AQBJTkRFWCBBRE1JU1NJ
+T046IEZPTExPV0VEIDUgREFZUyBBRlRFUiBERUxJVkVSWSAoMTEvMDkvOTgpIE9GIFRXSU5TIChW
+QUdJTkFMLCAxQlJFRUNIKS4gIFRXSU5TIFNUSUxMIElOIEhPU1BJVEFMLCBNT1RIRVIgUkVBRE1J
+VFRFRCBXSVRIIFNFVkVSRSBSSUYgUEFJTi4gIExBUEFST1NDT1BZIC0gQVBQUk9QUklBVEUgRklO
+RElOR1MgRk9SIFJFQ0VOVCBQUkVHTkFOQ1ksIEQmQyAtIFNPTUUgTU9ERVNUIENVUkVUVElOR1Mg
+Tk9UIFNFTlQgVE8gSElTVE9MT0dZLCBHSVZFTiBUTyBQQVRJRU5ULiAgTk8gRklOQUwgRElBR05P
+U0lTLCBCVVQgU0hFIFJFQ09WRVJFRCBBTkQgV0VOVCBIT01FLiAgUkVBRE1JVFRFRCBBR0FJTiBG
+T1IgTU9USEVSQ0FSRS4gIERVUklORyBQUkVHTkFOQ1kgKEpVTFkpIEFUIDMwIFdFRUtTIEFETUlU
+VEVEIEJFQ0FVU0UgSEIgNjguICBIQUQgVFJBTlNGVVNJT04uICBDT01NRU5UUyBBQk9VVCBIRVIg
+UE9PUiBBTlRFLU5BVEFMIEFUVEVOREFOQ0UgQVJFIEZSRVFVRU5ULgIAAEUy9AEASU5ERVggQURN
+SVNTSU9OIFdBUyBPTiBUSEUgU0VDT05EIERBWSBBRlRFUiBIRVIgRElTQ0hBUkdFIEZST00gREVM
+SVZFUlkgU1VJVEUgQUZFUiBUSEUgQklSVEggT0YgVFdJTiBHSVJMUyBPTiAxMS8wOS85OC4gVEhF
+IFBBVElFTlQgV0VOVCBIT01FIE9OIFRIRSBFVkVOSU5HIE9GMTQvMDkuICBUSElTIEFETUlTU0lP
+TiBCRUNBVVNFIE9GIFJJRiBQQUlOIE9GIFNPTUUgSE9VUlMgRFVSQVRJT04uICBOQVVTSUFURUQg
+QlVUIE5PIFZPTUlUSU5HLiAgT0ZGRU5TSVZFIFZBR0lOQUwgRElTQ0hBUkdFLiAgVUxUUkFTT1VO
+RCBTSE9XRUQgRUNIR0VOSUMgTUFURVJJQUwgV0lUSElOIFVURVJVUy4gIEQmQyBBTkQgQUJET01J
+TkFMIExBUEFST1NDT1BZIFBFUkZPUk1FRCAxNy8wOS85OC4gIENPTlZBTEVTQ0VOQ0UgVU5FVkVO
+VEZVTC4gIFNVQlNFUVVFTlQgT1ZFUk5JR0hUIEFETUlTU0lPTiBUTyBNT1RIRVJDUkFGVCBVTklU
+LiAgTk8gQ09NT1JCSURJVElFUyBFWENFUFQgU01PS0lORy5LAQBUT05TSUxMRUNUT01ZIE9OIDA3
+LzA1Lzk4LiAgTk8gUFJPQkxFTVMsIEJJRyBUT05TSUxTIC0gTElHQVRJT04gSU5GIEFORCBTVVAg
+UE9MRVdJVEggMi8wIFNJTEsgSEFFTU9TVEFTSVMgMi8wIFNJTEsuICBNQVJDQUlOIEFORCBBRFJF
+TkFMSU4gVE8gUElMTEFSUy4gIERJU0NIQVJHRUQgSE9NRSAwOC8wNS85OC4gIEFURSBDSElQUyAo
+VEhPVUdIIEEgU09GVCBESUVUIEhBRCBCRUVOIFNVR0dFU1RFRCkgQU5EIEJFR0FOVE8gVk9NSVQs
+IEhBRCBTTUFMTCBCTEVFRC4gIFJFQURNSVRURUQuICBOTyBDT05TRVFVRU5DRSwgSEIgRElEIE5P
+VCBGQUxMLCBXRU5UIEhPTUUgMDkvMDUvOTguxwAAMSkgSU5ERVggQURNSVNTSU9OOiBSRUFETUlT
+U0lPTiBXSVRIIEZSRVNIIEJMRUVESU5HIEZST00gVE9OU0lMTEFSIEJFRC4gIFRPTlNJTExFQ1RP
+TVkgRUFSTElFUiBUSEFUIERBWS4gMikgUkVDIFNVUFBVUkFUSVZFIFRPTlNJTExJVElTICBQUklN
+QVJZIEhBTU9SUkhBR0UgLSBTRVRUTEVEIFdJVEggUkVTVC4gIDMpIDA4LzA1Lzk4LiAwOC8wNS85
+OBoBAElORVZJVEFCTEUgTUlTQ0FSUklBR0UgQURNSVRURUQgMjcvMDEvOTggRk9SIEQmQyAtIFBP
+QyBGT1VORCBPTiBISVNUT0xPR1kuICBDT05USVVFRCBCTEVFRElORy4gIElOREVYIEFETUlTU0lP
+TiAwMS8wMi85OCwgVUxUUkFTT1VORCBTSE9XRUQgU1RJTEwgSEFEIFRJU1NVRSBJTlVURVJVUy4g
+IFJFUEVBVCBEJkMgMDEvMDIvOTgsIE5PIERFQ0lEVUEgT1IgRk9FVEFMIFRJU1NVRSwgSlVTVCBD
+TE9UUy9FTkRPTUVUUklVTSBTRUVOIE9OIEhJU1RPTE9HWS4gIFNBVElTRkFDVE9SWSBPVVRDT01F
+LnEAAFBBVElFTlQgSEFEIElOQ09NUExFVEUgQUJPUlQgQU5EIE9OIDI3LzAxLzk4IEhBRCBFUlBP
+Qy4gIFJFQURNSVRURUQgNSBEQVlTIExBVEVSV0lUSCBSRVRBSU5FRCBQTEFDRU5UQSBSRU1BTkVO
+VFMuKgMAQURNSVRURUQgT04gMDQvMDIvOTgsIFRSQU5TRkVSUkVEIEZST00gUFJJVkFURSBIT1NQ
+SVRBTCBXSEVSRSBMRUZUIFJBRElDQUwgTUFTVE9JREVDVE9NWSBET05FLiAgTk9URUQgLSBMT05H
+IEFORCBESUZGSUNVTFQgU1VSR0VSWSBBTkQgTE9ORyBBTkFFU1RIRVRJQyAoNCBIT1VSUykgSU5W
+T0xWSU5HIFBST1BPRk9MIEFORCBJU09GTFVBUkFORS4gIE5FWFQgREFZIENISUxEIE5PVEVEIFRP
+IEhBVkUgTElUVExFIExBTkdVQUdFLCBJUlJJVEFCTEUsIEFORCBIQUQgQUJTRU5DRSBTRUlaVVJF
+LiAgQUxTTyBMRUZUIExPV0VSIE1PVE9SIE5FVVJPTkUgNyBJTiBDUkFOSUFMIE5FUlZFIFBBTFNZ
+LiAgSU4gSE9TUCMwNCAtIEdSQURVQUxMWSBJTVBST1ZFRCBBTkQgTE9ORyBURVJNIEZPTExPVyBV
+UCBTSE9XU0ZVTEwgUkVDT1ZFUlkuICBGSU5ESU5HUyBJTiBIT1NQSVRBTCBJTkNMVURFIC0gTk9S
+TUFMIENTRiwgVkFHVUUgQUJOT1JNQUxJVFkgSU5CUkFJTiBDVCBUSEFUIE1BWSBKVVNUIEhBVkUg
+QkVFTiBPRURFTUEgQU5EIFBFUkhBUFMgUkVMQVRFRCBUTyBTVVJHRVJZIChBTiBNUklET05FIElO
+IE5PViAxOTk4IFNIT1dFRCBOTyBMRVNJT04gQVQgQUxMKTsgRUVHIFNIT1dFRCBFUElMRVBUSUMg
+QUNUSVZJVFkgQU5EIFJBSVNFRCBUSEUgUE9TU0lCSUxJVFkgT0YgVklSQUwgRU5DRVBIQUxJVElT
+IEFORCBTTyBUSEUgQ0hJTEQgV0FTIFRSRUFURUQgV0lUSCBBQ1lDTElWSU4gVU5USSBDU0YgUENS
+IFdBUyBTSE9XTiBUTyBCRSBORUdBVElWRS4gIEhFIENPTlRJTlVFRCBPTiBBTlRJQ09OVlVMU0FO
+VCBBRlRFUiBESVNDSEFSR0UumgIAUEFUSUVOVCBBRE1JVFRFRCAwNC8wMi85OCBGUk9NIFJFRkVS
+UklORyBIT1NQSVRBTCBBUyBBTiBVUkdFTlQgQ0FTRSBXSEVOIEVYQU1JTklORyBQQUVESUFUUklD
+SUFOIE9CU0VSVkVEIEFOIEFCU0VOVCBTRUlaVVJFLiAgVEhFIENISUxEIEhBRCBBIExFRlQgUkFE
+SUNBTCBNQVNUT0lERUNUT01ZIDI5LzAxLzk4IEZPTExPV0VEIEJZIEFHSVRBVElPTiwgRU1PVElP
+TkFMIExBQklMSVRZIEFORCBMRUZUIEwgTU9UT1IgTkVVUk9ORSBGQUNJQUwgUEFMU1ksIEFQSEFT
+SUEuICBDSElMRCBIQUQgQSBNSU5PUiBIRUFEIElOSlVSWSBBVCBUSEUgQUdFIE9GIDQgWUVBUlNG
+T0xMT1dFRCBCWSBDT05WT0xTSU9OIEFORCBBTlRJQ09OVlVMU0lWRSBUSEVSQVBZIEdJVkVOIEZP
+UiAxIFlFQVIuICBJVCBXQVMgRkVMVCBUSEFUIFRIRSBBTkFFU1RIRVRJQyBNQVkgSEFWRSBQUkVD
+SVBJVEFURUQgVEhFIFRFTkRFTkNZIEZPUiBDT05WVUxUSU9OUywgQlVUIEhSUEVTIFNJTVBMRVgg
+RU5DRVBIQUxJVElTIENPVUxETidUIEJFIEVYQ0xVREVELiAgRUVHIENPTkZJUk1FRCBFUElMRVBT
+WS4gIFJFU1BPTkRFRCBUTyBNRURJQ0FUSU9OIEFORCBESVNDSEFSR0VEIDExLzAyLzk4IFdJVEgg
+V0FSRCBGT0xMT1cgVVAsIFBBRURJQVRSSUMgRk9MTE9XVVAgQU5EIENBVCBTQ0FOIElOIDEgTU9O
+VEguZAEARlJBQ1RVUkVEIFJBRElVUyBBTkQgVUxOQVIgMjUvMTAvOTggV0hFTiBGRUxMIE9GRiBC
+SUtFLiAgTUFOSVBVTEFURUQgVU5ERVIgR0VORVJBTCBBTkFFU1RIRVRJQyBBTkQgUFVUIElOIEFC
+T1ZFLUVMQk9XIENBU1QuICBBVCBSRVZJRVcgT04gMDUvMTEvOTgsIFRIRVJFIFdBUyBSQURJQUwg
+RElTUExBQ0VNRU5UIE9GIFRIRSBESVNUQUwgUkFESVVTIFNPIEhFIFdBUyBSRUFETUlUVEVELCBS
+RS1NQU5JUFVMQVRFRCBVTkRFUiBHRU5FUkFMIEFOQUVTVEhFVElDIEFORCBQT1NJVElPTiBJTVBS
+T1ZFRC4gIEFHQUlOIFBVVCBJTiBBQk9WRS1FTEJPVyBDQVNULiAgQVRGSU5BTCBSRVZJRVcgVEhF
+IEFSTSBTSEFQRSBXQVMgR09PRC74AQBJTkRFWDogMTEgWUVBUiBPTEQgQlkgV0lUSCBGUkFDVFVS
+RUQgRElTVEFMIEZPUkVBUk0gRlJPTSBGQUxMSU5HIE9GRiBISVMgQklLRSBIQUQgTUFOSVBVTEFU
+SU9OIEFORCBQTEFTVEVSIENBU1QgT04gMjcvMTAvOTguICBUSEUgUE9TSVRJT04gSEFEIFNMSVBQ
+RUQgQVQgVEhFIFRJTUUgT0YgSElTIE9QQyBSRVZJRVcgT04gMDUvMTEvOTggQU5EIFJFTUFOSVBV
+TEFUSU9OIEFEVkVSVElTRUQuICBUSEUgT0JMSVFVSVRZIE9GIFRIRSBGUkFDVFVSRSBTSEFQRSBM
+RVQgVE8gUkVDVVJSRU5UIENPTkNFUk5TIEFCT1VUIElUUyBQT1NJVElPTiBTVUJTRVFVRU5UTFkg
+QlVUIFRIRSBFTkQgUkVTVUxUIEFUIDYgV0VFS1MgV0FTIERFRU1FRCBTQVRJU0ZBQ1RPUlkgQU5E
+IFJFTU9ERUxMSU5HIFdBUyBPQ0NVUklORy4gIDI2LzEwLzk4IE1WQSAyNy8xMC85OCBXSVRIIFBM
+QVNURVIgQ0FTVC4gIDA1LzExLzk4IFJFTUFOSVAgIDA2LzExLzk4IERJU0NIQVJHRUQuICAxNy8x
+Mi85OCBDQVNUIE9GRi7DAgBUSElTIE1BTiBXQVMgQSBTTU9LRVIgQU5EIEhBRCBGSCBPRiBBTkVV
+UllTTSAoTE9XRVIpLiAgSU5ERVggQURNSVNTSU9OIDA0LzAyLzk4LSBTVURERU4gUEFJTiBJTiBS
+SUdIVCBMRUcgRlJPTSBJU0NIQUVNSUEuICBVUkdFTlQgQU5HSU9HUkFNIFNIT1dFRCBQT1BMSVRF
+QUwgQU5FVVJZU00gQU5EIEJMT0NLQUdFIE9GIFJVTiBPRkYgVkVTU0VMUy4gIEdJVkVOIEhFUEFS
+SU4gVEhFTiBBVFRFTVBURUQgVEhST01CT0xZU0lTIDA1LzAyLzk4IChGQUlMRUQpLiAgVEhFTiBT
+VVJHSUNBTCBSRVBBSVIsIFZFSU4gR1JBRlQgQU5EIENMT1QgUkVNT1ZBTCAwNi8wMi85OCBXSVRI
+IENPTlRJTlVFRCBIRVBBUklOLiAgUEVEQUwgUFVMU0UgRkVMVCBJTU1FRElBVEVMWSBQT1NUIE9Q
+IEJVVCBESU1JTklTSEVEIFRIRU4gVkFOSVNIRUQgMi0zIEhPVVJTIExBVEVSLiAgSUxPUFJPU1Qg
+SU5GVVNJT04gVFJJRUQuICBORVhUIE9QRVJBVElPTiAwOC8wMi85OEZPVU5EIFZFSU4gR1JBRlQg
+V0lERUxZIFBBVEVOVCBCVVQgVEhST01CT1NJUyBJTiBSVU4gT0ZGIFZFU1NFTFMuICBGT0dBUlRZ
+IENBVEhFVEVSIFBBU1NFRCBCVVQgTk8gRkxPVyBFU1RBQkxJU0hFRC4gIENPTlRJTlVFRCBERVRF
+UklPUkFUSU9OIE9GIExFRyBMRUQgVE8gQkVMT1dLTkVFIEFNUFVUQVRJT04gT04gMTAvMDIvOTgu
+ICBVTkVWRU5URlVMIFJFQ09WRVJZIEFORCBXRU5UIFRPIFJFSEFCLrEBAFBBVElFTlQgQURNSVRU
+RUQgMDQvMDIvOTggV0lUSCBBTiBBQ1VURUxZIElTQ0hBRU1JQyBMRUcgLSBSSUdIVCBGRU1PUkFM
+IEFSVEVSSU9HUkFNIDA0LzAyLzk4IE9DQ0xVU0lPTiBQT1BMSVRFQUwgQ09OU0lTVEVOVCBXSVRI
+IEFORVVSSVNNQUwgRElMQVRJT04gQU5EIFRIUk9NQk9TSVMuICBBVFRFTVBURUQgVEhST01CT0xZ
+U0lTIDA1LzAyLzk4IC0gRkFJTEVEIFRPIFBBU1MgQ0FUSEVURVIuICAwNi8wMi85OCBPUCAxKVJF
+UEFJUiBPRiBSSUdIVCBQT1BMSVRFQUwgQU5FVVJZU00gV0lUSCBJTlRFUlBPU0lUSU9OIFJFVkVS
+U0VEIFZFSU4gR1JBRlQgQU5EIEVNQk9MRUNUT01ZIC0gRkFJTEVEIDA4LzAyLzk4LiAgT1AgMikg
+VEhST01CT0xFQ1RPTVkgQU5EICAgICAgS0lOQVNFIFRIUk9NQk9MWVNJUy0gRkFJTEVEIDEwLzAy
+Lzk4IE9QIDMpIFJJR0hUIEJLQS4WAQBJTkRFWCAxOC8xMS85OCBBRE1JVFRFRCBGT1IgVkFHSU5B
+TCBCTEVFRElORyAtIFRISVMgU0VUVExFRCBXSVRIT1VUIE9QRVJBVElPTi5OTyBFVklERU5DRSBP
+RiBJTkZFQ1RJT04uICBXRU5UIEhPTUUgQUZURVIgMSBEQVkuICBIQUQgQkVFTiBBRE1JVFRFRCAx
+Ny8xMSBBTkQgRElTQ0hBUkdFRCBFQVJMWSAxOC8xMS4gIE1JU1NFRCBBQk9SVElPTiBSRVFVSVJJ
+TkcgRCZDLiAgRU1QVFkgVVRFUlVTIENPTkZJUk1FRCBBVCBFTkQgT0YgU1VSR0VSWSBBTkQgTUlO
+SU1BTCBCTE9PRCBMT1NTLggBAFBBVElFTlQgQURNSVRURUQgQVMgTUlTU0VEIE1JU0NBUlJJQUdF
+IDE3LzExLzk4IEFUIDExLTEyLzQwIFdFTlQgVE8gVEhFQVRSRSBIQUREICYgQyBBTkQgRElTQ0hB
+UkdFRCBTQU1FIERBWS4gIFJFQURNSVRURUQgTkVYVCBEQVkgMTgvMTEvOTggSU5ERVggQURNSVNT
+SU9OIFdJVEggQUJET01JTkFMIENSQU1QUyBBTkQgUFYgQkxFRURJTkcuICBESUFHTk9TSVMgLSBS
+UE9DIC0gU0VUVExFRCBXSVRIT1VUIEZVUlRIRVJEICYgQyBESVNDSEFSR0VEIDE5LzExLzk4LgwC
+AEFETUlUVEVEIEFUIDM4IFdFRUtTIEdFU1RBVElPTiAtIFBSSU1JR1JBVklEQSBXSVRIIEhPUCBB
+TkQgUFJPVEVJTlVSSUEsIFNPTUUgU1BPVFMgQkVGT1JFIEVZRVMuICBTRVRUTEVEIElOIEhPU1BJ
+VEFMIEFORCBXSVRIIE1FVEhZTE9MT1BBIEtFUFQgSU4gSE9TUElUQUwuICBTUE9OVEFORU9VU0xZ
+IFdFTlQgSU5UTyBMQUJPVVIgVEhFIERBWSBCRUZPUkUgSU5EVUNUSU9OIERVRS4gIFZBR0lOQUwg
+REVMSVZFUlkgTk8gUFJPQkxFTVMgQVQgVElNRS4gIEJMRUQgNDAwTUxTIFBST01QVExZIEFORCBB
+Tk9USEVSIDQwME1MUyBTT09OIEFGVEVSLiAgRVVBIEZPVU5EQklMQVRFUkFMIENFUlZJQ0FMIFRF
+QVJTLCBPTkUgQkxFRURJTkcgQU5EIEEgWS1TSEFQRUQgUEVSSU5FQUwgVEVBUiAtIEFMTCBTVVRV
+UkVELiAgU0VUVExFRCBBTkQgRElTQ0hBUkdFRC4gIEhBRU1PR0xPQklOIDcwLCBQVVQgT04gSVJP
+Ti4gIFBBVElFTlQgRkFJTEVEIFRPIEFUVEVORCBNRURJQ0FMIEZPTExPVyBVUCBSRUdBUkRJTkcg
+UFJPVEVJTlVSSUEuXAMASU5ERVggQURNSVNTSU9OOiAgMTkgWUVBUiBPTEQgUFJJTUlHUkFWSURB
+IEFUIDM4LzQwIFdFRUtTIEFETUlUVEVEIEZPUiBIRUFEQUNIRVMsIEhZUEVSVEVOU0lPTiA/IEdQ
+SCBCVVQgQkxPT0RTIE5PUk1BTC4gIDI0IEhPVVIgVVJJTkFSWSBQUk9URUlOIDEuNi0xLjggRy4g
+IE5PT0VERU1BLiAgQlAgMTE1LTE1MC84MC04NS4gIEFEVklTRUQgVE8gUkVNQUlOIEkvUCBCVVQg
+TU9ERVJBVEVMWSBOT04gQ09NUExJQU5UIEFORCBSRUNVUlJFTlRMWSBBV09MLiAgSU5EVUNUSU9O
+IE9GIExBQk9VUiBSRUNPTU1FTkRFRCwgQlVUIFJFU0lTVEVEIEJZIFBBVElFTlQuRklOQUxMWSBB
+R1JFRUQgRk9SIDAyLzA3Lzk4IEJVVCBTUE9OVEFORU9VUyBWQUdJTkFMIERFTElWRVJZIEFUIDA0
+MDAgSFJTIDAyLzA3Lzk4LiAgUFBIIDgwMC0xMDAwIE1MIEFUIDA0MTUgSE9VUlMuICBMRUFESU5H
+IFRPIFNVUkcgRVhQTE9SQVRJT04gQU5EIFNVVFVSSU5HIE9GQ0VSVklDQUwgVEVBUlMgQU5EIEEg
+WSBTSEFQRUQgUEVSSU5FQUwgVEVBUi4gIEJMRUVESU5HIENPTlRJTlVFRCBBVCBBIFNMT1cgUkFU
+RS5IQiBEUk9QUEVEIEZST00gMTA4IE9OIDAxLzA3IFRPIDc0IE9OIDAyLzA3IFRPIDY4IE9OIDA0
+LzA3LiAgUEFUSUVOVCBERUNMSU5FRFRSQU5TRlVTSU9OLiAgUFJFU0NSSUJFRCBJUk9OLiAgQkxF
+RURJTkcgU1RPUFBFRCBCWSAwMy8wNy4gIFBBVElFTlQgUkVGVVNFRCBUT0JSRUFTVCBGRUVELiAg
+MDQvMDcgVFJBTlNGRVJSRUQgVE8gSE9TUCBYIEZPUiBGVVJUSEVSIENPTlZBTEVTQ0VOQ0UgQ0xP
+U0VSIFRPIEhPTUUuICBGQUlMRUQgVE8gQVRURU5EIEZPTExPVyBVUCBBUFBPSU5UTUVOVCBUTyBD
+SEVDSyBSRU5BTCBGVU5DVElPTi5DAwBSRUZFUlJFRCBUTyBTVVJHSUNBTCBPLlAgV0lUSCBBQkRP
+TUlOQUwgUEFJTiAmIFdFSUdIVCBMT1NTLCBNQVNTIEZFTFQgSU4gQUJET01FTi4gUFJPSU9SIEFM
+Q09IT0wgVVNFUiAmIE1BWUJFIFNPTUUgT1BJQVRFIEFERElDVElPTiBJTiBQQVNULiBFTkRPU0NP
+UFkgLSBIIFBZTE9SSSBQT1NJVElWRSAmIFRSRUFURUQuIFNFTEYgUkVGRVJSRUQgSU5UTyBIT1NQ
+SVRBTCAyMC84Lzk4IFdJVEggQUJET01JTkFMIFBBSU4gJldFSUdIVCBMT1NTLiBJTlZFU1RJR0FU
+SU9OIFdJVEggQy5UIFNIT1dFRCBNQVNTIFJFTEFURUQgVE8gTElWRVIuIFRIRVkgREVDSURFRCBJ
+VCBXQVMgSU5GTEFNTUFUT1JZIEZST00gT0xEIFBFUkZPUkFURUQgRC5VLiAmIERJRCBMSVRUTEUg
+SU5WRVNUSUdBVElPTi4gVEhFIEMuVEFMU08gTk9URUQgSEUgSEFEIEVYVEVOU0lWRSBWRU5PVVMg
+VEhST01CT1NJUyAtIEkuVi5DIFBPT1JMWSBGSUxMRUQsIEJPVEggSUxJQUMnUyAmIENPTU1PTiBG
+RU1PUkFMUyBUSFJPTUJPU0VEIChBTlRJQ09BR1VMQU5UIEdJVkVOKS4gUkVGRVJSRUQgVE8gUFNZ
+Q0hJQVRSSVNUIC1ESUFHTk9TSVMgUFNZQ0hPUEVOSUMgUEFJTi4gRklSU1QgSU5ERVggQURNSVNT
+SU9OIFdJVEggTU9SRSBQQUlOIC0gVFJFQVRFPAAgIABEIEJZIFBTWUNIT0xPR0lTVCBXSVRIIFJF
+TEFYQVRJT04gRElTQ0hBUkdFRCBBRlRFUiAyIERBWVMuIFNFQ09ORCBJTkRFWCBBRE1JU1NJT04g
+Rk9STU9SRSBQQUlOICYgV09SU0UgQ09ORElUSU9OLiBGSU5BTExZIE9OIDI0LzEwLzk4IEhBRCBM
+QVBBUk9UT01ZIC0gTUFTUyBGT1VORCAmIEJJT1BTSUVELiBBREVOT0NBUkNJTk9NQS4gRElFRCAz
+MS8xMS85OC4LAwAwNi8xMC85OCBBRE1JVFRFRCBWSUEgR1AgV0lUSCBEWVNQTk9FQSwgQU5BRU1J
+QSBBTkQgR0VORVJBTExZIFVOV0VMTC4gIENUIFNDQU4gKDI3LzA4Lzk4KSAgSEVQQVRJQyBNQVNT
+ID8gIElORkxBTU1BVE9SWS4gIE9OIEVYQU1JTkFUSU9OIFJJR0hUIExFRyBURU5ERVJORVNTIFdJ
+VEggT0VERU1BIFRPIEdST0lOLiAgUlM6LSBCSUxBVEVSQUwgV0lERVNQUkVBRCBDUkFDS0xFUyBV
+UCBUTyBNSUQgWk9ORS4gIEFTOi0gIE5PIE9SR0FOT01FR0FMWS4gIDA2LzEwLzk4IEVDRyBTSU5V
+UyBUQUNIWUNBUkRJQSBUIFdBVkUgSU5WRVJTSU9OIFYxLVYzLiAgSEIgMTIzV0JDIDEzLjAgRVNS
+IDE4IEFMSyBQTzQgMTU4IElOQ1JFQVNJTkcgR0FNTUEgR1QgMTIzIElOQ1JFQVNFRCwgSU5SIDIu
+Ni5DSEVTVCBYLVJBWSBOQUQuICAxMy8xMC85OCBSRVBFQVQgQ1QgRVhURU5TSVZFIEFCTk9STUFM
+SVRZIE9GIFRIRSBQRVJJVE9ORVVNLiAgMjQvMTAvOTggTEFQQVJPU1RPTVkgQU5EIEJJT1BTWSBN
+QVNTIC0gSU5PUEVSQUJMRSBDQVJDSU5PTUEuICAyNy8xMC85OCBBU0NJVElFUyBXSVRIIEFTU09D
+SUFURUQgQkFDSyBBTkQgQUJET01JTkFMIFBBSU4uICAzMC8xMC85OCBISVNUT0xPR1kgQURFTk9D
+QVJDSU5PTUEgT01FTlRVTS4gIDAzLzExLzk4ICBESVNDSEFSR0VEIEhPTUUgV0lUSCBIT1NQSUNF
+IFNVUFBPUlQuICAxMy8xMS85OCBESUVEIEFUIEhPTUUuICBBL0UgT0NDVVJFRFBSRVZJT1VTIEFE
+TUlTU0lPTiAoTk9UIElOREVYKSAgMjEvMDkvOTggQlVUIFNUSUxMIFJFTEVWQU5ULs4CAERJQUJF
+VEVTIFRZUEUgMiwgSFlQRVJURU5TSU9OIEFORCBIWVBFUkxJUElEQUVNSUMuICBGVUxMIFNUQVBI
+IFJFTkFMIEZBSUxVUkUuICBERUNJREVEIE9OIENBUEQgQU5EIEhBRCBURU5DSE9GRiBDQVRIRVRF
+UiBJTlNFUlRFRCAyNy83Lzk4IC0gRkFJTEVELCBSRVBMQUNFRCBBRlRFUiBFWEFNSU5BVElPTiBV
+TkRFUiBHRU5FUkFMIEFOQUVTVEhFVElDIDEwLzkvOTggQU5EIFRIRVJFIFdBUyBQRVJTSVNURU5U
+IExFQUtTTyBOT1QgVVNFRC4gIEFOT1RIRVIgV0FTIFVTRUQgQU5EIEVWRU5UVUFMTFkgUkVNT1ZF
+RCBKQU5VQVJZIDk5LiAgSEFEIEhBRU1PRElBTFlTSVMgVklBIENFTlRSQUwgVkVOT1VTIExJTkUg
+V0hJTEUgV0FJVElORyBGT1IgVEVOQ0xFSUZGIFRPIFdPUksuICBJTkRFWCBBRE1JU1NJT04gRk9S
+IElORkVDVElPTiBPRiBDRU5UUkFMIExJTkUgKFBST1RFSU4gTUlSQUJJTElTIE9OIElUUyBUSVAg
+V0hFTiBDVUxUVVJFRCwgQkxPT0QgQ1VMVFVSRVMgVFdJQ0UgQUxSRUFEWSBHUkVXIFNUQVBIIEFV
+UkVVUy4gIFRSRUFURUQgV0lUSCBGTFVDTE9YQUNJTExJTiBBTkQgQ0VGVVJPWElNRS4gIFNFVFRM
+RUQgQU5EIERFVkVMT1BFRCBORVcgTElORSBQTEFDRUQgTEFURVIuICBTRU5UIE9VVCBPRiBUT1dO
+LiAgSU5GSVNUVUxBIEZPUk1BVElPTiBGT1IgUEVSTUFORU5UIEhBRU1PRElBTFlTSVMuICBESUVE
+IDkvNy85OSA/SU5UUkFDRVJFQlJBTCBCTEVFRC7AAQA2NyBZRUFSIE9MRCBGRU1BTEUuICBFTkQg
+U1RBR0UgUkVOQUwgRkFJTFVSRS4gIERJQUJFVEVTLiAgTlVNRVJPVVMgUFJPQkxFTVMgV0lUSFBF
+UklUT05FQUwgRElBTFlTSVMsIEFORCBXQVMgUFVUT04gVEVNUE9SQVJZIEhBRU1PRElBTFlTSVMg
+U0VQVEVNQkVSIDE5OTggKDEwLzA5Lzk4KS4gIDA5LzEwLzk4IEFETUlUVEVEIFdJVEggRkVWRVIg
+QU5EIFJJR09SUyBUPTM4LjguICBCTE9PRCBDVUxUVVJFIEdST1cgU1RBUEguIEFVUkVVUyBOQUQg
+VEhFIENFTlRSQUwgTElORSBSRU1PVkVELiAgRkVWRVIgU0VUVExFRCBSQVBJRExZLiAgUkVTVEFS
+VEVEIE9OIEhBRU1PRElBTFlTSVMuICBBUlJBTkdFTUVOVFMgTUFERSBGT1IgUkVQTEFDRU1FTlQg
+T0YgVEVOQ0hPRkYuICBESVNDSEFSR0VEIDEzLzEwLzk4LiAgMTkvMTAvOTggUkVNT1ZBTCBBTkQg
+UkVJTlNFUlRJT04gT0YgVEVOQ0hPRkYulgEASU5ERVggQURNSVNTSU9OIEZPUiBSRU1PVkFMIE9G
+IEEgTEFSR0UgUElFQ0UgT0YgR0xBU1MgUFJFU0VOVElORyBJTiBSSUdIVCBBWElMTEEuICBUSElT
+IFdBUyBSRU1PVkVEIFdJVEhPVVQgUFJPQkxFTSBVTkRFUiBHRU5FUkFMIEFOQUVTVEhFVElDLiAg
+U1VSR09FTiBOT1RFUyBUSEVSRSBXQVMgTk8gT0JWSU9VUyBFTlRSWSBXT1VORCBORUFSIFRIRSBH
+TEFTUy4gIFBBVElFTlQgSEFEIEhBRCBGQUxMIEJBQ0tXQVJEUyBPTlRPIEdMQVNTIFNPTUUgMTAg
+WUVBUlMgUFJFVklPVVNMWSwgR0xBU1MgUkVNT1ZFRCBUSEVOIEFORCBBUkVBIFgtUkFZRUQgVEhF
+TiBBTkROT05FIEZPVU5EIFRPIEhBVkUgQkVFTiBMRUZULiAgKFRIRSBHTEFTUyBQUk9WRUQgVE8g
+QkUgUkFESU8tT1BBUVVFIElOIFRIRSAxOTk4WC1SQVlTKSYCAElOREVYIEFETUlTU0lPTjogIDI2
+IFlFQVIgT0xEIE1BTEUgV0lUSCBIQVJEIFNXRUxMSU5HIFBPU1RFUklPUiBBWElMTEFSWSBGT0xE
+IFJJR0hUIEFSTSBXSElDSCBBUFBFQVJFRCBEVVJJTkcgSEVBVlkgUEhZU0lDQUwgQUNJVklUWSBP
+TiAwMy85OCBCVVQgSEUgUFVTSEVEIFRIRVNXRUxMSU5HIEJBQ0sgSU5UTyBQTEFDRS4gIElUIEhB
+UyBSRUNVUlJFRCBXSElMRSBSQUtJTkcuICBQQVNUIEhJU1RPUlkgRkFMTCBPTlRPR0xBU1MgMTk5
+OCAtIEdMQVNTIFJFTU9WRUQgVEhFTiBBTkQgQSBQT1NUIFJFTU9WQUwgWC1SQVkgU0FJRCBOT1Qg
+VE8gU0hPVyBBTlkgR0xBU1MgUkVNQUlOSU5HLiAgMTEvMDYvOTggU1VSR0lDQUwgUkVNT1ZBTCBP
+RiBHTEFTUyBGUkFHTUVOVCBSSUdIVCBQT1NURVJJT1IgQVhJTExBUlkgRk9MRC4gIFRISVMgQ09S
+UlJFU1BPTkRFRCBUTyBBIFJBRElPUEFRVUUgRk9SRUlHTiBCT0RZIFNFRU4gT04gWC1SQVkuICBO
+T0VWSURFTkNFIE9GIElORkVDVElPTiBPUiBORVJWRSBPUiBPVEhFUiBUSVNTVUUgREFNQUdFLiAg
+RElTQ0hBUkdFRCAxMi8wNi7IAgBJTkRFWCBBRE1JU1NJT04gRk9SIFJJR0hUIFBZT1NBTFBJTlgg
+LSBQUkVTRU5URUQgV0lUSCBBQkRPTUlOQUwgUEFJTiwgTk8gUFJJT1IgUkVMRVZBTlQgSElTVE9S
+WS4gIElNQUdJTkcgU0hPV0VEIFJJR0hUIFBFTFZJQyBNQVNTLCBOQVRVUkUgVU5DTEVBUi4gIE9Q
+RVJBVElPTiBCWSBHWU5BQ09MT0dJU1QgQU5EIFNVUkdJQ0FMIFJFR0lTVFJBUi4gIERFQ0lERUQg
+QkVTVCBUTyBEUkFJTiBBQlNDRVNTIEJVVCBMRUFWRU9WQVJZIEFORCBUVUJFIElOIFNJVFUgQkVD
+QVVTRSBPRiBJTkRVUkFUSU9OLiAgUFVTIEdSRVcgRS1DT0xJLCBGVUxMWSBTRU5TSVRJVkUuQVBQ
+RU5ESVggUkVNT1ZFRC4gIEFOVElCSU9USUMgR0lWRU4gKEZMVUNMT1hJQ0lMTElOIEFORCBDRUZP
+WElUSU4gSU5JVElBTExZKS4gIFNFVFRMRUQgQU5EIERJU0NIQVJHRUQuICBSRUFETUlUVEVEIDIv
+MTEvOTggV0lUSCBCT1dFTCBPQlNUUlVDVElPTi4gIExBUEFST1NDT1BZMy8xMS85OCAtIEZSRUUg
+QURIRVNJT05TIFJFTU9WRUQgUklHSFQgVFVCRSBCT1dFTCBPUkJJVCBCWSBBREhFU0lPTlMgQU5E
+IEJZIE9ORUFSRUEgQURIRVJFRCBUTyBUSEUgSU5GTEFNTUVEIFRVQkUuICBGUkVFIEZMVUlEIEJV
+VCBOT1QgUFVTIElOIEFCRE9NRU4uICBQQVRJRU5UQ09OVElOVUVEIFdJVEggQUJET01JTkFMIFBB
+SU4gQU5EIFZPTUlUSU5HLCBFVkVOVFVBTExZIEhBRCBUUE4gQU5EIFNFVFRMRUQuzgIASU5ERVgg
+QURNSVNTSU9OOiAgNDIgWUVBUiBPTEQgRkVNQUxFIEFETUlUVEVEIFdJVEggOCBEQVlTIEhJU1RP
+UlkgTE9XRVIgQUJET01JTkFMIFBBSU4gQU5EIEJMT0FEVElORy4gIE5PIEQmVi4gIFBBSU4gTk9U
+IElNUFJPVklORyBBTkQgU0xFRVAgRElTVFVSQkVELiAgUEFJTiBSRUxJRUYgTkVDRVNTQVJZIEZP
+UiBTTEVFUC4gIEhBRCBCRUVOIE9OIEFOVElCSU9USUNTIEZPUiA0IERBWVMuICBNSUxEIFBZUkVY
+SUEuICBJTlZFU1RJR0FUSU9OIEFORCBFWEFNSU5BVElPTjogTUFTUyBJTiBSSUYuICBMQVBBUk9U
+T01ZOiBQWU9TQUxQSU5YIC0gRFJBSU5FRCBCVVRMRUZUIElOIFNJVFUuICBBUFBFTkRJQ0VUT01Z
+LiAgKEhJU1RPUEFUSDogQUNVVEUgQVBQRU5ESUNJVElTKSAgUE9TVCBPUCBBTlRJQklPVElDUy4g
+IENPTlZBTEVMU0NFTkNFOiBQUk9HUkVTUyBTQVRJU0ZBQ1RPUlkuICBESUQgSEFWRSBTT01FIEFC
+RE9NSU5BTCBQQUlOIE9OIERBWSA2IEJVVCBUUkFOU0lFTlQuICBBQkVCUklMRSBBRlRFUiBEQVkg
+My4gIERJU0NIQVJHRUQgMjkvMTAvOTguICBSRUFETUlUVEVEIDAxLzExLzk4IFdJVEggMzYgSE9V
+UiBISVNUT1JZIElOQ1JFQVNJTkcgUEFJTiBBTkQgVk9NSVRJTkcuICBESUFHTk9TRUQgU01BTEwg
+Qk9XRUxPQlNUUlVDVElPTjogQURIRVNJT05TOiBBQ1RJVkUgSU5GRUNUSU9OIElOIFJJR0hUIEZB
+TExPUElBTiBUVUJFLiAgVFVCRSBFWENJU0VELq0DAElOREVYIEFETUlTU0lPTiBGT1IgUklHSFQg
+S05FRSBSRVBMQUNFTUVOVC4gIEJBRCBPQSwgSEFEIExFRlQgS05FRSBSRVBMQUNFTUVOVCAxOTkx
+IElOIFBSSVZBVEUsIEFORCBPU01FIEFOS0xFIEFOVEhST0RFU0lTIExBVEVSLiAgQkVDQVVTRSBP
+RiBEVlQgSU4gMTk5MSBIRSBIQURQUk9QTFlMQVhJUyBGT1IgVEhFIFJJR0hUIEtORUUgT1AuICBB
+RlRFUiBTVVJHRVJZIEhFIENPTVBMQUlORUQgREFJTFkgT0YgUEFJTiBJTktORUUsIEJVVCBOTyBT
+UEVDSUZJQyBDQVVTRSBGT1VORC4gIEFGVEVSIERJU0NIQVJHRSBIRSBQQUlOIFBFUlNJU1RFRCwg
+UExVUyBTV0VMTElORyBBTkQgUE9PUiBGTEVYSU9OLiAgU1VSR0VPTiBESUQgTUFOSVBVTEFUSU9O
+IFVOREVSIEdBIFdISUNIIElNUFJPVkVEIElULiAgQU4gQVNQSVJBVElPTiBQUk9EVUNFRCBOTyBD
+UllTVEFMUyBPUiBFVklDRU5DRSBPRiBJTkZFQ1RJT04uICBBRlRFUiBUSEFUIEhBRCBBIFNURVJP
+SUQgSU5KRUNUSU9OICgyMi8xMi85OCBBUFBST1gpIEFORCBUSEVSRSBXQVMgQlJJRUYgSU1QUk9W
+RU1FTlQgKERJQUdOT1NFRCBNRURJQUwgTElHQU1FTlQgU1RSQUlOKS4gIFRIRU4gR1AgUkVQRUFU
+RUQgVEhJUyBJTiBFQVJMWSAxOTk5IEFQUEFSRU5UTFkgU09NRSBCRU5FRklUIEZPUiBXRUVLUy4g
+IFRIRU4gSEUgRkVMTCAoQVBSSUwpIEFORCBGT0xMT1dJTkcgVEhBVCBJTkpVUlkgSEFEIFdPUlNF
+IFBBSU4gQU5EV0VMTElORy4gIEFTUElSQVRFIC0gUFVTLCBHUkVXIFNUQVBIIEFVUkVVUy4gIDEz
+LzA0Lzk5IFJFQURNSVRURUQuICBKT0lOVCBXQVNIT1VUL0dFTlRBTUlDSU4gSU5TVElMTEVEIDE1
+LzA0Lzk5LiAgUFJPU1RIRVNJUyBSRU1PVkVEIDIwLzA0Lzk5LiAgRkxVQ0xPWEFDSUxMSU5HSVZF
+TiBUSFJPVUdIT1VULiAgTk8gRVZJREVOQ0UgSU4gTk9URVMgT0YgQU5ZIEZVUlRIRVIgUFJPQkxF
+TVMuJgEAU0VDT05EIFJGMi4gIEJZIFRIRSBUSU1FIFRISVMgRklMRSBXQVMgUkVWSUVXRUQgQlkg
+IzcgVEhFIExBVEVTVCBWT0wgT0YgTk9URVMgSEFEIEdPTkUgQkFDSyBUTyBDTElOSUMuICBTTyBN
+TyBNSVNTRUQgVEhFIEZBQ1QgVEhBVCBLTkVFIEpPSU5UIElORkVDVElPTiBXSVRIIFNUQVBIIEFV
+UkVVUyAoMTMvMDQvOTkpICBSRUFETUlUVEVEIDE1LzA0Lzk5LiAgUFJPU1RFU0lTIFJFTU9WRUQg
+MjAvMDQvOTkuICBSRVBMQUNFRCAzMS8wNS85OS4gIEZMVUNMT1ggVEhST1VHSE9VVC4gIEZJTkUg
+QUZURVIgUkUgVU5JT04udAMAV09NQU4gV0lUSCBCQUQgQ09BRCBBTkQgU0VWRVJBTCBBRE1JU1NJ
+T05TIEZPUiBDSEVTVCBJTkZFQ1RJT04gQU5EIEVYQUNFUkJBVElPTk9GIENPQUQuICBUSElTIEFE
+TUlTU0lPTiBXSVRIIENPVUdIIEFORCBTSE9SVE5FU1MgT0YgQlJFQVRIIEJVVCBGT1VORCBBIE5F
+VyBQUk9CTEVNIC0gTEFSR0UgTEVGVCBQTEVVUkFMIEVGRlVTSU9OLiAgVEhJUyBXQVMgVEFQUEVE
+IE9OIDA3LzA4Lzk4IC0gNDAwIE1MLiAgUE9TVC1EUkFJTiBDSEVTVCBYLVJBWSBTSE9XRUQgIk1P
+REVSQVRFLVNJWkVEIiBQTkVVTU9USE9SQVguICBUSElTIERJRCBOT1QgSU5DUkVBU0UgT1ZFUiBU
+SEUgTkVYVCBEQVlTIEFORCBJTkRFRUQgR1JBRFVBTExZIFJFRFVDRUQuICBXSEVOIFNIRSBIQUQg
+QU5PVEhFUiBQTEVVUkFMIFRBUCBPTiAyNC8wOC85OCBUSEUgUE9TVC1UQVAgWC1SQVkgU0hPV0VE
+IE5PIFBORVVNT1RIT1JBWC4gIFRIRVJFIFdBUyBOTyBSRUNPUkRFRElOQ1JFQVNFIElOIFNIT1JU
+TkVTUyBPRiBCUkVBVEggRlJPTSBUSEUgUE5FVU1PVEhPUkFYIEJVVCBTSEUgREVWRUxPUEVEIE5F
+VyBDSEVTVCBQQUlOLCBMRUFESU5HIFRPIEEgQk9ORSBTQ0FOIFRPIEVYQ0xVREUgTUVUQVNUQVNF
+UyAoSVQgRElEIE5PVCBTSE9XIFNVQ0ggQUJOT1JNQUxJVFkpLiAgQSBQUkVWSU9VU0xZIEZPVU5E
+IEFORCBJTlZFU1RJR0FURUQgQlJFQVNUIExVTVAgV0FTIFRIT1VHSFQgVE8gQkUgTk9OLU1BTElH
+TkFOVC4gIFNIRSBIQUQgMiBGVVJUSEVSIEFETUlTU0lPTlMgV0lUSCBIRVIgQ09BRCBBTkQgUExF
+VVJBTCBFRkZVU0lPTiAtIElOQVVHVVNUIEVGRlVTSU9OIERSQUlORUQgKDEgTElUUkUpLCBJTiBT
+RVBURU1CRVIgU0hFIERJRUQgUVVJVEUgUVVJQ0tMWSwgT0YgSEVSRElTRUFTRS5tAgAwNy8wOC85
+OCBBRE1JVFRFRCBXSVRIIFNIT1JUTkVTUyBPRiBCUkVBVEgsIFlFTExPVyBTUFVUVU0sIEZFVkVS
+LCBBTk9SRVhJQSwgV0VJR0hUIExPU1MuICBQUkVWSU9VU0xZIERJU0NIQVJHRUQgMjkvMDcvOTgg
+V0lUSCBMQVJHRSBMRUZUIFBMRVVSQUwgRUZGVVNJT04gRUNHIFNJTlVTIFRBQ0hZQ0FSRElBLCBE
+RUVQICJUIiBJTlZFUlNJT04gVjItVjYgKE5FVyBTSU5DRSAwMy8wNy85OCBMREggMTg0IEFTVCAx
+NSBDSzQ4LiAgUExFVVJBTCBBU1BJUkFUSU9OIDQwMCBNTCBGTFVJRCBBU1BJUkFURUQgLSBQTkVV
+TU9USE9SQVggKFNNQUxMKSAwMiBTQVQgOTclUExFVVJBTCBBU1BJUkFUSU9OIE5PIEdST1dUSCBO
+RUdBVElWRSBDWVRPTE9HWS4gIDEwLzA4Lzk4IENIRVNUIFBBSU4gTERIIDM2NC4xMi8wOC85OCBQ
+QUlOIFJJQlMgQU5EIEJBQ0sgQk9ORSBTQ0FOIFVQVEFLRSBJTkNSRUFTRUQgVDYgQU5EIEwyIFJF
+UCBTTUFMTCBDUlVTSEZSQUNUVVJFIE9SIFBPU1MgREVHRU4uICAyNS8wOC85OCBIT01FIE9OIERJ
+Q0xPRkVOQUMsIE1TVCwgT01FUFJBWk9MRSwgUk9DQUxUUk9MIEMrUyBJTkhBTEVSLiAgRElTVFJJ
+Q1QgTlVSU0UgQU5EIE9VVFBBVElFTlRTIERFUEFSVE1FTlQgMSBNT05USC4XAwBUSElTIE1BTiBI
+QUQgVEhST01CT1BITEVCSVRJUyBPRiBMRUZUIExPTkcgU0FQSEVOT1VTIFZFSU4uICBVTFRSQVNP
+VU5EIFdJVEggRE9QUExFUiBTSE9XRUQgRVhURU5TSVZFIENMT1QgVE8gR1JPSU4sIFBMVVMgTk9O
+LUNPTVBSRVNTSU9OIElOIERJU1RBTCBUSUJJQUwgVkVJTiAoTElFIEJFTE9XIEtORUUpLiAgREVD
+SVNJT04gVE8gVFJFQVQgLSBDTEVYQU5FIFRIRU4gV0FSRkFSSU4gRk9SIDYgV0VFS1MuICBOTyBD
+T01QTElDQVRJT05TIFJFQ09SREVELiAgT04gMDQvMDkvOTggUEFUSUVOVCBIQUQgIEhBRCBMSVZF
+UiBCSU9QU1kgVE8gQ0hFQ0sgT04gSEFFTUFDSFJPTUFUT1NJUyBJTiBGQU1JTFkgQU5EIERFVkVM
+T1BFRCBBQkRPTUlOQUwgUEFJTiBBTkQgSFlQT1RFTlNJT04sIFNQRU5ESU5HIFNPTUUgREFZUyBJ
+TiBIT1NQSVRBTCwgQ09OU0VSVkFUSVZFIFRSRUFUTUVOVC4gIERFQ1JFQVNJTkcgSEIgMTU1IFRP
+IDEzMi4gIFVMVFJBU09VTkQgQUJET01FTiBESUQgTk9UIFNIT1cgQkxPT0QuICBUSEVOSEUgQUhE
+IFJBUElEIEFGIEZPUiBBIERBWSwgQkFDSyBUTyBTUi4gIERJU0NIQVJHRUQgMDkvMDkvOTguICBJ
+IFNVUFBPU0UgVEhFIEJFRCBSRVNUIEFTU09DSUFURUQgV0lUSCBCSU9QU1kgQ09NUExJQ0FUSU9O
+IENPVUxEIEhBVkUgQ0FVU0VEIFRIUk9NQk9TSVMuICBJJ00gTk9UIFNVUkUgVEhFIExJVkVSIEJJ
+T1BTWSBXQVMgSU5ESUNBVEVELE5PIExGVEFCTk9STUFMSVRJRVMgQU5EIERJQUdOT1NJUyBDT1VM
+RCBIQVZFIEJFRU4gRVNUQUJMSVNIRUQgQlkgR0VORVRJQyBURVNULpwBADY3IFlFQVIgT0xEIE1B
+TEUgRkFNSUxZIEhJU1RPUlkgT0YgSEFFTU9DSFJPTUFUT1NJUy4gIEFETUlUVEVEIDA0LzA5Lzk4
+IEZPUiBMSVZFUiBCSU9QU1kuICBDT01QTElDQVRFRCBCWSA/IEhBRU1BVE9NQSA8ACAgAC0gUEFM
+TE9SLCBIWVBPVEVOU0lPTi4gIERJU0NIQVJHRUQgMDkvMDkvOTguICBJTkRFWDogIFJFQURNSVNT
+SU9OIDIxLzA5Lzk4IFdJVEggVFdPIFdFRUsgSElTVE9SWSBPRiBMRUcgUEFJTi4gIEVYVEVOU0lP
+TiBUSFJPTUJPUEhMRUJJVElTLCBDTE9UIE9GIERJU1RBTCBUSElSRCBPRiBUSUJJQUwgVkVJTi4g
+IFBVVCBPTiBDTEVYQU5FIEFORCBXQVJGQVJJTi4gIERJU0NIQVJHRUQgMjUvMDkvOTggT04gNiBX
+RUVLUyBXQVJGQVJJTi4gIElNUFJFU1NJT046ICBEVlQgQVMgQ09NUExJQ0FUSU9OT0YgUFJPQ0VE
+VVJFLucBAEtPUkVBTiBJTU1JR1JBTlQgV09NQU4gV0lUSCBOTyBFTkdMSVNILiBNRU5PUlJIQUdJ
+QSAtPiBIQiA4NywgQUNVVEUgQURNSVNTSU9OIDE2LzkvOTguIDIgVU5JVFMgQkxPT0QgVFJBTlNG
+VVNFRC4gRElBR05PU0VEIEFTIEZJQlJPSURTLiBCT09LRUQgRk9SIEhZU1RFUkVDVE9NWSxET05F
+IDUvMTAvOTgsIE5PIFBST0JMRU0uIEhJU1RPTE9HWSBBREVOT01ZT1NJUy4gRElTQ0hBUkdFRCA5
+LzEwLzk4LiBJTkRFWCBBRE1JU1NJT04gMTUvMTAvOTggV0lUSCBJTkNSRUFTSU5HIFBBSU4gTEVG
+VCBMRUcgRk9SIEEgRkVXIERBWVMuIFUvUyBFWFRFTlNJVkUgRC5WLlQuUFJFU0NSSUJFRCBDTEVY
+QU5FICYgV0FSRkFSSU4gJiBESVNDSEFSR0VEIEZPUiBHUCBGT0xMT1cgVVAuIChIQiAxMTUgUFJF
+IE9QICYgSEIgNzggT04gREFZIDIgUE9TVCBPUCwgR0lWRU4gRkVSUk9HUkFEVU1FVCkuIFNIRSBX
+QVMgVVAgJiBBQk9VVCBRVUlDS0xZIEFGVEVSIE9QRVJBVElPTi7ZAQBBRE1JVFRFRCBTRVBURU1C
+RVIgMTk5OCAtIEFOQUVNSUEgRlJPTSBNRU5PUlJIQUdJQSAgU0VUIFVQIEZPUiBIWVNURVJFQ1RP
+TVkgV0hJQ0ggIFdBUyBET05FIDUvMTAvOTguIE5PIEFDVElPTiBSRUNPUkRFRCBGUk9NIEQuVi5U
+LiBQUk9QSFlMQVhJUy4gSEIgNzQgT04gMTYvOS85OCwgVFJBTlNGVVNFRCBUTyBIQiAxMTVHTSBP
+TiAyOS85Lzk4LiBQUkUgT1AgSEIgTk9UIFJFQ09SREVELCBCVVQgV0FTIEhCIDc4IE9ONi8xMC85
+OC4gUE9TVCBPUEVSQVRJT04gR0lWRU4gT1JBTCBJUk9OLiBIQiA5MyBPTiAxNS8xMC85OC4gSU5E
+RVggQURNSVNTSU9OIFdJVEhMRUZUIExFRyBQQUlOLiBVLlMgRE9ORSBESUFHTk9TRUQgQVMgIEQu
+Vi5ULiBHSVZFTiBTLkMgTC5NLlcgSEVQQVJJTi4gV0FSRkFSSU5VU0UgREVMQVlFRCBCRUNBVVNF
+IE9GIEFOQUVNSUEgJiBDT05TVU1JTkcgQUJET01JTkFMIFBBSU4sIFVOVElMIE8gJiBHIFJFVklF
+Vy0BAExFRlQgRFVQVVlUUkVOUyBDT05UUkFDVFVSRSAsIEZBU0NJRUNUT01ZICYgR1JBRlQgKEZV
+TEwgVEhJQ0tORVNTKSBCT09LRUQgMjMvMi85OC4gSE9NRSBPTiBEQVkgMi4gQ09NRSBCQUNLIFRP
+IEZPTExPVyBVUCBPTiAzMC8zLzk4IC0gSEUgSEFETidUIFJFQUxJU0VEIEhFIE5FRURFRCBUTyBL
+RUVQIEhBTkQgRUxFVkFURUQgJiBJVCBTV0VMTEVEICsrLiBUSEUgR1JBRlRTIFdFUkUgIlNVU1BF
+Q1QiIEJVVCBTRVRUTEVEV0lUSCBMT0NBTCBSRVNUICYgREVCUklERU1FTlQuIEhFQUxFRCAxOS81
+Lzk4ICYgR09PRCBGVU5DVElPTi7qAgBBQ1RJVkUgTUFSS0VUIEdBUkRJTkVSLiBTTU9LRVMgNS9E
+LiBTT0NJQUwgRVRPSC4gSU5ERVggQURNSVNTSU9OIDIzLzMvOTguIFJFTEVBU0UgTCBEVVBBWVRS
+QU5TIENPTlRSQUNULiAzIEZJTkdFUlMgUEFSVElBTCBGQVNDSUVDVE9NWSBBTkQgRlVMTCBUSElD
+S05FU1MgU0tJTiBHUkFGVCAoRlJPTSBQUk9YIEZPUkVBUk0pIFNBIChNQUNST0NZVE9TSVMsIExG
+VCBJTkNSRUFTRSkgRElETlQgS0VFUCBIQU5EIFVQLCBHUk9TUyBTV0VMTElORyBMRUZUIEhBTkQg
+SEVBTElORyBERUxBWUVELiBIRUFMSU5HIExFRlQgSEFORCBERUxBWUVEIDIvMTIuIEwgTElUVExF
+RklOR0VSIFJFUVVJUkVTIEZVUlRIRVIgU1VSR0VSWS4gMjYvMTEvOTggV0hJTEUgQk9XTElORyBC
+RUUvV0FTUCBGTEVXIE9VVCBPRiBIQUlSLCBSQVBJRCBPTlNFVCBTT0IsIFBBTFBJVEFUSU9OUyBB
+TkQgUkFTSC4gVE9PSyBRVUlOSU5FIEZPUiBDUkFNUCAxIEhPVVIgRUFSTElFUi4gQU5BUEhZTEFY
+SVMgUlggQURSRU4uID8gMjYvMTEvOTggT1IgTkVYVCBEQVkgQVRPWElBIElOQ09PUkRJTkFUSU9O
+ICBMIEFSTSwgQVRPWElBLiBDVCBIRUFEID8/IFBPU1NJQkxFIENFUkVCSUxMQU4gSU5GQVJDVC4g
+TkVVUk9MT0dZIENPTlNVTFQgPz8gVFJFQVRNRU5UIEFTUElSSU4uIFJFQURNSVNTSU9OIDMvNi85
+OSBQQVJUSUFMIEZBU0NJRUNUT01ZIEFORCBaIFBMQVNUWSBSSU5HIEZJTkdFUi4gQVhJTExBUlkg
+UklHSFQgQVJNIEJMT0NLIE9OIERBWSBTVEFZLmwBAEJMSU5EICYgTVVURSBTUEFTVElDIFFVQURS
+SVBMRUdJQSBXSVRIIEFERFVDVE9SICBTUEFTTVMgT0YgTElQUywgU0VWRVJFIE1FTlRBTCBSRVRB
+UkRBVElPTi4gIElOIENPTU1VTklUWSBIT1VTRSBXSVRIIENBUkVSLiBERVZFTE9QRUQgRk9MTElD
+VUxJVElTIChTVEFQSCkgJiBMQVRFUiAgQ0VMTFVMSVRJUyBGUk9NIFBSRVNTVVJFICBPTiBNRURJ
+QUwgVEhJR0guIEFORCBTTUFMTCBMQVRFUkFMIE1BTExFT0xVUyBQUkVTU1VSRSBVTENFUi4gVFJF
+QVRFRCBXSVRIIEFOVElCSU9USUNTICYgUkVUVVJORUQgVE8gSE9NRS4gSSBET04nVCBTRUUgVEhJ
+UyBBUyBDQVVTRSAgQlkgSElTIENBUkUgQlVUIEJZIEhJUyBTRVZFUkUgRElTQUJJTElUWS4TAgBN
+QUxFIDMzIFlFQVJTLiBNRU5UQUxMWSBSRVRBUkRFRCwgU1BBU1RJQyBRVUFEUklQTEVHSUMsIEJM
+SU5EICYgTVVURS4gSU4gQ0FSRSBIT01FLiBTUFJFQURJTkcgQ0VMTFVMSVRJUyBMRUZUIExPV0VS
+IExFRy4gNCBEQVlTLiBQUkVTU1VSRSBBUkVBIExBVC4gTUFMTEVPTFVTLiA3LzEyLzk4IEdQIFNX
+QUIsIFBSRVNDUklCRUQgQ09UUklNT1hBWk9MRSAgICAgICAmIEJBQ1RST0JBTi4gOC8xMi85OCBB
+RE1JVFRFRCBURU1QRVJBVFVSRSAzOC4wIC0gMzguOCBGT1IgNDggSE9VUlMuIFBSRVNDUklCRUQg
+RkxVQ0xPWEFDSUxMSU4gMSBHTSAgICBJVi4gIDkgRFNDSEFSVEVELCBTRVZFUkUgRkFMTFMgT04g
+OS8xMi85OC4gUEVOSUNJTExJTiAyIE1HICBJVi4gVC5ELlMuIENIQVJURUQgR0lWRU4gOSBEU0ZP
+UiA3IERPU0VTLiBNT0RFUkFURSBHUk9XVEggU1RBUEhZTE9DT0NDVVMgQVVSRVVTLCBGTFVDTE9Y
+LlMgLCBQRU5JQ0lMTElOIFIuIE5PSU5ESUNBVElPTiBGT1IgQUREVUNUT1IgUkVMRUFTRS4gMTQv
+MTIvOTggRElTQ0hBUkdFRC6TBABWRVJZIERJRkZJQ1VMVCBQQVRJRU5UIFdJVEggU0VWRVJFIEVQ
+SUxFUFNZIFRIQVQgSEFTIEJFRU4gUkVTSVNUQU5UIFRPIEFMTCBUUkVBVE1FTlQgLSBPTEQgJiBO
+RVcgQU5USUNPTlZVTFNBTlRTIEFMTCBUUklFRC4gT04gSU5ERVggQURNSVNTSU9OIFRIRSBQSEVO
+WVRPSU4gTEVWRUwgV0FTIFNMSUdIVExZIExPVyAmIERPU0UgSU5DUkVBU0VEIEJZIDMwTUdNIE9O
+TFkuIFNIRSBJUyBERVNDUklCRUQgQVMgQk9SREVSIExJTkUgUEVSU09OQUxJVFkgJiBJUyBESUZG
+SUNVTFQgSU4gQSBTT0NJQUwgU0VOU0UuIFRIRVJFIEhBVkUgQkVFTiBTRVZFUkFMIEVQSVNPREVT
+IE9GIEJVUk5TIEZST00gSEVSIFNFSVpVUkVTLiBJTkRFWCBBRE1JU1NJT046IFRPIFBMQVNUSUMg
+U1VSR0VSWSBGT1IgTUFOQUdFTUVOVCBPRiBQQUlOIEZPTExPV0lORyBJTlNFUlRJT04gT0YgVElT
+U1VFIEVYUEFOREVSUyBUTyBGT1JFSEVBRCBPTiAxNC84Lzk4LiBBR1JFRURUTyBIQVZFIEVYUEFO
+U0lPTiBDT05USU5VRUQgSU4gSE9TUElUQUwgV0lUSCBBTkFMR0VTSUMgQ09WRVIuIEJVVCBFVkVO
+VFVBTExZIERFTUFOREVEIFRIRUlSIFJFTU9WQUwgKFdJVEggVEhSRUFUUykgQ09VUlQgQUNUSU9O
+ICYgU0VMRiBIQVJNLiBTTyBSRU1PVkVEIDUvMTAvOThPTiAxNC8xMC85OCBGRUxMIElOIFdBUkQg
+LSBXSVRORVNTRUQgU0hFJ0QgQkVFTiBIQVZFIEZSRVFVRU5UIERST1AgQVRUQUNLUyBJTiBXQVJE
+IEZPUiBTRVZFUkFMIERBWVMgLSBUSElTIFRJTUUgRElEIFNPIElORlJPTlQgT0YgU1RBRkYgLSBJ
+TiBNSUQgU0VOVEVOQ0UuIEhJVEhFQUQuIFdPVU5EUyBPUEVORUQgVVAuIFVOUkVTUE9OU0lWRSBU
+TyBWT0lDRSBGT1IgSEFMRiBIT1VSLCBUSE9VR0ggTU9WSU5HIEFMTCBMSU1CUy4gVVJHRU5UIENU
+IFNDQU4uIFNIT1dFRCBTVUJEVVJBTCBIQUVNQVRPTUEgLSBBQ1VURSBXSVRIIFBPU1NJQkxZIENI
+Uk9OSUMgQkFTRS4gVFJBTlNGRVJSRUQgVE8gTkVVUk9TVVJHRVJZLiBUUkVBVEVEIENPTlNFUlZB
+VElWRUxZIEJFQ0FVU0UgT0YgU0xJR0hUTFkgSU5GRUNURUQgU0NBTFAgV09VTkRTICYgUkVUVVJO
+RUQgVE8gSE9TUElUQUwgNyBPTiAyNi8xMC85OCBTQ0FMUCBXT1VORFMgSU5GRUNURUQgQlVUU0VU
+VExJTkcgJiBSRVFVSVJFRCBGVVJUSEVSIEFETUlTU0lPTiBGT1IgREVCUklERU1FTlQuFwcAMTQv
+OS85OCBBRE1JVFRFRCBBQ1VURUxZIFVOQUJMRSBUTyBUT0xFUkFURSBESVNDT01GT1JUIE9GIFRJ
+TUUgRVhQQU5ERVJTIC0gV0VMTEtOT1dOIFBBVElFTlQgV0lUSCBNVUxUSVBMRSBCVVJOUyBTRUNP
+TkRBUlkgVE8gRVBJTEVQU1kuIE9OIENBUkJBTUFaRVBJTkUgMTAwME1HTk9DVEUuICAgICAgIERJ
+TEFOVElOIDMwME1HTSBOT0NURS4gUEhFTk9CQVJCSVRPTkUgICAxNTBNR00gTk9DVEUuIEFOQUxH
+RVNJQSwgSU5JVElBTExZIEZPUiBSRU1PVkFMIE9GIEVYUEVOREVSUyBMQVRFUiBDQU5DRUxMRUQu
+IFBTWUNIIExJQVNPTiwgU09DSUFMIFdPUktFUiAmT1QuIERJU0NPTUZPUlQgQ09OVElOVUVEIC0g
+S05JRkUgTElLRSAgICBQQUlOUy4gMTcvOS85OCBCSVRFIFNQTElOVCBGSVRURUQuIE5BVVNFQSBV
+TkFCTEUgVE8gS0VFUCBFUElMRVBUSUMgTUVESUNBVElPTiBET1dOIElOU1BJVEUgT0YgQU5USU5B
+VVNFQSBUUkVBVE1FTlQuIEVQSUxFUFRJQyBTRUlaVVJFIDE5LzkvOTggJiAzIFggMjAvOS85OCAg
+LSBNRURJQ0FUSU9OUyBDT05DRU5UUkFUSU9OIE1FQVNVUkVEICYgV0VSRSBJTiBUSEVSQVBVVElD
+IFJBTkdFIC0gU0NBTiBCWSBORVVST0xPR0lTVCAyMS85Lzk4IFNVR0dFU1QgSU5DUkVBU0VEIFBI
+RU5ZVE9JTlRPIDMzME1HTSBOT0NURS4gMjIvOS85OCA/IENFTExVTElUSVMgTEVGVCBFWUUgU1dP
+TExFTiAmIFJFRC4gSVYgQU5USUJJT1RJQ1MmIFNXQUJTIFRBS0VOIDIzLzkvOTguIFNFRU4gQlkg
+TkVVUk9MT0dJU1QgQUdBSU4sIFBBVElFTlQgT1ZFUiAgICAgTFlFICBUSU1FIEhBREJFRU4gT04g
+QUxMIEFWQUlMQUJMRS4gICAgICAgIEVQSUxFUFRJQyBEUlVHUyAtIEVYUEVDVFMgUEFUSUVOVCBU
+TyBDT05USU5VRUhBVklORyBFUElMRVBUSUMgQVRUQUNLUy4gMjYvOS85OCBCTEFDS09VVD8gRlVS
+VEhFUiBTRUlaVVJFLiBMRUZUIEhFQVJJTkdERUNSRUFTRUQgQU5EICAgICAgICAgICAgTkVDSyBQ
+QUlORlVMICYgUFVGRlkuIDI4LzkvOTggRlJPTlQgRVhQQU5ERVJTIENBVVNJTkcgVElTU1VFIE5F
+Q1JPU0lTIC0gRVhQQU5TSU9OIFNUT1BQRUQuIE9OVE8gT1JBTCBDRUNMT1IgNS8xMC85OCBUTyBP
+VCAtIFJFTU9WQUwgT0ZORUNST1RJQyBUSVNTVUUgJiBTQ0FMUCBFWFBBTkRFUlMuIElWIEFOVElC
+SU9USUNTICYgREFJTFkgRFJFU1NJTkdTLiA3LzEwLzk4IFBPU1QgT1AgUFlSRVhJQSAzOCBERUdS
+RUVTLiBBTlRJQklPVElDUyBERUNSRUFTRUQgODkuIEsgMy0yIERFQ1JFQVNFRC4gRkVSUk9HUkFE
+ICZLICsgR0lWRU4uIDcvMTAvOTggRlVSVEhFUiBTRUlaVVJFIC0gUEFUSUVOVCBGT1VORCBPTiBG
+TE9PUi4gOC8xMC85OCBVUFNFVCBBUyBUT0xEIFNIRSBIQUQgSEFEIEEgU0VJWlVSRSBXSEVOIFNI
+RSBCRUxJRVZFRCBTSEUgSEFETidULiBBUFlSRVhJQUwgICAgICAgICAxMC8xMC85OCAmIDEzLzEw
+Lzk4IFNFVkVSQUwgRkFMTFMuIFNLVUxMIFguUiAmIEMuVCBTQ0FOIEhFQUQuIDE0LzEwLzk4IFRS
+QU5TRkVSUkVEIFRPIE5FVVJPU1VSR0VSWS4gQ1QgU0NBTiAtIEFDVVRFIFNVQiBEVVJBTCBGUk9O
+VE9QQVJJRVRBTCBSRUdJT04uIEFMVEhPVUdIIFBBVElFTlQgRElEIEhBVkUgU1VCRFVSQUwgV0hJ
+TFNUIElOIEhPU1BJVEFMLiBORVVST0xPR0lTVCBTVEFURVMgQ0xFQVJMWSBUSEFUIFNIRSBIQVMg
+SEFEQUxMIEVQSUxFUFRJQyBEUlVHUyBBVkFJTEFCTEUgJiBTVElMTCBOT1QgQUxCRSBUTyBDT05U
+Uk9MJiBFUElMRVBUSUMgQVRUQUNLUyBXSUxMIENPTlRJTlVFIC0gVEhFUkVGT1JFIE1BTkFHRU1F
+TlQgVU5BQkxFIFRPIERPIEFOWU1PUkUgVEhBTiBUSEVZIFdFUkUgRE9JTkcuvwEAT0JFU0lUWSwg
+RElBQkVUSUMgV0lUSCBTTEVFUCBBUE5PRUEgQU5EIEFTVEhNQS4gIExPTkdTVEFORElORyBJTkNJ
+U0lPTkFMIEhFUk5JQSxQUkVTRU5UUyBXSVRIIEFCRE9NSU5BTCBQQUlOLiAgSEVSTklBIElSUkVE
+VUNJQkxFLiAgVVJHRU5UIFNVUkdJQ0FMIFJFUEFJUi4gIEFURElTQ0hBUkdFIE9OIDIvMiBUSEUg
+U0tJTiBBVCBMT1dFUiBFTkQgT0YgV09VTkQgIkRVU0tZIiBBTkQgSVRTIFZJQUJJTElUWSBRVUVT
+VElPTkVELiAgUEFUSUVOVCBSRUFETUlUVEVEIDE2LzIgV0lUSCBORUNST1NJUyBPRiBTS0lOIEFS
+T1VORCBXT1VORCBFREdFUywgQVJFQSAyMFg4Q00uICBUSElTIFdBUyBXSURFTFkgRVhDSVNFRCBB
+TE9ORyBXSVRIIE5FQ1JPVElDIEZBVCBBTkQgRURHRVMgUFVMTEVEIFRPR0VUSEVSIC0gQUxMIFdF
+TEwgVkFTQ1VMQVJJU0VELiAgTk8gUFJPQkxFTVMgUkVDT1JERUQuyQAASVJSRURVQ0lCTEUgSU5D
+SVNJT05BTCBIRVJOSUEgLSBSRVBBSVJFRC4gIFBPU1QgT1AvUFJFIERJU0NIQVJHRSBQQVRJRU5U
+J1MgQUJET01JTkFMIFNLSU4gTE9PS0VEIERPVUJURlVMTFkgVklBQkxFLiAgUkVBRE1JVFRFRCAx
+Ni8yLzk4IFdJVEggTkVDUk9TSVMgT0YgRkFUIEFORFNLSU4sIFJFUVVJUklORyBSRS1FWENJU0lP
+TiBBTkQgU1VUVVJJTkcuxwIAS05PV04gQ0FSQ0lOT01BIFBOQUNSRUFTIFdJVEggSEVQQVRJQyBT
+RUNPTkRBUlkuIDQuMy45OCBBRE1JU1NJT04gRk9SIEJMT09EIFRSQU5TRlVTSU9OIFdIRU4gSEFF
+TU9HTE9CSU4gNzAuIEZFTFQgVU5XRUxMIERVUklORyAzUkQgVU5JVCwgQ0hFQ0tFRCBPVVQgQlkg
+SE9VU0UgU1VSR0VPTi4gRkVFVCBDT0xEIEFORCBXRUFLIEFORCBCUklFRkxZIExPU1QgQ09OU0NJ
+T1VTTkVTUy4gVFJBTlNGVVNJT04gSEFMVEVEIEZPUiAzMCBNSU5VVEVTIFRIRU4gQ09NUExFVEVE
+LiBQQVRJRU5UIEtFUFQgSU4gRk9SIE9CU0VSVkFUSU9OLCBTVElMTCBGRUVMSU5HIFVOV0VMTCBE
+SVNDSEFSR0VEIDYuMyBBTkQgUkVBRE1JVFRFRCBIT1VSUyBMQVRFUiAoSU5ERVgpIFdJVEggRkVW
+RVIuIEJMT09EIENVTFRVUkVTR1JFVyBFQ09MSSwgU0VOU0lUSVZFIFRPIEFNT1hJTC4gVFJFQVRF
+RCBXSVRIIEFVR01FTlRJTiwgRElTQ0hBUkdFRCBBRlRFUiAzIERBWVNUTyBDT01QTEVURSBDT1VS
+U0UuIFRIRVJFIElTIE5PIE1FTlRJT04gT0YgQU4gSU5WRVNUSUdBVElPTiBPRiBUSEUgQkxPT0Qg
+VFJBTlNGVVNJT04gQVMgU09VUkNFIE9GIFNFUFNJUyBUSE9VR0ggRkFNSUxZIFJBSVNFRCBUSEUg
+UVVFU1RJT04uIE5FWFQgQURNSVNTSU9OIEZPUlNBR0lUVEFMIFNJTlVTIFRIUk9NQk9TSVMsIFJF
+TEFURUQgVE8gQ0FOQ0VSIEJVVCBOT1QgVE8gQkxPT0QgVFJBTlNGVVNJT04unAIANjQgWUVBUiBP
+TEQgTUFMRS4gS05PV04gQ0FSQ0lOT01BIFBBTkNSRUFTIFdJVEggSEVQQVRJQyBTRUNPTkRBUklF
+Uy4gNC8zLzk4IC0gNS8zLzk4IElOIEhPU1BJVEFMIEZPUiBCTE9PRCBUUkFOU0ZVU0lPTiBGT1Ig
+QU5BRU1JQS4gUkVDSUVWRUQgMyBVTklUUyBQQUNLRUQgUkVEQ0VMTFMuIERJU0NIQVJHRUQgNS8z
+Lzk4IE1PUk5JTkcuIChGRUxUIFVOV0VMTCBBVCAxODM1IEhPVVJTLCA0LzMvOTgpLiA2LzMvOTgg
+MDIzMCBSRUFETUlUVEVELiBGRVZFUklTSCwgR0VORVJBTCBVTldFTExORVNTLiA3LzMvOTggRSBD
+T0xJIElOIEJMT09EIENVTFRVUkUuIFNFTlNJVElWRSBBTU9YSUNJTExJTi4gVy5DLkMgNy40LiA4
+LzMvOTggQVBZUkVYSUFMLiA5Jy8zLzk4IElORkVDVElPTiBSRVNPTFZJTkcgT05BVUdNRU5USU4u
+IERJU0NIQVJHRUQuIElNUFJFU1NJT046IFRIRSBUSU1JTkcgU1VHR0VTVCBTVFJPTkdMWSBUSEFU
+IFRISVMgSVMgQSBUUkFOU0ZVU0lPTiBSRUxBVEVEIEJBQ1RFUklBRU1JQSBBTkQgU08gQU4gQURW
+RVJTRSBFVkVOVC4gVEhFIElORkVDVElPTiBNQVkgQkUgUkVMRUFURUQgVE8gVEhFIEZFRUxJTkcg
+T0YgVU5XRUxMTkVTUywgRFVSSU5HIFRIRSBUUkFOU0ZVU0lPTiBPRiBUSEUgVEhJUkQgVU5JVCBP
+RlBBQ0tFRCBDRTwAICAATExTIEFUIDE4MzUgT04gNC8zLzk4Lt4FADQ1IFlFQVIgT0xEIFdPTUFO
+LCBESVNBQkxFRCBGUk9NIEhFQUQgSU5KVVJJRVMgSU4gTU9UT1IgVkVISUNMRSBBQ0NJREVOVCBC
+VVQgTElWSU5HIElOREVQRU5ERU5UTFkuIEJBRCBGQU1JTFkgSElTVE9SWSBPRiBDT1JPTkFSWSBE
+SVNFQVNFLiAoRkFUSEVSIE1ZT0NBUkRJQUwgSU5GQVJDVElPTiA0OCwgU0lTVEVSIE1ZT0NBUkRJ
+QUwgSU5GQVJDVElPTiAzNikuIEtOT1dOIFRPIEhBVkUgSVNDSEFFTUlDIEhFQVJUIERJU0VBU0Ug
+SEVSU0VMRiwgT04gTklUUkFURVMuIEFETUlUVEVEIFZFUlkgSUxMICgxMy4yOCBTRUVOIEZJUlNU
+IEFUIEVNRVJHRU5DWSBERVBBUlRNRU5ULCBMRUZUIFRIRVJFIEFUIDE2MDAgRk9SIFdBUkQpLiBO
+T1RFUyBFWFRSRU1FTFkgU1BBUlNFLCBOTyBFTEVDVFJPQ0FSRElPR1JBTVMgSU4gRklMRS4gU0hF
+J0QgQkVDT01FIFNVRERFTkxZIFVOV0VMTCBXSElMRSBHQVJERU5JTkcgNiBEQVlTIEVBUkxJRVIs
+IFNBVyBHUDE5LjEwLCBOTyBESUFHTk9TSVMgTUFERS4gTk9XIE9OIDIzLjEwIEhBRCBDQURJT0dF
+TklDIFNIT0NLLCBBTkQgRklORElOR1MgT0YgSU5GRVJPLUxBVEVSQUwgTVlPQ0FSRElBTCBJTkZB
+UkNUSU9OIChMQUNUSUMgQUNJRCBERUhZRFJPR0VOQVNFIDE1NzcgIHtOSVRSQVRFIDIzMC00NjB9
+LCBDSyAxMjAxICgyNC0xNzApIENLTUIgMjI4ICg8MjUpLiBBTFRIT1VHSCBTRUVOIEJZIENPVU5T
+RUxMRVIgSU4gRU1FUkdFTkNZREVQQVJUTUVOVCBOTyBDT01NRU5UUyBGUk9NIEhJTSBBTkQgQUxM
+IDMgUEFHRVMgT0YgTk9URVMgRlJPTSBPTkUgUEVSU09OICg/IEhPVVNFIFNVUkdFT04sID8gUkVH
+SVNUUkFSKS4gUEFUSUVOVCBUUkFOU0ZFUlJFRCBUTyBJTlRFTlNJQ0UgQ0FSRSBVTklUIEFORCBJ
+TU1FRElBVEVMWSBTVEFSVEVEIE9OIERPQlVUQU1JTkUgNU1HL0tHL01JTiBBVCAxNjE1IFRIRU4g
+IEdJVkVOIEZSVVNFTUlERSA0ME1HLiBOTyBDSEVTVCBYUkFZIFJFUE9SVEVEIE5PIEJMRCBHQVNF
+UyBSRVBPUlRFRCBET0JVVEFNSU5FIElOQ1JFQVNFRCBUTyAxMCBNRy9LRy5NSU4gQVQgMTYyMCBS
+RUdJU1RFUkVEIE1FRElDQUwgT0ZGSUNFUiBUUllJTkcgVE8gUFVUIElOIENFTlRSQUwgVkVOT1VT
+IFBSRVNTVVJFIExJTkUgQVQxNjIwLCBQQVRJRU5UIEhBUyBSRVNQSVJBVE9SWSBUSEVOIENBUkRJ
+QUMgQVJSRVNULiBDUFIgQU5EIElOVFVCQVRJT04gUkVTVVNDSVRBVElPTi4gQ09OU1VMVEFOVCBQ
+UkVTRU5UIEJVVCBOTyBJTkRJQ0FUSU9OIE9GIFdITyBFTFNFLiBBRFJFTk9MSU5FLCBBVFJPUElO
+RSBHSVZFTi4gRUxFQ1RST01FQ0hBTklDQUwgRElTU09DSUFUSU9OIERFU0NSSUJFRCBCWSBSRUdJ
+U1RFUkVEIE1FRElDQUwgT0ZGSUNFUiwgTk8gTUVOVElPTiBPRiBXSEFUIFJIWVRIRU0gUEFUSUVO
+VCBJTiBBVCBBTlkgU1RBR0UuIFJIWVRITSBTVFJJUCAgQVQgUkVMRVZBTlQgVElNRSBBUFBFQVJT
+IFRPIFNIT1cgQ09ORklSTUVEIEVMRUNUUklDQUwgQUNUSVZJVFkgSU4gSlVOQ1RJT05BTCBSSFlU
+SE0uUwIARkFNSUxZIEhJU1RPUlkgTVlPQ0FSRElBTCBJTkZBUkNUSU9OIEZBVEhFUiBNSSA0OCwg
+U0lTVEVSIE1JIDM2LCBHUkFORE1PVEhFUiBNSS4xNy4xMC45OCBTVURERU4gQU5HSU5BIE9OU0VU
+IEFTV0VMTCBBUyBDSEVTVCBQQUlOIFdISUxFIEdBUkRFTklORyAtIFNXRUFUSU5HIENIRVNUIFRJ
+R0hUTkVTUyBTRVZFUkFMIERBWVMuIDE5LjEwLjk4IFdPUlNFLCBUSE9VR0hUIFRPIEhBVkUgVklS
+QUwgSUxMTkVTUy4gUEVSU0lTVEFOVExZIFRJUkVEIFNXRUFUSU5HIFNFVkVSRSBDSEVTVCBUSUdI
+VE5FU1MgTFlJTkcgRE9XTiBHUk9TUyBGQVRJR1VFLjIzLjEwLjk4QURNSVRURUQgV0lUSCBCUC4g
+VEhFUkVGT1JFIEFDVVRFIElORkVSSU9SIE1ZT0NBUkRJQUwgSU5GQVJDVElPTiBXSVRIIENBUkRJ
+T0dFTklDIFNIT0NLLCBDTEVYQU5FLCBET0JVVEFNSU5FICgyMCBNTFMgT05MWSBHSVZFTiksIEZS
+VVNFTUlERSwgQURSRU5BTElOLiBFTEVDVFJPQ0FSRElPR1JBTSAxNTAvTUlOIEFQUFJPWElNQVRF
+TFkuIE5PIFBVTFNFLiBQLkQgRUxFQ1RST01FQ0hBTklDQUwgRElTQVNPU0NJQVRJT04uIERJRUQg
+MTY1NSBQUkVTVU1FRCBJTkZBUkNUSU9OIDE3LjEwLgcDAElOREVYIEFETUlTU0lPTiBGT1IgUklH
+VCBUT1RBTCBLTkVFIEpPSU5UIFJFUExBQ0VNRU5UIElOIE9CRVNFLCBBU1RITUFUSUMgV09NQU5X
+SVRIIFJIRVVNQVRPSUQgQVJUSFJJVElTLiBJTiBUSEVBVFJFIFNQSU5BTCBORUVETEVTIEFMTCBU
+T08gU0hPUlQgVE8gUkVBQ0ggRFVSQS4gU08gQVRURU1QVEVEIEdFTkVSQUwgQU5FQVNUSEVUSUMg
+QlVUIEZBSUxFRCBUTyBJTlRVQkFURS4gVEhFUkUgSVMgTk8gTUVOVElPTiBPTiBBTkFFU1RIRVRJ
+QyBSRUNPUkQgT0YgQU5ZIERSVUdTIE9USEVSIFRIQU0gVEVNQVpFUEFNIChOT1QgU1VSRSBXSEVO
+IEdJVkVOKSBBTkROT05FICBUTyBJTkRVQ0UgQU5BRVNUSEVTSUEgT1IgUFJPVklERSBSRUxBWEFU
+SU9OLiBQUkVTVU1BQkxZIEJPVEggV0VSRSBHSVZFTiBJRiBJTlRVQkFUSU9OIEFUVEVNUFRFRCAi
+VU5BQkxFIFRPIElOVFVCQVRFIE9SIElOU0VSVCBMLiBNQVNLIiBOT1RFIFNBWVMgIiBQQVRJRU5U
+IEFXT0tFIi4gUEFUSUVOVCBWRVJZIEFOTk9ZRUQgVEhBVCBTSEUgSEFEIFBSRVZJT1VTTFkgQkVF
+TiBBRE1JVFRFRCAoIE5PVkVNQkVSMTk5NykgRk9SIFRISVMgT1BFUkFUSU9OIEFORCBCRUVOIFRV
+Uk5FRCBET1dOIEJZIEFOQUVTVEhFVElTVCBBUyBUT08gR1JFQVQgQSBSSVNLLiBTRU5UIE9VVCBQ
+QVRJRU5UUyBUTyBMT09TRSAxMCBLRyBXRUlHSFQgKEZST00gMTEwKSBBTkQgQUNISUVWRUQgTE9T
+UyA3IEtHLiBPUEVSQVRJT04gUkVTSEVEVUxFRCBBTkQgRE9ORSAyNS4zIFVOREVSIFNQSU5BTCBB
+TkFFU1RIRVRJQy4BAgA1MCBZRUFSIE9MRCBGRU1BTEUuIFNNT0tFUi4gNi85NiBBU1RITUEgMjQg
+SE9VUlMgVkVOVElMQVRJT04uIDEyLzk2IEFTVEhNQS4gNS85N0FTVEhNQS4gNC8xMS85NyBSSEVV
+TU9UT0lEIEFSVEhSSVRJUyBIQU5EUyBBTkQgS05FRVMuIDUvMTEvOTcgRk9SIFRLSlIuIFNVUkdF
+UllOT1QgVU5ERVJUQUtFTiBBUyBBTkFFU1RIRVRJU1QgVU5IQVBQWSBXSVRIIEhFUiBDT05ESVRJ
+T04gLSBJSEQgT0JFU0lUWSBDT1JELiBBU1RITUEuICgxMDJLRykgTUVEUyBCUklDRVJZTCwgU0VS
+RVZFTlMtIEZMSVhPVElERSA1MDBNRyBUSEVPUEhZTExJTkUgNDAwLCBWRU5UT0xJTiA1TUcgMlgg
+REFJTFkgU09TLiBQUkVETklTT05FIDE1TUcuIDE3LzMvOTggUkVBRE1JVFRFRCBGT1IgVEtKUi4g
+QU5BRVNUSEVUSVNUVU5BQkxFIFRPIERPIFNQSU5BTC4gVU5BQkxFIFRPIElOVFVCQVRFIEZPUiBH
+QS4gVkVSWSBVUFNFVCBXSEVOIEVYUExBSU5FRC4gMjQvMy85OCBUS0pSIC0gU1BJTkFMIEFOQUVT
+VEhFVElDLiA2LzQvOTgSAwBFTERFUkxZIE1BTiBXSVRIIExBQkVMIEdPVVQsIFRIRSBTVUJTRVFV
+RU5UIDFYIElOREVYIEFETUlTU0lPTiBESUFHTk9TRUQgQVMgUkhFVU1BVE9JRCBJTiBBTk9USEVS
+IEhPU1BJVEFMIChDTElOSUNBTCBTWU5EUk9NRSwgU0hPV0VEIFBPU0lUSVZFIFJIRVVNQVRPSUQg
+VEVTVCxFU1IgMTEzKSBTTyBNSVNTRUQgRElBR05PU0lTLiBJTkRFWCBBRE1JU1NJT04gV0FTIEZP
+UiBBIEFORCBSIFRSQU5TRkVSIEFGVEVSIEFETUlTU0lPTiBUTyBTVVBSSUNBTCBXQVJEIFdJVEgg
+UklHSFQgTEVHIENFTExVTElUSVMgUExVUyBCQUxJVVMgQ1lTVCwgTk8gREVFUCBWRU5PVVMgVEhS
+T01CT1NJUy4gQ0VMTFVMSVRJUyBGUk9NIEZPT1QgVE8gTUVESUFMIFRISUdIIC0gU0VWRVJFLiBB
+VCBBIEFORCBSIE5PVEVEIFJJR0hUIEtORUUgU1dPTExFTiBBTkQgUEFJTkZVTC4gQVNQSVJBVEUg
+LSBDTE9VRFkgQU5EIEJMT09EIFNUQUlORUQsIEhJR0ggUFJPVEVJTiwgOTAlIFBPTFlNT1JQSFMs
+IExJR0hUIEdST1dUSCBTVEFQSCBFUElERVJNSURJUy4gQVNTVU1FRCBUTyBCRSBJTkZFQ1RJVkUg
+QVJUSFJJVElTIC0gQVQgV0FTSCBPVVQgTE9TUyBPRiBGSUJSSU4gSU4gSk9JTlQsIEFORCBDTE9V
+RFkgRkxVSUQuIFNFVFRMRUQgV0lUSCBJViBGTFVDTE9YLiBSRUFETUlUVEVEIFRPIEFOT1RIRVIg
+SE9TUCAyMC4xMC45OSBXSVRIIFJJR0hUIEtORUUgU0VQVElDIEFSVEhSSVRJUyBBR0FJTi4gVEhJ
+UyBUSU1FIEdST1VQIEcgSEFFTUlMWVRJQyBTVFJQVE9DT0NDSSBUUkVBVEVEIFdJVEggUEVOSUNJ
+TExJTi7wBQA2OCBZRUFSIE9MRCBNQUxFLiBIWVBFUlRFTlNJT04sIEdPVVQsIFJIRVVNQVRPSUQg
+QVJUSFJJVElTLiBIQUQgQkVFTiBJTiBTVVJHSUNBTFdBUkQgMjIvOS85OC02LzEwLzk4IEZPUiBD
+RUxMVUxJVElTIE9GIFJJR0hUIExFRy4gVFJFQVRFRCBXSVRIIElWIEFOVElCSU9USUNTLjYvMTAv
+OTggVFJBTlNGRVJSRUQgVE8gQVQgJiBSIFVOSVQgRk9SIFJFSEFCSUxJVEFUSU9OLiA4LzEwLzk4
+IFBBSU5GVUwgUklHSFQgS05FRSBBU1BJUkFURUQuIDkvMTAvOTggQVNTRVNTTUVOVCBPRiBMT1cg
+R1JBREUsIFBBUlRJQUxMWSBUUkVBVEVEIFNFUFRJQyBBUlRIUklUSVMuIChHUkVFTiBDT0FHVUxB
+UiBORUdBVElWRSBTVEFQSFlMT0NPQ0NVUykgVFJFQVRFRCBXSVRIIEZMVUNMT1hBQ0lMTElOLiBE
+SVNDSEFSR0VEIDE2LzEwLzk4IExFVFRFUiBCWSBSSEVVTUFUT0xPR0lTVCA4LzEyLzk4IFNVR0dF
+U1RTIFRIQVQgTUFZIEFMTCBIQVZFIEJFRU4gRFVFVE8gQSBSVVBUVVJFRCBCQUtFUlMgQ1lTVCBS
+QVRIRVIgVEhBTiBDRUxMVUxJVElTIEFORCBTRVBUSUMgQVJUSFJJVElTIEFORCBKVVNUUFVUIE9S
+IEhZRFJPWFlDSExPUk9RVUlOIFdJVEggQSBSRUNPTU1FTkRBVElPTiBGT1IgTUVUSE9UUkVYQVRF
+IElOIFRIRSBGVVRVUkUuSU1QUkVTU0lPTjogSUYgSU5ERUVEIFRIRSBESUFHTk9TSVMgT0YgQ0VM
+TFVMSVRJUyBBTkQgU0VQVElDIEFSVEhSSVRJUyBXRVJFIE1JU1RBS0VOLCBBTkQgSVQgV0FTIFJF
+QUxMWSBBTEwgRFVFIFRPIEEgUlVQVFVSRUQgQkFLRVJTIENZU1QsIFdISUNIIFNFRU1TIExJS0VM
+WSBBTkQgSVMgVEhFIE9QSU5JT04gT0YgQSBTUEVDSUFMSVNUIFJIRVVNT1RPTE9HSVNULCBUSEVO
+IFRIRSBBRE1JU1NJT04gVE8gSE9TUElUQUxXQVMgUFJPQkFCTFkgTkVFRExFU1NMWSBMT05HLiBI
+QUQgVEhFIENPUlJFQ1QgRElBR05PU0lTIEJFRU4gTUFERSBIRSBXT1VMRCBIQVZFQkVFTiBPTiBB
+TiBBUFBST1BSSUFURSBESVNFQVNFIE1PRElGWUlORyBBR0VOVCBTVUNIIEFTIE1FVEhPVFJFWEFU
+RSBBTkQgSVMgTElLRUxZIFRPIEhBVkUgQkVFTiBGSVQgRk9SIERJU0NIQVJHRSBTT09ORVIuIEhJ
+UyBUT1RBTCBBRE1JU1NJT04gV0FTIDIyLzkvOTgtNi8xMC85OD0gMTQgREFZUyBJTiBTVVJHRVJZ
+IDYvMTAvOTgtMTYvMTAvOTggPSAxMCBEQVlTIElOIEFUJlIuIDI0IERBWVMgVE9UQUwuIElUIE1B
+WUJFIEFTU1VNRUQgVEhBVCBDT1JSRUNUIERJQUdOT1NJUyBBTkQgQVBQUk9QUklBVEUgVFJFQVRN
+RU5UIFdPVUxEIEhBVkUgKENPTlNFUlZBVElWRUxZKSBIQUxWRUQgVEhFIERBWVMgSU4gSE9TUElU
+QUwuIDogMTIgREFZUyBEVUUgVE8gTUlTRElBR05PU0lTLiBTVUJTRVFVRU5UTFkoMjIvMTAvOTkp
+IEhFIERJRCBIQVZFIEEgRE9DVU1FTlRFRCBTRVBUSUMgQVJUSFJJVElTIEJVVCBQT1NTSUJMWSBU
+SElTIElUIFNFTEZJUyBEVUUgVE8gVEhFIFBSSU9SIElOU1RSVU1FTlRBVElPTiBPUiBJUyBBIENP
+TVBMSUNBVElPTiBPRiBVTkRFUkxZSU5HIFJIRVVNQVRPSUQgQVJUSFJJVElTLv4CAElOREVYIEFE
+TUlTU0lPTiBGT1IgRlVTSU9OIERJUCBKT0lOVCBSSUdIVCBSSU5HIEZJTkdFUiAtIFRISVMgV0FT
+IFNVQ0NFU1NGVUwgQVRGT0xMT1cgVVAgMiBNT05USFMgTEFURVIuIEJBQ0tHUk9VTkQsIEFWVUxT
+SU9OIE9GIEZSQUdNRU5UIERJU1RBTCBQSEFMQU5YIFJJR0hUUklORyBGSU5HRVIsIElOSlVSWSBV
+TktOT1dOIFRPIE1FIE9QRU4gUkVEVUNUSU9OIElOVEVSTkFMIEZJWEFUSU9OIDE0LjguOTcgLSBT
+Q1JFVy4gTk8gTUVOVElPTiBPRiBTVEFSVEVEIFRFTkRPTiBMQVRFUkFMIE9QRVJBVElPTi4gVEhF
+TiBQQVRJRU5UIFdBUyBTUExJTlRFRCBBTkQgTEFURVIgQkVHQU4gRVhFUkNJU0UsIEFGVEVSIFNP
+TUUgVU5LTk9XTiBQRVJJT0QgVEhFIEQuSS5QIEpPSU5UIFdPVUxETidUIEZMRVguU08gUkVPUEVS
+QVRFRCAxNi4xMC45NyAtIFRFTkRPTiBSVVBUVVJFRCBKVVNUIERFRVAgVE8gRElTVEFMIEFOTlVM
+QSBQVUxMWSBBTkQgQ09VTEROJ1QgIEJFIFNUUkVUQ0hFRCBCQUNLIFRPIFBST1BFUiBQT1NJVElP
+Ti4gU08gU1VSR0VPTiBESUQgQSBURU5PREVTSVMgT0YgRElQSk9JTlQgQU5EIFNVVFVSRUQgRkRQ
+IFRFTkRPTiBUTyBUSEUgU1BMSU5UIEZEUyBURU5ET04uIE5PIEZPTExPVyBVUCBSRUNPUkRFRCBO
+RVhUIEVOVFJZIElTIFRIRSBJTkRFWCBBRE1JU1NJT04gQU5EIElUIElTIFNIT1JUIE9OIERFVEFJ
+TCAtIEpVU1QgU0FZUyAiSEUgVU5GT1JUVU5BVEVMWSBSRVJVUFRVUkVEIFRIRSBSRVBBSVIiLCBI
+RU5DRSBBUlRIUk9ERVNJUy5sAgAyNyBZRUFSIE9MRCBNQUxFLiBBVlVMU0lPTiBGUkFDVFVSRSBE
+SVNUQUwgUEhBTEFOWCBSIFJJTkcgRklOR0VSIDE0LzgvOTcgUkVRVUlSRUQgT1JJRi4gMTYvMTAv
+OTcgUlVQVFVSRSAoP0NBVVNFKSBPRiBGTEVYT1IgVEVORE9OLiBURU5PREVTSVMgUEVSRk9STUVE
+LiBSRVBBSVJSVVBUVVJFRCAoP0RBVEUpIEFORCBFTEVDVEVEIFRPIEFSVEhST0RFU0UgVEhFIERJ
+U1RBTCBJTlRFUkZIQUxBTkdFQUwgSk9JTlQuIDIyLzEvOTggKElOREVYKSBBUlJBTkdFRCBBRE1J
+U1NJT04gRk9SIEFSVEhST0RFU0lTIE9GIERJUCBKT0lOVC4gVU5DT01QTElDQVRFRC4gRElTQ0hB
+UkdFRCAyMy8xLzk4LiBESVNDVVNTSU9OOiBJUyBUSEUgVEVORE9OIFJVUFRVUkUgQU4gQURWRVJT
+RSBDT05TRVFVRU5DRSBPRiBUSEVPUklHSU5BTCBPUEVOIFJFRFVDVElPTiBBTkQgSU5URVJOQUwg
+RklYQVRJT04gT0YgVEhFIEZSQUNUVVJFRCBQSEFMQU5YID8gTk8gTk9URSBPRiBURU5ET04gSU5K
+VVJZIEFUIFRJTUUgT0YgT1BFUkFUSU9OICgxNC85Lzk3KS4gUFJFU1VNQUJMWSBBQlJBU0lPTiBC
+WSBUSEUgQk9ORSBTQ1JFVyBPUiBCT05FIEZSQUdNRU5UUyBJUyBUSEUgQ0FVU0UgT0YgVEhFIFRF
+TlNPTiBSVVBUVVJFLigDAElOREVYIEFETUlTU0lPTiBGT1IgRS5VLkEsIEQgJiBDLCBQT0xZUEVD
+VE9NWSAmIEhZU1RFUk9TQ09QWS4gUE9MWVAgKENFUlZJQ0FMKSBGT1VORCBBVCBUSU1FIE9GIENF
+UlZJQ0FMIFNNRUFSIFRFU1QuIEFUIE9QRVJBVElPTiBOTyBQT0xZUCBGT1VORCwgSlVTVCBMT1RT
+IE9GIE1VQ1VTICYgTVVDT0lEIFRJU1NVRSAoQ09ORklSTUVEIEhJU1RPTE9HSUNBTExZKS4gSFlT
+VE9ST1NDT1BFIFBBU1NFRCBXSVRIIEVBU0UsQlVUIE9QRVJBVElPUiBTQVcgQk9XRUwgJiBQRVJJ
+Q09MSUMgRkFUIFNPIFJFVFJFQVRFRC4gTEFQQVJPU0NPUFkgUEVSRk9STUVELiBOT0JPV0VMIFBF
+UkZPUkFUSU9OIE9SIE9USEVSIERBTUFHRSBGT1VORC4gUEVSRk9SQVRJT04gT0YgVVRFUlVTIFNF
+RU4gT04gUklHSFQgSVNUSE1JQ0FMIFBPUlRJT04gLSBQTFVTIFBFQ1VMQUNVTEFUSVZFIEZJQlJP
+SURTIElOIFVURVJJTkUgV0FMTC4gQ0xBRk9SQU4gJiBGTEFHWUwgICBHSVZFTiBJTU1FRElBVEVM
+WS4gUEFUSUVOVCBLRVBUIE9WRVJOSUdIVCAmIFNFRU1FRCBUTyBCRSBTVEFCTEUuIEZPTExPVyBV
+UCBJTiAyIFdFRUtTIFBMQU5ORUQgQlVUIERJRE4nVCBTRUVNIFRPIE9DQ1VSLiBJTiBGRUJSVUFS
+WSA5OSBHUCBSRUZFUlJFRCBIRVIgQkFDS1RPIEdZTkFFIE9QIEJFQ0FVU0UgT0YgUFVSVUxFTlQg
+JiBCTE9PRCBTVEFJTkVEIERJU0NIQVJHRSBTSU5DRSBUSEUgT1BFUkFUSU9OLiBHUCBHQVZFIEFO
+VElCSU9USUNTICYgQU5USUZVTkdBTC4gQlkgVEhFIFRJTUUgUEFUSUVOVCBTRUVOIEFUIENMSU5J
+QyBIRVIgUFJPQkxFTUhBRCBSRVNPTFZFRC68AQAxLzkvOTggUkVGRVJSRUQgRk9SIFJFVklFVyBP
+RiA/Q0VSVklDQUwgUE9MWVAuICAyMS85Lzk4IFJFVklFV0VEIEFUIENMSU5JQyAtIEVVQUFORCBI
+WVNURVJPU0NPUFkgUExBTk5FRC4gIDIyIC0gMjMvMTAvOTggQURNSVRURUQgQU5EIEVVQSBDQVJS
+SUVEIE9VVCAtIEFUIEhZU1RFUk9DT1BZIFBFUkZPUkFUSU9OIE9GIFVURVJVUyAoUklHSFQgSVNU
+SE1JQUwgUE9SVElPTikuICBWSVNVQUxJU0VEIEFUIFNVQlNFUVVFTlRJTU1FRElBVEUgUEVJVElO
+RU9TQ09QWSAtIE5PIEJMRUVESU5HIC0gIE5PIEJPPAAgIABXRUwgSU5KVVJZLiAgMTkvMy85OCBS
+RVZJRVdFRC4gIE1PREVTVCBQRVJTSVNUQU5UIERJU0NIQVJHRSBXSElDSCBXQVMgQVQgVElNRVMg
+QkxPT0QgU1RBSU5FRC4gIFRXTyBDT1VSU0VTIE9GIEZMQUdZTC4gIE5PIERJU0NIQVJHRSBGT1Ig
+NCBXRUVLUyBQUklPUiBUTyAxOS8zLpICAFRISVMgTUFOIElTIEFOIEFMQ0hPTElDIC0gRFJJTktT
+IDUgTElUUkVTIEhPTUUgQlJFVyBEQUlMWS4gIEFMU08gVEFLRVMgMS8yIEFTUElSSU4gQU5EIFVO
+S05PV04gRE9TRSBUSUFQUk9GRU5JQyBBQ0lEIChTVVJHQU0pIEZPUiBBUlRIUklUSVMgKD9QU09S
+SUFUSUMpLiAgSU5ERVhBRE1JU1NJT04gV0lUSCBCSUcgR0FTVFJPSU5URVNUSU5BTCBCTEVFRCwg
+QUNVVEUgUE9TVEVSSU9SIERVT0RFTkFMIFVMQ0VSIChUSEVZRElETidUIFJFUE9SVCBPTiBWQVJJ
+Q0VTIEFUIEVORE9TQ09QWSkuICBCTE9PRCBUUkFOU0ZVU0lPTiBCVVQgRkFJTEVEIFRPIFNFVFRM
+RVNPIE9QRVJBVElORyBUSEVBVFJFIE9OIDEvOS85OCAtIFVMQ0VSIE9WRVJTRVdOLiAgRVZJREVO
+Q0UgT0YgUE9TVEFMIEhZUE9URU5TSU9OQVQgT1BFUkFUSU9OLiAgT04gREFZIDcgKDgvOS85OCkg
+SEUgU1BJS0VEIEEgVEVNUEVSQVRVUkUgT0YgMzguNSBERUdSRUVTLiAgQkxPT0RDVUxUVVJFUyBH
+UkVXIE1SU0EuICBIQUQgQ0FOQ09NWUNJTiBGUk9NIDEwIC0gMjAvOS85OC4gIE5PIEZPQ1VTIE9G
+IE1SU0EgRk9VTkQgLVdPVU5EIEhFQUxFRCwgTk8gQ0hFU1QgT1IgSU5UUkEtQUJET01JTkFMIElO
+RkVDVElPTiwgTk8gRU5ET0NBUkRJVElTLiAgRk9MTE9XRURVUCBCWSBESVNUUklDVCBOVVJTRS6B
+AwAxOTg3IEZPUkNFRCBUTyBTVE9QIFdPUksgQVMgQSBQTFVNQkVSIEJFQ0FVU0UgT0YgUFNPUklB
+U0lTIChTS0lOIEFORCBBUlRIUklUSVMpRElTQUJJTElUWSBQRU5TSU9OLiAgMTk4OSBBTkdJTkEg
+QVNTRVNTRUQuICBUTyBMT1NFIFdFSUdIVCBBTkQgU1RPUCBTTU9LSU5HLiAgMzEvOC85OCBBRE1J
+VFRFRCBXSVRIIEJMRUVESU5HIERVT0RFTkFMIFVMQ0VSLiAgQUJOT1JNQUwgQ0xPVFRJTkcgTUVD
+SEFOSVNNIChJTlIgMS42KSBTRUNPTkRBUlkgVE8gNSBMSVRSRVMgSE9NRSBCUkVXIERBSUxZIC0g
+SEVQQVRPTUVHQUxZIDE1Q00uICBQRVJTSVNURU5UIEJMRUVESU5HIExFRCBUTyBMQVBBUk9UT01Z
+IEFORCBPVkVSU0VXSU5HIE9GIFNQVVJUSU5HIEJMRUVERVIgSU4gQUNVVEUgRFVPREVOQUwgVUxD
+RVIuICBVTkNPTVBMSUNBVEVEIElOSVRJQUwgUkVDT1ZFUlkgVU5USUwgNy85Lzk4IFBZUkVYSUNB
+TCBBTkQgQ0hFU1QgSU5GRUNUSU9OLiAgOS85Lzk4IE1SU0EgU0VQVElDQUVNSUEgU1dBQlMgTk9T
+RSwgRFJBSU4gU0lURSwgR1JPSU4gLSBQT1NJVElWRSBNUlNBLiAgQUZURVIgVkFOQ09NWUNJTiBU
+SEVTRSBXRVJFIEJZIFRIRSAxNFRIIE5FR0FUSVZFLiAgVUxUUkFTT1VORCBTSE9XRUQgTk8gRU5E
+T0NBUkRJVElTLiAgV09VTkQgRFJFU1NJTkdTIFNUSUxMLiAgMjEvOS85OCBJTVBPUlRBTlQgRFJB
+SU5BR0UgKDUwME1MKSBXT1VORCBIRUFMSU5HLiAgU1RJTEwgRFJBSU5JTkcgQVQgRElTQ0hBUkdF
+LiAgMTcvMTEvOTggRElEIE5PVCBSRVBPUlQgRk9SIEZPTExPVyBVUC4gIERJU1RSSUNUIE5VUlNF
+IFJFR1VMQVJMWSBWSVNJVElORyBBTkQgRFJFU1NJTkcgRElTQ0hBUkdJTkcgV09VTkQuICAyLzEx
+Lzk4IEZJTkFMTFkgRFJJRUQgVVAgQU5EIFBBVElFTlQgRElTQ0hBUkdFRC5LAgBJTkRFWCBBRE1J
+U1NJT04gRk9SIFJFRE8gT0YgVFVSUCBGT1IgUFJPU1RBVElDIEhZUEVSVFJPUEhZLiBUSElTIE9Q
+RVJBVElPTiBXQVMgU1VDQ0VTU0ZVTCBBTkQgVk9JRElORyBXQVMgV0VMTCBFU1RBQkxJU0hFRC4g
+SE9XRVZFUiBQQVRJRU5UIERJRCBIQVZFIEZFVkVSIEFORCBQT1NJVElWRSBNSURTVFJFQU0gVVJJ
+TkUgKD4xMDAwIFdISVRFIEJMT09EIENFTExTLCBTVEFQSCBFUElERVJNSURJUykgT04gMk5EIERB
+WVBPU1QgT1BFUkFUSVZFLiBUUkVBVE1FTlQgV0lUSCBPTkUgRE9TRSBJViBHRU5UQU1ZQ0lOIEFO
+RCBPUkFMIEZFTkNMT1ggT04gRElTQ0hBUkdFIFdISUNIIFdBUyBOT1QgREVMQVlFRC4gRUFSTElF
+UiBUVVJQIDEzLjEuOTggLSBBUFBBUkVOVExZIFRFQ0hOSUNBTCBQUk9CTEVNV0lUSCBMQVNFUiAo
+Ik9WRVIgSEVBVEVEIikgU08gT1BFUkFUSU9OIERJU0NPTlRJTlVFRCBQQVJUIFdBWSBUSFJPVUdI
+LiBBUyBBIENPTlNFUVVFTkNFIFRIRSBQQVRJRU5UIENPVUxEIE5PVCBQQVNTIFVSSU5FIFBPU1Qg
+T1BFUkFUSVZFLCBIQUQgU1VQUkFQVUJJQyBDQVRIRVRFUkFORCBTRVZFUkFMIFRSSUFMUyBPRiBW
+T0lESU5HLnEBADE0LjEuOTggTEFTRVIgVC5VLlIuUCAtIExBU0VSIE9WRVJIRUFURUQtT1BFUkFU
+SU9OIFdBUyBBQkFORE9ORUQuIEhBRU1BVFVSSUEgKytCTE9DS0VEIENBVEhFVEVSIFRXSUNFLTMg
+V0FZIERSQUlOQUdFLiBQT1NTSUJMRSBGQUxTRSBQQVNTQUdFLVNVUFJBIFBVQklDIENBVEhFVEVS
+LCBBTlRJQklPVElDUyBHSVZFTi4gRElTQ0hBUkdFRCAyNi4xLjk4IFdJVEggU1VQUkEgUFVCSUMg
+Q0FUSEVURVIgSU4uIFJFQURNSVRURUQgMjcuMS45OCBGVVJUSEVSIFQuVS5SLlAgMjguMS45OC4g
+RkVWRVIgUE9TVC1PUEVSQVRJVkVMWSBHRU5UQU1ZQ0lOIEdJVkVOLkRJU0NIQVJHRUQgQU5EIFNV
+UFJBIFBVQklDIENBVEhFVEVSIFJFTU9WRUQgT04gMzAuMS45OBgCAElOSVRJQUwgRVZFTlQgLSBG
+QUxMIEZST00gSE9SU0UgU1VMS1kgKDIyLjQuOTgpIEtOT0NLRUQgT1VUIEFORCBGUkFDVFVSRSBS
+SUdIVCBGSVJTVCBNRVRBQ0FSUEFMLiBMQVRURVIgUkVEVUNFRCBBTkQgSyBXSVJFRCBXSEVOIElO
+IEhPU1BJVEFMLiBJTkRFWCBBRE1JU1NJT04gRlJPTSBDTElOSUMgV0hFTiBIRSBDQU1FIFdJVEgg
+SU5GRUNUSU9OIElOIERPUlNVTSBPRiBIQU5EIC0gU1RBUEggQVVSRVVTLiBBRE1JVFRFREZPUiBJ
+ViBBTlRJQklPVElDLCBESVNDSEFSR0VEIE9OIE9SQUwgUEVOSUNJTExJTiBBTkQgRkxVQ0xPWCBB
+RlRFUiAzIERBWVMuIFJFQURNSVRURUQgVFdJQ0UgTU9SRSAtIDI0LjUuOTggV0lUSCBSSUdIVCBB
+WElMTEFSWSBDRUxMVUxJVElTIEFORCA1LjYuOTggRk9SIElORkVDVElPTiBBUk9VTkQgSy1XSVJF
+Uy4gT04gTEFTVCBPQ0NBU0lPTiBIQUQgTU9SRSBGTFVDTE9YIEFORCBXSVJFUyBSRU1PVkVELiBB
+TEwgU0VUVExFRCBBTkQgSEUgV0FTIERJU0NIQVJHRUQgRlJPTSBDTElOSUMsIFdFTEwsIE9OIDEz
+LjcuOTguFQIANDIgWUVBUiBPTEQgTUFMRS4gMjIvNC85OCBKT0NLRVkgVEhST1dOIEZST00gSE9S
+U0UuIENPTU1JTlVURUQgSU5UUkFDT1JUSUNVTEFSIEZSQUNUVVJFIEZJUlNUIE1FVEFDQVJQQUwg
+T0YgUklHSFQgSEFORC4gT1RIRVIgU09GVCBUSVNTVUUgSU5KVVJJRVMuIENST1NTRUQgSy0gV0lS
+RVMgSU5TRVJURUQuIERJU0NIQVJHRUQgMzAvNC85OC4gMTMvNS85OCAoSU5ERVgpIFJFQURNSVNT
+SU9OIEZPUiBJTkZFQ1RJT04gQVJPVU5EIEstV0lSRSBTSVRFUy4gQ0VMVUxJVElTLCBBWElMTEFS
+WSBMWU1QSE9ERVJNT1BBVEhZLiBHSVZFTiAyIERBWVMgSU5UUkFWRU5PVVNBTlRJQklPVElDUy4g
+RElTQ0hBUkdFRCAxNS81Lzk4IE9OIE9SQUwgQU5USUJJT1RJQ1MuIFJFQURNSVRURUQgMjQvNS85
+OCAtIDI5LzUvOTggV0lUSCBBWElMTEFSWSBJTkZFQ1RJT04uICYgNS82Lzk4IC0gOC82Lzk4IFdJ
+VEggQ0VMTFVMSVRJUyBPRiBUSFVNQi4gSU5QUkVTU0lPTjogUE9TVCBPUEVSQVRJVkUgSU5GRUNU
+SU9OLCBXSVRIIDIgRlVSVEhFUiBSRUxBUFNFUy6zAQBQUkVWSU9VUyBJViBEUlVHIEFCVVNFLCBO
+T05FIEZPUiA3IFlFQVJTLiBIRVBBVElUSVMgQyBJTkZFQ1RJT04uIElOREVYIEFETUlTU0lPTjog
+RkVMTCBPRkYgUk9PRiwgU1VTVEFJTkVEIEZSQUNUVVJFIFRPIFJJR0hUIERJU1RBTCBSQURJVVMs
+IExFRlQgU0NBUEhPSUQsIEFORCBUQUJFTCBXRURHRSBDT01QUkVTU0lPTiBMMi4gTk8gRlJBQ1RV
+UkUgTkVFREVEIE9QRVJBVElPTi4gSU4gSE9QU0lUQUwgRk9SIFBBSU4gUkVMSUVGLiBHT1QgQUJE
+T01JTkFMIFBBSU4gREVTVEVOU0lPTiBPTiBEQVkgMiBBTkQgMywgPyBJTEVVUywgU0VUVExFRCBX
+SVRIIENPTlNFUlZBVElWRSBUUkVBVEVNRU5ULiBDT1VMRE4nVCBCRSBNT0JJTElTRUQgVElMTCBC
+QUNLIEJSQUNFIFBST1ZJREVEIEFORCBUSElTIFRPT0wzIEVYVFJBIERBWVMgQUZURVIgSVQgV0FT
+IFJFUVVFU1RFRC4LAQBBRE1JVFRFRCAyMS8xLzk4IEZBTEwgRlJPTSBST09GLiBGUkFDVFVSRSBM
+RUZUIERJU1RBTCBSQURJVVMgUklHSFQgU0NBUEhPSUQuIEFOVFdFREdFIEZSQUNUVVJFIEwuMi4g
+QkFDSyBQQUlOLiAyNC8xLzk4IENPTU1FTkNFRCBNT0JJTElTSU5HLiBGQVggU0VOVCAyNi8xLzk4
+IEZPUiBCUkFDRS4gLSBESUQgTk9UIEFSUklWRSBVTklUTCAyOS8xLzk4LiBESVNDSEFSR0VEIDMw
+LzEvOTguIFNUQUZGIERJU0FUSVNGSUVEIEJZIERFTEFZIElOIFBST1ZJRElORyBCUkFDRS57AgBU
+RU1QT1JBTCBBUlRFUklUSVMgRElBR05PU0VEIFNFUFQgOTcgT04gQkFTSVMgT0YgQ0hFTUlDQUwg
+U1gsIEhJR0ggRVNSLCBFUVVJVk9DQUwgQklPUFNZLiBHUCBCUk9VR0hUIFBSRUROSVNPTkUgRE9T
+RSBET1dOIEJVVCBDT1VMRE4nVCBHRVQgQkVMT1cgMTVNRy9EQVkgQkVDQVVTRSBPRiBSRUNVUlJF
+TlQgU1guIE9OIDYuMi45OCAoSU5ERVgpIEhFIEZPVU5EIFBBVElFTlQgVE8gSEFWRSBHTFVDT1NF
+IE9GIDQxIEFOREFETUlUVEVELiBBTFNPIE5BIDEyMC4gTk9UIFNJR05JRklDQU5UIEFDVElPTiBU
+QUtFTiwgU0lNUExZIFJFRFVDRUQgUFJFRE5JU09ORSBUTyAxME1HIEFORCBSRVRVUk5FRCBIRVIg
+VE8gR1AuIEdMVUNPU0UgU1RJTEwgSElHSCwgTkEgU1RJTEwgTE9XLiBHTyBNT05JVE9SRUQsIENP
+TlNVTFRFRCwgU1RBUlRFRCBHTElQSVpJREUgNU1HLCBCVVQgTk8gQkVORUZJVC4gUEFUSUVOVCBS
+RUFETUlUVEVEIDExLjIgV0lUSCBHTFVDT1NFIDMyLCBOQSAxMjcuIFNUQVJURUQgT04gSU5TVUxJ
+TiBBTkQgVEFVR0hULSBTRUxGIEFETUlOSVNUUkFUSU9OLiBTQVRJU0ZBQ1RPUlkgQVQgRk9MTE9X
+IFVQIDEgWUVBUiBMQVRFUiwgU1RJTEwgT04gUFJFRE5JU09ORSA4IE1HIEFORCBTVElMTCBPTiBJ
+TlNVTElOLswCADYyIFlFQVIgT0xEIEZFTUFMRSxESUFHTk9TRUQgKCBCSU9QU1kpIEFTIEhBVklO
+RyBURU1QT1JBTCBBUlRFUklUSVMgVEhSRUUgTU9OVEhBUyBQUkVWSU9VU0xZLiBPTiBQUkVETklT
+T05FIElOVElBTExZIDEwTUcgREFJTFksIElOQ1JFQVNFRCBUTyAxMk1HIEEgV0VFSyBCRUZPUkVE
+VUUgVE8gSU5DUkVBU0lORyBBUlRIUkFMWVJJQS42LzIvOTggUFJFU0VOVEVEIFdJVEggUE9MWVVS
+SUEsIFBPTFlESVBTSUEgRFlTVVJJQSAoIFRSRUFURUQgQlkgR1AgV0lUSCBUUklNRVRIT0ZSSU0p
+IEdQIE1FQVNVUkVEIEJMT09EIFNVR0FSUyBMRVZFTCBAIDQxQVNTRVNTRUQgQVMgUFJFRE5JU09O
+RSBJTkRVQ0VEIEhZUEVSR0xZQ0FFTUlBLiBQUkVETklTT05FIFJFRFVDRUQgVE8gMTAgTUcgTk9D
+VEVXSVRIIFBMQU4gVE8gUkVEVUNFIEJZIDEgTUcgUEVSIFdFRUsuQUxTTyBIWVBFUk5BVFJBRU1J
+QywgUFJPQkFCTFkgRFVFIFRPIEFDUiBJTkhJQklUT1IgKEVOQUxFUFJJQyksRElTQ0hBUkdFRCA3
+LzIvOThSRUFETUlUVEVEIDExLTE0IEZFQlVBUlkgMTk5OCBVTlRJTCBQRVJTSVNURU5UIEhZUEVS
+R0xZQ0FFTUlBIE1BTkFHRUQgV0lUSCBJTlNVTElOIElORlVTSU9OIFVOVElMIFNUQUJMRS4gRElT
+Q0hBUkdFRCBXSVRIIFNVQkNVVEFORU9VUyBJTlNVTElOIEZPUiBTRUxGIEFETUlOSVNUUkFUSU9O
+LklNUFJFU1NJT04gOiBDT05GTElDVCBPRiBTVEVSSU9EIFRIRVJBUFkuEwIASU5ERVggQURNSVNT
+SU9OIEZPUiBEQ1IgLSBEQUNUT0NZU1RPLVJISU5PU1RPTVkgLSBJTlNFUlRJT04gT0YgTEFDUklN
+QUwgRFVDVE8nRE9OQUdIVUUgVFVCRSBCRUNBVVNFIE9GIFBFUlNJU1RFTlQgRVBJUEhPUkEuIE9O
+IDIuMTAuOTggSEUgUFJFU0VOVEVEIFVSR0VOVExZIFdIRU4gVEhFIFRVQkUgQ0FNRSBPVVQgV0hF
+TiBIRSBCTEVXIEhJUyBOT1NFLiBSRVBMQUNFRCBVTkRFUiBFTkRPU0NPUElDIFNVUkdFUlkgQ09N
+QklORUQgV0lUSCBPUEhUSEFMTU9MT0dZLiBCQUNLR1JPVU5EIC0gSU5JVElBTCBOQVNBTCBQT0xZ
+UEVDVE9NWSBNQVkgOTcsIEhJU1RPTE9HWSBTSE9XRUQgSU5WRVJUSU5HIFBBUElMTE9NQSBXSElM
+RSBIQVMgSU5WQVNJVkUgUE9URU5USUFMICAgU08gV0VOVCBCQUNLIEZPUiBNT1JFIEVYVEVOU0lW
+RSBTVVJHRVJZIFRPIFJFTU9WRSBUSElTIFRVTU9VUiBPTiAyMi43Ljk3LiBJVCBXQVMgQVMgQSBS
+RVNVTFQgT0YgVEhJUyBUSEFUIEhFIEhBRCBQRVJTSVNURU5UIExBQ1JJTUFUSU9OIEhFTkNFIFRI
+RSBEQ1IuTgIANDMgWUVBUiBPTEQgRkVNQUxFLiBIQUQgUklHSFQgTEFURVJBTCBSSElOT1RPTVkg
+QU5EIE1BWElMRUNUT01ZIElOIDE5OTcgKDIyLjcuODcpIEZPUiBJTlZFUlRFRCBQQVBJTExPTUEu
+IFNJTkNFIFRIRU4gSEFTIEhBRCBFUElQSE9SQSBBIEJMSU5EIFNVTVAuIERFU0NSSUJFRCBBUyJJ
+QVRST0dFTklDIERBTUFHRSIuIDE1LjkuOTggQVJSQU5HRUQgQURNSVNTSU9OIEZPUiBSSUdIVCBF
+TkRPU0NPUElDIERBQ1JPQ1RPLSBSSElOT1BMQVNUWS4gMTYuOS45OCBMQUNIUllNQUwgRFVDVCwg
+Q0FOTlVMQVRFRCBMQUNIUllNQUwgU0FDIEVYUE9TRUQgQU5EIERFUk9PRkVELiBPJ0RPTk9HSFVF
+IFRVQkVTIElOU0VSVEVELiBESVNDSEFSR0VEIDE2LjkuOTggUE9TVCBPUEVSQVRJVkVMWS4gUkVB
+RE1JVFRFRDIuMTAuOTggLSAzLjEwLjk4IEZPUiBSRVBFQVQgT0YgRENSIEJFQ0FVU0UgT0YgQUND
+SURFTlRBTCBESVNMT0RHRU1FTlQgT0YgTydET05PR0hVRSBUVUJJTkcuIElNUFJFU1NJT046IEJP
+VEggUFJPQ0VEVVJFUyBJTiAxOTk4IFdFUiBORUNFU1NJVEFURUQgVE8gUkVQQUlSIEEgQ09NUExJ
+Q0FUSU9OIE9GIFNVUkdFUlkgT0YgMjIuNy45Ny4FBABFTERFUkxZIExBRFkgV0lUSCBTRVZFUkUg
+SVNDSEFFTUlDIEFORCBWQUxWVUxBUiBIRUFSVCBESVNFQVNFLCBNQU5ZIEFETUlTU0lPTlMgRk9S
+IFRIRVNFIEFORCBDT05HRVNUSVZFIEhFQVJUIEZBSUxVUkUuIE9OIDE5LjguOTggLSBBQkRPTUlO
+QUwvQ0hFU1QgUEFJTiwgQURNSVRURUQsIE5PIE1ZT0NBUkRJQUwgSU5GQVJDVElPTi4gT04gMjcu
+OC45OCBBQkRPTUlOQUwgUEFJTiwgQURNSVRURUQsIFVMVFJBU09VTkQgU0hPV0VEIENIT0xFVEhF
+SUFTSVMuIEVSQ1AgT04gNy45Ljk4IC0gMiBTVE9ORVMgUkVNT1ZFRCBGUk9NIENPTU1PTiBCSUxF
+IERVQ1QgQU5EU1BJTkNURVJPVE9NWS4gUEFUSUVOVCBOT1RJQ0UgQkxBQ0sgTU9USU9OUyBGT1Ig
+QSBGRVcgREFZUyBCVVQgSVQgRElEIFNFVFRMRS4gSEFFTU9HTE9CSU4gMTIwIE9OIERJU0NIQVJH
+RSBPTiA5LjkuOTggKCtBTFAgMjcwKS4gT04gMTEuOS45OCBBQkRPTUlOQUwgUEFJTiBBRE1JU1NJ
+T04gQ1QgU0hPV0VEIE5PIFNUT05FUyBJTiBEVUNUUy4gSEFFTU9HTE9CSU4gMTEzIEFORCBBTFAg
+NDg3LiBJTkRFWCBBRE1JU1NJT05PTiAgMjcuOS45OCBBRE1JU1NJT04gV0lUSCBOQVVTRUEgQU5E
+IERJWlpJTkVTUy4gSEFFTU9HTE9CSU4gODEsIEVORE9TQ09QWSBTSE9XRUQgQkxFRURJTkcgRlJP
+TSBTUEhJTkNURVJPVE9NWSBTSVRFLiBBRFJFTkFMSU5FIElOSkVDVEVELiBQQVRJRU5UIEhBRCA0
+IFVOSVQgQkxPT0QgVFJBTlNGVVNJT04sIE9OIDI5LjkgSEFFTU9HTE9CSU4gOTgsIE9OIDMwLjkg
+SEFFTU9HTE9CSU4gNzMgRlVSVEhFUiBUUkFOU0ZVU0lPTiwgT04gMS4xMCBIQUVNT0dMT0JJTiAx
+MTMgQU5EIFNUQVlFRCBTVEFCTEUgQUZURVIgVEhBVC4gQ09BR1VMQVRJT04gVEVTVFMgQUxMTk9S
+TUFMIFRIUk9VR0ggT1VULiBESVNDSEFSR0VEIDYuMTAuIE5PIEZVUlRIRVIgQURNSVNTSU9OIFJF
+TEFURUQgVE8gVEhJUyBQUk9CTEVNLCBGVVJUSEVSIENBUkRJQUMgQURNSVNTSU9OIEFORCBESUVE
+IDUuNS45OSBBRlRFUiAyIE1PTlRIUyBJTiBIT1NQSVRBTC7bAgA3OCBZRUFSIE9MRCBGRU1BTEUg
+QURNSVRURUQgMTkuOC45OCBBVFlQSUNBTCBDSEVTVCBQQUlOIChQQVNUIEhJU1RPUlkgSVNDSEFF
+TUlDSEVBUlQgRElTRUFTRSwgQ09OR0VTVElWRSBIRUFSVCBGQUlMVVJFIEFORCBBT1JUSUMgVkFM
+VkUgRElTRUFTRSkuIFBBSU4gQ09OU0lERVJFRCBOT04tQ0FSRElBQyBBU1QgQUxQIElOQ1JFQVNF
+RCAyNzggIDI0Mi4gQklMSVJVQklOIE5PVCBET05FIElOIFNDUkVFTi4gRElTQ0hBUkc8ACAgAEVE
+IE5FWFQgREFZIFdJVEggTk9URSBUTyBIQVZFIEJJTElSVUJJTiBET05FIEJZIEdQLiBSRUFETUlU
+VEVEIDI3LjkuOTggQUNVVEUgQ0hPTEVDWVNUSVRJUyBBTkQgU1RPTkVTLiBDT01NT04gQklMRSBE
+VUNUIEVSQ1AgLSBTUEhJTkNFUlRPT01ZIDJYIDFDTSBTVE9ORVMgUkVNT1ZFRCA/IFJFU0lEVUFM
+IFNUT05FLiAgIERJU0NIQVJHRUQgOS45Ljk4LiBSRUFETUlUVEVEIDEwLjkuOTggRlVSVEhFUiBB
+QkRPTUlOQUxQQUlOID8gQklMSUFSWSBQQUlOIFNFVFRMRUQgQk9PS0VEIEZPUiBNUkNQIERJU0NI
+QVJHRUQgMTUuOS45OC4gSU5ERVggQURNSVNTSU9OMjcuOS45OCBNQUxBRU5BIEZPUiAxIFdFRUsu
+IEhBRU1PR0xPQklOIDgxIFRSQU5TRlVTRUQuIEdBU1RST1NDT1BZIEJMRUVESU5HIFNQSElOQ1RF
+Uk9UT01ZLiBJTkpFQ1RFRCBXSVRIIEFEUkVOQUxJTkUuIERJU0NIQVJHRUQgNi4xMC45OCBIQUVN
+T0dMT0JJTiAxMTQuIE5PIEZVUlRIRVIgQkxFRURJTkcu2AIAODEgWUVBUiBPTEQgV09NQU4gNiBZ
+RUFSIFNUQUJMRSBBTkdJTkEgT04gRElMVElBWkVNIChET1NFIEhBTFZFRCBMSUdIVExZIEJFRk9S
+RUFETUlTU0lPTikgTklUUk9HTFlDRVJJTiBBTkQgQVNQSVJJTiA2NTBNRyBUV0lDRSBBIERBWS4g
+Q0hFU1QgUEFJTiwgVU5TVEFCTEUgQU5HSU5BIChJTkRFWCBBRE1JU1NJT04pLiBUUkVBVE1FTlQg
+V0lUSCBBU1BJUklOIDE1ME1HIEFORCBDTEVYQU5FIDYwTUcgVEVJQ0UgQSBEQVlTVEFSVEVEIEVW
+RU5JTkcgNi45LCBTVE9QUEVEIEFGVEVSIEFNIERPU0UgMTQuOSArIERJTFRJQVpFTSBTUiAxMjAg
+VFdJQ0UgQSBEQVlBTkQgQVRFTk9MT0wuIElNUFJPVkVEIE9WRVIgU0VWRVJBTCBEQVlTLiBPTiAx
+My45IENPTVBMQUlOVFMgT0YgUEFJTiBXSElDSCBXT1JTRUVORUQuICdDT0xMQVBTRUQnIE9OIFRP
+SUxFVCBORVhUIERBWS4gTk8gRElBR05PU0lTLiBFVkVOVFVBTExZIENUIFNIT1dFRCBMQVJHRSBS
+RVRJTk9QRVJJVE9ORUFMIEhBRU1BVE9NQSBXSVRIIFJFQ1RVUyBTSEVBVEggRVhURU5TSU9OLiBB
+TkdJT0dSQVBIWSBGQUlMRUQgVE8gU0hPVyBBIEJMRUVESU5HIFBPSU5ULiBIQiBGRUxMIFRPIDgy
+RywgICBUUkFOU0ZVU0VEIDQgVU5JVFMgQ0xFWEFORSBBTkQgQVNQSVJJTiBTVE9QUEVELiBUUkVB
+VEVEIENPTlNFUlZBVElWRUxZIEFORCBSRUNPVkVSRUQuIEFTWU1QVE9NQVRJQyBESVZFUlRJQ1VM
+QVIgRElTRUFTRSBGT1VORCBJTiBDVC4PAgA4MSBZRUFSIE9MRCBGRU1BTEUgSElTVE9SWSBPRiBD
+T1JOQVJZIEFSVEVSWSBESVNFQVNFLkFOR0lOQSBGT1IgNiBZRUFSUy42LzkvOThBRE1JVFRFRCBX
+SVRIIENIRVNUIFBBSU4gQVQgUkVTVC5UUkVBVEVEIEFTIFVOU1RBQkxFIEFOR0lOQSBXSVRIIEFT
+UElSSU4sQ0xFWEFORUFORCBBIEJFVEEgQkxPQ0tFUi4gMTIvOS85OCJTVE9NQUNIIFBBSU4iIEVQ
+SUdBU1RSSUMgVEVOREVSTkVTUy4gMTQvOS85OCBDT0xMQVBTRSwgUEFMRSwgQlAgMTEwLzUwLiAx
+NS85Lzk4IEFSVEVSSU9HUkFNIFNIT1dFRCBOTyBBQ1RJVkUgQkxFRURJTkcuIDE2LzYvOTggVUxU
+UkFTT1VORCBTSE9XRUQgUkVUUk9QRVJJVE9ORUFMIEhBRU1BVE9NQS4gMTcvOS85OCBBTlRJLUNP
+QUdVTEFOVFMgU1RPUFBFRC4gMjcvOS85OCBESVNDSEFSR0UuIFRIRSBSRVRST1BFUklUT05FQUwg
+SEFFTUFUT01BIFdBUyBQUk9CQUJMWSBDQVVTRUQgQlkgQU5USS1DT0FHVUxBTlRTIChBU1BJRVIs
+JiBQT1NTSUJMWSBTU09ESVVNIEVOT1hBUEFSSU4oIENMRVhBTkUpKUoEAEVMREVSTFksIENPUkQg
+Rk9SIExJRkUgVElNRSBPRiBTTU9LSU5HLiAgQURNSVNTSU9OIFdJVEggQ0hFU1QgSU5GRUNUSU9O
+LCBMRUZUIFBORVVNT05JQSAzMC8xMi85NyAoQU5EIEJFRk9SRSBUSEFUIDI1LzIvOTcpLiAgUkFE
+SU9MT0dJU1QgUkVQT1JURUQgIkxBUkdFIEVOQ0lSQ0xJTkcgR09JVFJFIFBVU0hJTkcgQU5EIENP
+TVBSRVNTSU5HIFRIRSBUUkFDSEVBIFBPU1RFUklPUkxZIiBXSElDSCBIRSBUSE9VR0hUIE1JR0hU
+IFJFTEFURSBUTyBQTkVVTU9OSUEuICBOTyBGVVJUSEVSIENPTU1FTlQgT04gVEhBVC4gIElOREVY
+OiBBTk9USEVSIEJPVVQgT0YgTEVGVCBMT1dFUiBMT0JFIFBORVVNT05JQSwgQUZURVIgMldLUyBB
+VUdNRU5USU4gQVQgSE9NRS4gIEFCTk9STUFMIExJVkVSIEVOWllNRVMgMzAvOSAoQUxQIDIyMSwg
+R0dUIDU4OCkgQk9USCBJTVBST1ZFRCBCVVQgTk9UIE5PUk1BTCBPTkUgV0VFSyBMQVRFUi4gIFRS
+RUFUTUVOVCBXSVRIIENFRlVST1hJTUUgT04gQURNSVNTSU9OLiAgRElBUlJIT0VBIDEyIFggMSBE
+QVkgT04gMS8xMCwgQy5ESUZGSUNJTEUgTkVHQVRJVkUsU0VUVExFRC4gIFNUQVlFRCBGRUJSSUxF
+IEFORCBXSVRIIENIRVNUIFNJR05TIFRIUk9VR0hPVVQgQURNSVNTSU9OLCBESVNDSEFSR0VEV0lU
+SCBURU1QRVJBVFVSRSAzOCBERUdSRUVTLiAgTk8gUFJFLURJU0NIQVJHRSBDSEVTVCBYLVJBWS4g
+IFJFQURNSVRURUQgMjAvMTAgV0lUSCBMRUZUIExPV0VSIExPQkUgQU5EIExVTkdVTEFSIENPTlNP
+TElEQVRJT04gQU5EIDIgREFZUyBMQVRFUiBIQUQgUklHSFQgTE9XRVIgT0xPQkUgUE5FVU1PTklB
+IEFMU08uICBUUkVBVE1FTlQgV0lUSCBDRUZUUklBWE9ORSBBTkQgVEhFTiBDTEFSSVRIUk9NWUNJ
+TiwgVEhFTiAyMi8xMCBBVUdNRU5USU4gUkVTVEFSVEVELiAgT04gNS8xMCBBTFAgMTMwIChOT1JN
+QUwpLCBHR1QgMjk5OyBPTiAyMC8xMCBBTFAgMTQ5LEdHVCA0NjQ7IE9OIDE3LzExIEFMUCA5MCwg
+R0dUIDkxLiAgTk8gUEFUSE9HRU4gR1JPV04gRlJPTSBCTE9PRCBPUiBTUFVUVU0gT04gSU5ERVgg
+T1IgU1VCU0VRVUVOVCBBRE1JU1NJT05TLCBCVVQgSU4gREVDRU1FQlIgMTk5NyBLTEVCU0lFTExB
+LpoCAFNFVkVOVFkgWUVBUiBPTEQgRkVNQUxFLkNIUk9OSUMgT0JTVFJVQ1RJVkUgQUlSV0FZUyBE
+SVNFQVNFIFNJTkNFIDE5ODAsIFdJVEggRlJFUVVFTlQgQURNSVNTSU9OIEZPUiBFWEFDQ0VSQkFU
+SU9OIE9GIFBOVUVNT05JQS4zMC85Lzk4IFVOV0VMIEZPUiBUSFJFRSBXRUVLUywgU1RBUlRFRCBP
+TiBBTlRJQklPVElDIChXSElDSD8pIFRXTyBXRUVLUyBCRUZPUkUsVEhFTiBDSEFOR0VEIFRPIFVB
+R01FTlRJTiBPTkUgV0VFSyBCRUZPUkUgQURNSVNTSU9OLiBDT1VHSCBGRVZFUiBBTkQgUklHT1JT
+IEZPUjMgREFZUy4gRElBUlJIT0VBIEFUIFRJTUUgT0YgQURNSVNTSU9OLiBUUkVBVEVEIFdJVEgg
+SVYgQ0VGVVJPWElNRS4gU1RPT0wgTkVHQVRJVkUgRk9SIEMuIERJRkZJQ0xFLjMwLzEwLzk4IERJ
+QVJSSE9FQSBIQUQgU0VUVExFRC4zMC85Lzk4IExJVkVSIEZVTkNUSU9OIFRFU1RTIEFMSyBQSE9T
+IDIyMSwgR0dUNTg4LCBBTFQ2OC42LzEwLzk4IERJU0NIQVJHRUQgT04gT1JBTCBDRUZVUklYSU4u
+SU1QUkVTU0lPTi4gQk9USCBUSEUgQ0hPTEVTVEFUSUMgUElDVFVSRSBPRiBERVJBTkdFRCBMSVZF
+IEZVTkNUSU9OIFRFU1RTIEFORCBUSEVESUFSUkhPRUEgQVJFIFBST0JMRSBDT01QTElDQVRJT04g
+T0YgVEhFIE9VVFBBVElFTlQgVFJFQVRNRU5UIFdJVEggQVVHTUVOVElOLg8DAEVMREVSTFkgQU5Y
+SU9VUyBXT01BTiBPTiBQUkVETklTT05FIDVNRyAxIERBWSBGT1IgWUVBUlMgT04gQUNDT1VOVCBP
+RiBBUFBBUkVOVCBHSUFOVCBDRUxMIEFSVEVSSVRJUy5OTyBPU1RFT1BFTklDLkhBRCBPQSBMRUZU
+IEtORUUgQU5EIEFETUlUVEVEIDEzLzggRk9SIE1FRElDQUwgQ09NUEFDVE1FTlQgUkVQTEFDRU1F
+TlQuICBHSVZFTiBJViBLRUZMRVggRk9SIDQgREFZUyAoVElMIEdPVCBESUFSUkhPRUEpLiAgUEFU
+RUlOVCBDT01QTEFJTkVEIE9GIFBBSU4gSU4gS05FRSBCVVQgV09VTkQgVkxFQU4sIEFGRUJSSUxF
+LiAgTU9CSUxJU0VELCBESVNDSEFSR0VEIDIwLzguICBSRUFETUlUVEVEIChJTkRFWCkgMjIvOCBX
+SVRIIFBBSU4gSU4gS05FRSwgREVTQ1JJQkVEIEJZIEhPVVNFIFNVUkdFT04gQVMgUkVELCBIT1Qs
+IFNXT0xMRU4sIE5PIERJU0NIQVJHRSBBTFRIT1VHSCBSRURORVNTIFdPUlNFIE9WRVIgV09VTkQu
+ICBHSVZFTiBJViBLRUZaT0wgRk9SIDEgREFZIFRIRU4gTk8gRlVSVEhFUiBNRU5USU9OIE9GIEFO
+VElCSU9USUMuICBTVVJHRU9OIFRIT1VHSFQgSU5GTEFNTUFUSU9OIE1JR0hUIEJFIERVRSBUTyBT
+VVRVUkVTIFNPIFJFTU9WRUQgVEhFTSAyMy84LCBTTElHSFRMWSBFQVJMWSwgUkVQTEFDRUQgV0lU
+SFNURVJJU1RSSVBTLiAgRElTQ0hBUkdFRC4gIFNXQUIgLSBOT1JNQUwgRkxPUkEuICBQQVRJRU5U
+IFJFVklFV0VEICBBVCBPVVRQQVRJRU5UJ1MgMjYvOCwgV09VTkQgU0xJR0hUTFkgUkVELCBIRUFM
+SU5HIFdFTEwuICBOTyBGVVJUSEVSIFBST0JMRU1TLp8BADc0IFlFQVIgT0xEIEZFTUFMRS4gUkVB
+RE1JVFRFRCBPTiBBQ0NPVU5UIE9GIFdPVU5EIElORkVDVElPTi4gTk8gU1dBQiBSRVNVTFRTLiAy
+Mi84Lzk4IC0gUkVTUE9OREVEIFFVSUNLTFkgVE8gSVYgS0VGWk9MLiBIT01FIDIzLzgvOTguIDEz
+LzgvOTggQURNSVRURUQgRk9SIExFRlRLTkVFIFJFUExBQ0VNRU5ULiBDQVJSSUVEIE9VVCBVTkVW
+RU5URlVMTFkgT04gMTMvOC85OC4gR0lWRU4gS0VGTEVYIFBPU1QgT1AgVElMTCAxNy84Lzk4LiBI
+T01FIDIwLzgvOTguIERSQUlOIC0gMTcvOC85OCBBRlRFUiBSRU1PVkFMIE5PIEdST1dUSC4gUE9T
+VCBPUCBXT1VORElORkVDVElPTiBGT0xMT1dJTkcgS05FRSBSRVBMQUNFTUVOVC4gTkVDRVNTSVRB
+VElOUyBSRUFETUlTU0lPTi4gUkVTUE9OREVEIFFVSUNLTFkgVE8gSVYgVEhFUkFQWS7uAQBJTkRF
+WDogUEVSIFZBR0lOQSBCTEVFRCBBQk9VVCAxMyBEQVlTIFBPU1QgREVMSVZFUlkuICBGRVZFUiBB
+TkQgQUNIRVMgQUxTTy4gIFRFTVBFUkFUVVJFIDM4IERFR1JFRVMuICBVTFRSQVNPVU5EIFNIT1dF
+RCBSRVRBSU5FRCBQUk9EVUNUUy4gIERJTExBVElPTiBBTkQgQ1VSRVRUQUdFIC0gUkVNT1ZFRC4g
+IEhJU1RPTE9HWSBOTyBNQUxJR05BTkNZLiAgSlVTVCBNWU9NRVRSSVVNIEFORCBDSE9SSU9OSUMg
+VklMTEkuQkxPT0QgQ1VMVFVSRVM6IEUuQ09MSSwgUkVTSVNUQU5UIFRPIEFNT1hJTCwgU0VOU0lU
+SVZFIFRPIEFVR01FTlRJTiwgQ0VGVFJJQVhPTkUuICBJTklUSUFMTFkgR0lWRU4gQVVHTUVOVElO
+IEFORCBGTEFHWUwgQUZURVIgRElMTEFUSU9OIEFORCBDVVJFVFRBR0UsIENIQU5HRUQgVE8gQ0VG
+VFJJQVhPTkUuICBDT05USU5VRUQgVkFHSU5BTCBCTEVFRElORyBGT1IgSlVTVCBBIEZFVyBEQVlT
+IFRIRU4gU1RPUFBFRC4gIFdFTEwgT04gRElTQ0hBUkdFLuQBADI3IFlFQVIgT0xEIEZFTUFMRS4g
+UDQsRzcuIFBSRU1BVFVSRSBST00gQVQgMjggV0VFS1MuIENISUxEQklSVEggQVQgVEVSVElBUlkg
+SE9TUElUQUwgKFRSQU5TRkVSUkVEIDEzIERBWVMgQkVGT1JFIEFETUlTU0lPTikuIDMgUFJFVklP
+VVMgUFJFR05BTkNJRVMgQ09NUExJQ0FURURCWSBSRVRBSU5FRCBQTEFDRU5UQS4gMi8xMi85OCBC
+TEVFRElORyBTSU5DRSBCSVJUSCwgRkVWRVIgJiBIRUFEQUNIRSBGT1IgMiBEQVlTLiBVUyBTSE9X
+UyBSRVRBSU5FRCBQUk9EVUNUUyBPRiBDT05DRVBUSU9OLiBEICYgQyBET05FIFVOREVSIEFVR01F
+TlRJTiBDT1ZFUi4gMy8xMi85OCBCTE9PRCBDVUxUVVJFIFBPU0lUSVZFIEZPUiBFIENPTEkuIEFO
+VElCSU9USUNTIENIQU5HRUQgVE8gQ0VGVFJJQVhPTkUgJiBNRVRST05JREFaT0xFLiBTRVRUTEVE
+LiA4LzEyLzk4IFRIUlVTSC4gVFJFQVRFRCBXSVRIIENMT1RSSU1BWk9MRS4gMTYvMTIvOTggRElT
+Q0hBUkdFRC40AQBJTkRFWCBBRE1JU1NJT04gRk9SIE5BU0FMIE9CU1RSVUNUVVJFIFNZTVBUT01T
+LCBBUlJBTkdFRCBTRVBUT1BMQVNUWSBBTkQgVFJJTU1JTkcgT0YgVFVSQklOQVRFUy4gIFdFTEwg
+UE9TVCBPUCBBTkQgRElTQ0hBUkdFRCBORVhUIERBWSAoMjcvMSkuICBPTiAyLzIgSEFEIDMgQlJJ
+U0sgRVBJU09ERVMgV0hJQ0ggQlJPVUdIVCBISU0gQkFDSyBUTyBFTlQgQ0xJTklDIEFORCBIRSBX
+QVMgQURNSVRURUQsIE5PU0UgUEFDS0VELiAgU0VUVExFRCBBTkQgRElTQ0hBUkdFRCAzLzIuICBU
+SEVSRSBXQVMgTk8gRVZJREVOQ0UgT0YgSU5GRUNUSU9OLucBADI1IFlFQVIgT0xEIE1BTEUuICBS
+RUNVUlJFTlQgU0lOVVNJVEUsIE9DQ0FTU0lPTkFMIE5BU0FMIE9CU1RSVUNUSU9OLCBFUElUQVhJ
+UyxTTk9SSU5HLiAgMjYvMS85OCBBUlJBTkdFRCBBRE1JU1NJT04gRk9SIFNFUFRPUExBU1RZLCBU
+UklNTUlORyBPRiBUVVJCSU5BVEVTIEFORExJTUlURUQgRU5ET1NDT1BJQyBTSU5VUyBTVVJHRVJZ
+LiAgTUlOSU1BTCBCTEVFRElORy4gIERJU0NIQVJHRUQgMjcvMS85OC4gIDIvMi85OCBBQ1VURSBS
+RUFETUlTU0lPTiBXSVRIIEJMRUVEIEZST00gTEVGVCBJTkZFUklPUiBUVVJCSU5BVEUuICBOT1NU
+UklMIFBBQ0tFRCwgR0lWRU4gSVYgRkxVSURTIEFORCBPQlNFUlZFRCBPVkVSTklHSFQuICAzLzIv
+OTggUEFDS0lORyBSRU1PVkVELCBNSU5JTUFMIEJMRUVESU5HLERJU0NIQVJHRUQuICBJTVBSRVNT
+SU9OOiBUSEUgUE9TVCBPUEVSQVRJVkUgQkxFRURJTkcgSVMgQU4gQURWRVJTRSBFVkVOVCwgQUxC
+RUlUTUlOSU1BTC58AgBJTkRFWDogUklHSFQgVE9UQUwgSElQIEpPSU5UIFJFUExBQ0VNRU5UIFJF
+VklTSU9OLCBPUklHSU5BTCAxOTg2IEJFQ09NSU5HIFVOU1RBQkxFLiAgU0hFIFNJUyBRVUlURSBX
+RUxMLCBNT0JJTElTRUQgV0VMTCwgQU5EIERJU0NIQVJHRUQ7IExBVEVSIFdFTlQgVE8gTE9ORyBU
+RVJNQ0FSRSBIT1NQSVRBTCBORUFSIEhFUiBIT01FLiAgOC8xMi85OCBBRE1JVFRFRCBGUk9NIEhP
+TUUgV0lUSCBESVNMT0NBVEVEIFJJR0hUSElQIEFGVEVSIFNJVFRJTkcgT04gVE9JTEVUIFNFQVQg
+QU5EIFRXSVNUSU5HLiAgTkVFREVEIEVBUkxZIFJFRFVDVElPTiBVTkRFUiBHRU5FUkFMIEFOQUVT
+VEhFVElDIEFORCBJVCBBUFBFQVJFRCBUTyBCRSBBTFJJR0hULiAgSE9XRVZFUiBPTiBBRE1JU1NJ
+T04gQUxTTyBIQUQgQklMQVRFUkFMIEZVTEwgVEhJQ0tORVNTIFVMQ0VSUyBPTiBIRUVMUyBPUklH
+SU5BTExZIEFDUVVJUkVEIEFUIElOREVYIEFETUlTU0lPTi5USEVSRSBSRVFVSVJFRCBERUJSSURF
+TUVOVCBVTkRFUiBHRU5FUkFMIEFOQUVTVEhFVElDIEFORCBUSEUgUklHSFQgV0FTIEdSQUZURUQu
+R1JBRlRTIEZBSUxFRCBCVVQgVUxDRVJTIFNMT1dMWSBIRUFMRUQuICBTSEUgUkVNQUlORUQgSU4g
+SE9TUElUQUwgRk9SIE1BTlkgV0VFS1NIAgBBUlJBTkdFRCBBRE1JU1NJT04gT0YgQU4gODUgWUVB
+UiBPTEQgV09NQU4gRk9SIFJFVklTSU9OIE9GIFRPVEFMIEhJUCBSRVBMQUNFTUVOVFJJR0hUIFBM
+QUNFRCBJTiAxOTg2LiBJVCBIQUQgQkVDT01FIFJBRElPTE9HSUNBTExZIExPT1NFIEJVVCBXQVMg
+QVNZTVBUT01BVElDLkEgU01BTEwgVUxDRVIgSEFEIEJFRU4gTk9URUQgT04gVEhFIExFRlQgSEVF
+TCBBVCBUSEUgUFJFQURNSVNTSU9OIENMSU5JQy4gT04gMjcvMTAvOTggQSBCTElTVEVSIFdBUyBO
+T1RFRCBPTiBUSEUgVE9QIE9GIFRIRSBSSUdIVCBGT09UICYgQlJFQUtET1dOIE9OIEhFRUxTLiBE
+SVNDSEFSR0VEIFRPIFJFSEFCSUxJVEFUSU9OIE9OIDMvMTEvOTguIFJFQURNSVNTSU9OIDgvMTIv
+OTggLSBESVNMT0NBVElPTiBSSUdIVCBUSFIgLSBSRURVQ0VEIElOIE9ULiAtIFBSRVNVUkUgQVJF
+QVMgUklHSFQgSEVFTCBOT1QgSEVBTEVEIC0gREVCUklERUQgJiBHUkFGVEVELiAoVEhFIFNLSU4g
+R1JBRlRTIFdFUkUgVU5TVUNDRVNTRlVMKS4gUkVBRE1JU1NJT04gMjUvMTIvOTkgLSBSRURJU0xP
+Q0FUSU9OIFJJR0hUIFRIUiAtIFJFRFVDRUQgSU4gRU1FUkdFTkNZLj0DAElOREVYIEFETUlTU0lP
+TiBGT1IgQVRURU1QVCAoRkFJTEVEKSBSRU1PVkFMIE9GIFJJR0hUIFVURVJJQyBTVE9ORS4gIFNU
+RU5UIFdBUyBSRU1PVkVEIEFORCBSRVBMQUNFRCBBTkQgUEFUSUVOVCBSRVRVUk5FRCBMQVRFUiBG
+T1IgUFJPQ0VEVVJFLiAgU0VRVUVOQ0U6IEtOT1dOIEJJTEFURVJBTCBSRU5BTCBTVE9ORVM7IE9O
+RSBJTiBMRUZUIFJFTkFMIFBFTFZJUywgT05FIElOIExPV0VSIEVORCBSSUdIVCBVUkVURVIuSEFE
+IExJVEhPVFJJUFNZIE9OIDI4LzkvOTguICBSRVBPUlRFRCBNSU5JTUFMIElNUEFDVCBPTiBSSUdI
+VCBTVE9ORSwgR09PRCBESVNSRVVQVElPTiBPTiBMRUZULiAgT04gMjkvOS85OCBBTlVSSUMsIFZP
+TUlUSU5HLiAgQ1JFQVRJTklORSAwLjM0LiAgTk9URUQgVE8gQkUgT05WT0xUQUVOIEFORCBJTkhJ
+QkFDRSBFSElDSCBNSUdIVCBIQVZFIENPTlRSSUJVVEVEIFRPIFBSRS1SRU5BTCBFTEVNRU5UIEJV
+VCBHRU5FUkFMTFkgVDwAICAASE9VR0hUIFRPIEJFIE9CU1RSVUNUSVZFIFVST1BBVEhZIEZST00g
+VEhFIExJVEhPVFJJUFNZLiAgQklMQVRFUkFMIEpKIFNURU5UUyBJTlRPIFVSRVRFUlMuICAxNC8x
+MC85OCBJTkRFWCBBUyBBQk9WRS4gIDIvMTEvOTggRlVSVEhFUiBVTlNVQ0NFU1NGVUwgTElUSE9U
+UklQU1kuICAxNC8xMi85OCBSRU1PVkFMIE9GIEJPVEggVVRFUklDIFNURU5UUzsgR1VJREUgV0lS
+RSBBTiBCQVNLRVRUSU5HIE9OIFJJR0hULiAgRVZFTlRVQUxMWSBSRU1PVkVEIFNUT05FLCBTVEVO
+VCBSRUlOU0VSVEVEIE9OIFJJR0hUIC0gRk9SIExBVEVSIFJFTU9WQUwgKERPTkUyMC8xLzk5KS4g
+IFNFUlVNIENSRUFUSU5JTkUgMTM3LikCAFRIRSBJTkRFWCBBRE1JU1NJT04gV0FTIEZPUiBUSEUg
+UkVNT1ZBTCBPRiBTVEVOVFMgRlJPTSBISVMgVVJJTkFSWSBUUkFDVC4gVEhFIEFETUlTU0lPTiBX
+QVMgUExBTk5FRC4gVEhFIEhJU1RPUlkgV0FTIE9GIEJJTEFURVJBTCBSRU5BTCBTVE9ORVMgV0lU
+SCBIQUQgQkVFTiBUUkVBVEVEIEJZIExJVEhPVFJZUFNZLiBUSElTIENBVVNFRCBGUkFHTUVOVFMg
+T0YgU1RPTkVTIFRPIE9CU1RSVUNUIFRIRSBVUkVURVJTIE5FQ0VTU0lUQVRJTkcgVEhFIElOU0VS
+VElPTiBPRiBTVEVOVFMgQkVDQVVTRSBUSEUgT0JTVFJVQ1RJT04gSEFEIENBVVNFRCBBQ1VURSBS
+RU5BTCBGQUlMVVJFLiBEVVJJTkcgSU5ERVggQURNSVNTSU9OIFRIRSBMRUZUIFNURU5UIFdBUyBS
+RU1PVkVELiBPTiBUSEUgUklHSFQgU0lERVNUT05FUyBQRVJTSVNURUQsIFdFUkUgVU5BQkxFIFRP
+IEJFIFJFTU9WRUQgRU5ET1NDT1BJQ0FMTFkgQU5EIExJVEhPVFJZUFNZIEZBSUxFRCBEVUUgVE8g
+RVFVSVBNRU5UIEZBSUxVUkUuIEEgUkVQRUFUIFNURU5UIFdBUyBJTlNFUlRFRCBPTiBUSEUgUklH
+SFQgU0lERS7dAwBUSElTIE1BTidTIFNUT1JZIEJFR0lOUyBXSVRIIExFRlQgVEhKUiBGUk9NIEJB
+RCBPQSBPTiAyMi81Lzk4LiAgQ0hBUk5MTFkgIFBST1NUSEVTSVMuICBPTiAyMy81IEhFIFdTIENP
+TVBMQUlOSU5HIE9GIFNZTVBUT01TIElOIExFRlQgTEVHIEFORCBXQVMgRk9VTkQgVE8gSEFWRSBX
+RUFLTkVTUyBOQUQgREVDUkVBU0VEIFNFTlNBVElPTiBMNTUxIFJFR0lPTlMuICBHT1QgV09SU0Ug
+QU5EIExBVEVSIFNMT1dMWSBJTVBST1ZFRC4gIFRIT1VHSFQgRFVFIFRPIEhBRU1BVE9NQSBDT01Q
+UkVTU0lORyBMRUZUIFNDSUFUSUMgTkVSVkUuICBPTiAyOS81LCBXSVRIIEhCQVJPVU5EIDkwIEdP
+VCBDSEVTVCBQQUlOLiAgTk8gRElBR05PU0lUSUMgRUNHIENIQU5HRVMgQlVUIEdST1AgVCBQT1NJ
+VElWRSwgU08gRElBR05PU0lTIE9GIE1JLiAgR0lWRU4gQ0xFWEFORS4gIFdPVU5EIE9PWkVEIEJM
+T09ELCBIQiBEUk9QUEVEIFRPIDcwLCBFVkVOVFVBTExZVFJBTlNGVVNFRC4gIFdPVU5EIElORkVD
+VEVEIFdJVEggRSBDT0xJICg1LzYpLiAgVEhFTiA2LyAgV09SU0UgSElQIFBBSU4gLSBQUk9TVEhF
+U0lTIERJU0xPQ0FURUQuICBJTiBPVCBDT1VMRE4nVCBSRUxPQ0FURSBTTyBIQUQgVE8gUkVPUEVO
+IE5BRCBSRUxQQUNFIEFDRVRBQlVMQVIgUE9SVElPTi4gIE9OIDEyLzYgSVQgQkVDQU1FIENMRUFO
+IFRIQVQgVEhFIExFRlQgTE9XRVIgTEVHIFdBUyBJU0NIQUVNSUMuICBBTkdJT0dSQU0gMTcvNiBT
+SE9XRUQgT0NDTFVERUQgTEVGVCBTVVBFUkZJQ0lBTCBGRU1PUkFMIEFORCBMRUZUIERFRVAgRkVN
+T1JBTCBBUlRFUklTRSBBTkQgTU9SRSBESVNUQUwgT0NDTFVTSU9OUyBBTFNPLiAgUEFUSUVOVCBQ
+UkVQQVJFRCBGT1IgQkVMT1cgS05FRSBBTVBVVEFUSU9OLSBIQUQgQSBCUklFRiBQRVJJT0QgSU4g
+QSZSIChBQ1RVQUxMWSBUSEUgSU5ERVggQURNSVNTSU9OKSBOQUQgVEhFTiBCS0EgT04gMy83Lzk4
+LiAgTEFURVIgV0VOVCBUTyBMT05HVEVSTSBDQVJFLlgDADc2IFlFQVIgT0xEIE1BTiBJTkRFWCBB
+RE1JU1NJT04gMjEvNS85OCBGT1IgTEVGVCBUT1RBTCBISVAgUkVQTEFDRU1FTlQgQU5EIElOVFJB
+T1BFUkFUSVZFIEFOVElCSU9USUNTLiAyMy81IFBBSU4gTEVGVCBGT09ULCBJU0NIQUVNSUMsIFNV
+QlNFUVVFTlQgQU5HSU9HUkFNLCBPQ0NMVVNJT04gTEVGVCBTVVBFUklPUiBGRU1PUkFMIEFSVEVS
+WSAgQU5EIERFRVAgRkVNT1JBTCBBUlRFUlkgUkVTVUxUSU5HIElOIExFRlQgQkVMT1cgS05FRSBB
+TVBVVEFUSU9OIDMvNy85OC4gMjQvNSBMRUZUIFNDSUFUSUNBIERVRSBUTyBDT01QUkVTU0lPTiBC
+WSBIRUFNQVRPTUEtIEdSQURVQUxMWSBSRVNPTFZFRC4gMjkvNSBDSEVTVCBQQUlOLCBQT1MgVE5U
+IFRST1BPTklOLVQgTVlPQ0FSRElBTCBJTkZBUkNUSU9OQ0xBWEFORSBBU1BJUklOLiBBTFNPIE1J
+TEQgTEVGVCBWRU5UUklDVUxBUiBGQUlMVVJFIEFORCBTTUFMTCBFRkZVU0lPTlMuSEIgNzcuIFNF
+VFRMRUQgQU5EIFRSQU5TRlVTSU9OLiA0LzYgQkxPT0QgT09aSU5HIEZST00gV09VTkQsIENVTFRV
+UkUgU0hPV0VEIEUgQ09MSSBHSVZFTiBBTlRJQklPVElDUy4gNi82IFRPIFRIRUFUUkUuIFBST1NU
+SEVTSVMgRElTTE9DQVRFRCwgSEFFTUFUT01BIEJSRUFLRE9XTk9GIFdPVU5ELiBGQUlMVVJFIFRP
+IFJFRFVDRSBPUEVOIFJFVklTSU9OLiBXT1VORCBPUEVORUQgV0lUSCBWQVNUIEFNT1VOVCBPRiBI
+RUFNQVRPTUEgRVZBQ1VBVEVELCBERUJSSURFTUVOVCwgUkVEVUNUSU9OIE9GIERJU0xPQ0FUSU9O
+LiBDVVAgUkVQTEFDRUQgSU5UTyBBTiBJTVBST1ZFRCBQT1NUSVRJT04uIEdSQURVQUwgSU1QUk9W
+RU1FTlQgRElTQ0hBUkdFIFJFSEFCSUxJVEFUSU9OIDI2LzY/AgBCQUJZIC0gQk9STiBBVCAzNSBX
+RUVLUyBHRVNUQVRJT04sIFVSR0VOVCBMU0NTIEJFQ0FVU0UgT0YgSVVHUiAmIFBPT1IgRkVUQUwg
+TU9WRU1FTlRTLiBOTyBTVEVST0lEIEdJVkVOLiBXQVMgU01BTEwgMjEyNUdNLCBBUEdBUiAxMC4g
+QkVHQU4gVE8gR0VUIFJFU1AgRElTVFJFU1NJTiBOTlUuIElOSVRJQUxMWSBIRUFEIEJPWCBPWFlH
+RU4gVEhFTiBDUEFQIFRIRU4gSU5UVUJBVEVEICYgVkVOVElMQVRFRCBGT1IgMiBEQVlTLiBYUiBD
+T05GSVJNRUQgSFlBTElORSBNRU1CUkFORSBESVNFQVNFLiBUSEVOIE9OIDcvNi85OCBMRUZUIFBO
+RVVNT1RIT1JBWCBSRVFVSVJFRCBVTkRFUldBVEVSIFNFQUxFRCBEUkFJTiAtIFJFTU9WRUQgOS82
+Lzk4LiBCQUJZIEdSQURVQUxMWSBJTVBST1ZFRCAmIFdBUyBXRUxMICYgR0FJTklORyBXRUlHSFQg
+V0hFTiBESVNDSEFSR0VEIDE4LzYvOTguIEdPT0QgUFJPR1JFU1MgSU4gREVWRUxPUEVNRU5UIEFU
+IDkgTU9OVEhTLiBESUQgSEFEIFNPTUUgQVNUSE1BICYgUkVTUElSQVRPUlkgSU5GRUNUSU9OUywg
+UE9TU0lCTFkgUkVMQVRFRCBUTyBISVMgRUFSTFkgTFVORyBJTlNVTFRTLqADAE1PVEhFUiAyNSBZ
+RUFSUyBPTEQgUDEgRzQgNC82Lzk4IFVMVFJBU09VTkQgQVQgMzUvNDAgU0hPV0VEIFJFRFVDRUQg
+TElRVU9SIEFORCBOTyBGRVRBTCBCUkVBVEhJTkcgQU5EIEJPRFkgTU9WRU1FTlRTLiBJTVBSRVNT
+SU9OIE9GIElVR1IsIEhJR0ggQ09SRCBQUkVTU1VSRSwgRU1FUkdFTkNZIExTQ1MgMjE1NSBHTSBC
+T1ksIEFQR0FSIDksMTAuIEJBQlkgVFJBTlNGRVJSRUQgVE8gIE5FT05BVEFMIFVOSVQsIFBSRVRF
+Uk0sIEhNRCBJTlRVQkFURUQgQU5EIE9OIFZFTlRJTEFUT1IuIDYvNi85OCBERVZFTE9QRUQgUE5V
+RU1PVEhPUkFYLCBEUkFJTiBJTlNFUlRFRCwgQ0xBTVBFRCA4LzYvOTgsIFJFTU9WRUQgOS84Lzk4
+LiBQSE9UT1RIRVJBUFkgOC82LTkvNi4gNy82IEFTUElSQVRFRCBGRUVFRC4gT05BTlRJQklPVElD
+Uy4gSU1QUk9WRU1FTlQsIFdFTEwgQU5EIERJU0NIQVJHRUQgMTgvNi85OC4gUkVBRE1JVFRFRCBP
+TiAyOC82Lzk4LTEvNy85OCBXSVRIIFBST0JBQkxFIFZJUkFMIElORkVDVElPTi4gSU1QUkVTU0lP
+Ti4gVEhFIFNUQVkgSU4gTk5VIFdBUyBDT01QTElDQVRFREJZIFRXTyBBRFZFUlNFIEVWRU5UUywg
+UE5VRU1PVEhPUkFYIE9OIFZFTlRJTEFUSU9OIEFORCBUSEUgQVNQSVJBVElPTiBPRiBBIFRVQkVG
+RUVELiBJVCBJUyBOT1QgQVQgQUxMIENMRUFSIFdIRVRIRVIgVEhFU0UgRVZFTlRTIERFTEFZRUQg
+QVRUQUlOTUVOVCBPRiBBIENPTkRJVElPTiBTQVRJU0ZBQ1RPUlkgRk9SIERJU0NIQVJHRSBGUk9N
+IE5OVSwgQlVUIFNFRU1TIFJFQVNPTkFCTEUgVE8gRVNUSU1BVEUgQU5ZIERFTEFZIEJFSU5HIEVR
+VUFMIFRPIFRIRSBUSU1FIEZPUiBXSElDSCBUSCBFQ0hFU1QgRFJBSU4gV0FTIElOIFBMQUNFLCBU
+SEFUIElTIDMgREFZUy4gVEhFIEFEVkVSU0UgRVZFTlQgV0FTIFBST0JBQkxZIE5PVCBQUkVWRU5U
+QUJMRS71AQBET1VCTEUgQURNSVNTSU9OIC0gQUxMIE1BVFRFUlMgTElOS0VELiBJTklUSUFMIFBS
+T0JMRU0gV0FTIFBFUkZPUkFURUQgQ09MT04gJiBBQlNDRVNTLCBQUk9CQUJMWSBESVZFUlRJQ1VM
+QVIgSU4gT1JJR0lOIC0gUFJFU0VOVElORyBBUyBBQkRPTUlOQUwgUEFJTiAtIENPTE9TVE9NWSBQ
+RVJGT1JNRUQgMjcvNy85Ny4gRklSU1QgSU5ERVg6IDE3LzcvOTggRk9SIENMT1NVUkUgT0YgQ09M
+T1NUT01ZLiBTVVJHRU9OIEhBRFRST1VCTEUgSURFTlRJRllJTkcgVEhFIFJFQ1RBTCBTVFVNUCBT
+TyBFTEVDVEVEIFRPIERPIEFOIEVORCBUTyBTSURFIEFOQVNUT01PU0lTKFNJREUgV0FMTCBPRiBS
+RUNUVU0pLiBQVVQgSU4gQU4gSUxFT1NUT01ZIFRPIFBST1RFQ1QgSVQuIFBBVElFTlQgUkVBRE1J
+VFRFRCBPTjQvNC85OCBXSVRIIEFCRE9NSU5BTCBQQUlOLCBDQVVTRSBOT1QgRk9VTkQuIE9OIDIy
+LzUvOTggRk9VTkQgQU5BU1RPTU9TSVMgQUxNT1NUIENPTVBMRVRFTFkgT0JTVFJVQ1RFRC5WBAAo
+QSkgNDggWUVBUiBPTEQgRkVNQUxFLCBBRE1JVFRFRCAyNS80Lzk3IFdJVEggU0lHTU9JRCBQRVJG
+T1JBVElPTi4gRVhQTEFOQVRJT04gTk9UIENMRUFSLiAtIEhJU1RPTE9HSUNBTExZLiAyNy80Lzk3
+IC0gSEFEIEhBUlRNQU5OJ1MgUFJPQ0VEVVJFIChFWENJU0lPTiBPRiBTSUdNT0lELiAtIFJFQ1RB
+TCBTVFVNUCBDTE9TRUQuIERJU1RBTCBFTkQgT0YgQ09MT04gLT4gU09MT1NUT01ZLiAtIEhPTUUg
+Ny81Lzk3LihCKSBJQSAtIDE3LzIvOTggUkVWRVJTQUwgT0YgSEFSVE1BTk5TLiAoQU5BU1RPTU9T
+SVMgT0YgUkVDVFVNIFRPIENPTE9OKSAmIExPT1BJTEVPU1RPTVkgT04gUklHSFQuIE9OIDE4LzIv
+OTggLSBJTEVPU1RPTVkgT1BFTkVEICYgQ09NUExFVEVELiAtPiAzMDBNTFMgQkxPT0QgTE9TUyAm
+IFJFUVVJUkVEIFNVVFVSSU5HIFdJVEggRUZGRUNULiAoQykgNC80Lzk4IC0gQURNSVRURUQgV0lU
+SCBTVUJBQ1VURSBPQlNUUlVDVElPTiBPRiBJTEVPU1RPTVkgLSBTRVRUTEVELiAoRCkgMjIvNS85
+OCBDT0xPTk9TQ09QWSAtIERJU1RBTCBCT1dFTCBBTkFTVE9NT1NJUyBTVEVOT1NFRC4gKEUpIDI5
+LzUvOTggQURNSVRURUQgV0lUSCBQQUlOICYgVk9NSVRJTkcgLSBTRVRUTEVELiAoRikgNC84Lzk4
+IFJFVklTSU9OIE9GIEFOQVNUT01PU0lTIChBTlRFUklPUiBSRVNFQ1RJT04pLiBBTExFUkdJQyBS
+RUFDVElPTiBUTyBGRVJST0dSQURVTUVUIC0+IE5PRElTQUJJTElUWS4gSE9NRSAxMi84Lzk4LiAo
+RykgMjkvOS85OCAtIENMT1NVUkUgT0YgSUxFT1NUT01ZLiBIT01FIDIvMTAvOTguKDEpIEhBUlRN
+QU5OJ1MgUFJPQ0VEVVJFICAoU0lHTU9JRCBDT0xPTiBSRVNFQ1RJT04pIERPRVMgUFJFRElTUE9T
+RSBUTyBIQVZFIERJRkZJQ1VMSVRZIElOIFJFVkVSU0FMIERVRSBUTyBFWENFU1NJVkUgU0NBUlJJ
+TkcgJiBESVNUT1JUSU9OIE9GIFBFTFZJQyBBTkFUT01ZLiAoMikgRU5EIFRPIFNJREUgQU5BU1RP
+TU9TSVMgLSBQUk9EVUNFUyBISUdIIFJJU0sgT0YgQU5BU1RPTU9USUMgU1RSSUNUVVJFIEFTIElO
+IFRISVMgQ0FTRS4gKDMpIEFOVEVSSU9SIFJFU0VDVElPTiBXT1VMRCBIQVZFIEJFRU4gVEhFIFBS
+RUZFUlJFRCBTVVJHRVJZIE9OIDE3LzIvOThXAgBLTk9XTiBNVUxUSVBMRSBTQ0xFUk9TSVMgU0lO
+Q0UgMTk5NSwgTk9UIE1VQ0ggRElTQUJJTElUWS4gIEFETUlUVEVEIFdJVEggMiBXRUVLU1BST0dS
+RVNTSU9OIE9GIFJJR0hUIEFSTSBBTkQgUklHSFQgTEVHIFdFQUtORVNTLiAgNCBEQVlTIFBSSU9S
+IFRPIEFETUlTU0lPTiBTQVdHUCwgR0lWRU4gUFJFRE5JU09ORSA2ME1HIFBFUiBEQVkgRk9SIDMg
+REFZUy4gIE5PIEJFVFRFUi4gIDMgREFZUyBCRUZPUkUgQURNSVNTSU9OIEdPVCBOQVVTRUEsIEFC
+RE9NSU5BTCBQQUlOIEFORCBWT01JVElORy4gIFRFTkRFUiBBQkRPTUVOIE9OIEFETUlTU0lPTiAo
+Lzk1KS5PTiAxMC81IFNFRU4gQlkgU1VSR0VPTiwgRElBR05PU0lTIEFQUEVORElDSVRJUy4gIFBS
+RUROSVNPTkUgU1RPUFBFRC4gIExBUEFST1NDT1BZLCBTSE9XRUQgUlVQVFVSRUQsIFBFUkZPUkFU
+RUQsIEdBTkdSRU5PVVMgQVBQRU5ESVguICBBUFBFTkRJWCBSRU1PVkVELiAgRFJBSU4gSU5TRVJU
+RUQuICBDRUZPWElUSU4gRk9SIDUgREFZUy4gIE9OIDEyLzUgU1RJTEwgRkVCUklMRSwgTUlOT1Ig
+UklHSFQgTE9XRVIgTE9CRSBBVEVMRUNUQVNJUy4gIFNFVFRMRUQuICBESVNDSEFSR0VEIDIwLzEw
+LhIFADUwIFlFQVIgT0xEIEZFTUFMRS4gIE1VTFRJUExFIFNDRUxFUk9TSVMgRElBR05PU0VEIDE5
+OTUsIEJVVCBTWU1QVE9NUyBUUkFDRUQgQkFDSyAyMCBZRUFSUy4gIDkvMTAvOTggMiBXRUVLIEhJ
+U1RPUlkgT0YgUFJPR1JFU1NJVkUgV0VBS05FU1MgT0YgVVBQRVIgTElNQlMgQU5EIFNMVVJSRUQg
+U1BFRUNILiAgMyBEQVkgSElTVE9SWSBPRiBOQVVTRUEsIFZPTUlUSU5HLCBBQkRPTUlOQUwgUEFJ
+Ti4gIFRSRUFURUQgQlkgR1AgV0lUSCBTVEVST0lEUyAoUFJFRE5JU09ORSA2ME1HIEZPUiAzIERB
+WVMpLiAgT04gQURNSVNTSU9OIFRFTVBFUkFUVVJFIDM4LjUgREVHUkVFUy4gIEFTU0VTU0VEIEFT
+IEVYQUNDRVJCQVRJT04gT0YgTVMgV0lUSCBGRVZFUiwgUFJPQkFCTFkgRFVFIFRPIFVSSU5BUlkg
+VFJBQ1RJTkZFQ1RJT04uICBOTyBFVklERU5DRSBUSEFUIEFCRE9NRU4gRVhBTUlORUQgQVMgUEFS
+VCBPRiBBRE1JU1NJT04gQ0xFUktJTkcuICAxMC8xMC85OCBBQkRPTUVOIFNUSUxMIFBBSU5GVUwu
+ICBTVVJHSUNBTCBPUElOSU9OIFJFUVVFU1RFRCAtIFBST0JBQkxZIEFQUEVORElDSVRJUy4gIFRB
+S0VOIFRPIFRIRUFUUkUgKEFGVEVSIDE2MDBIUlMpIEZPUiBMQVBBUk9UT01ZLiAgRk9VTkQgUEVS
+Rk9SQVRFRCBBUFBFTkRJWEFORCBSSUdIVCBJTElBQyBGT1NTQSBBQkNFU1MuICBDQVJFIFRSQU5T
+RkVSUkVEIFRPIFNVUkdFT05TLiAgU0xPVyBSRUNPVkVSWSBBTkRNT0JJTElTQVRJT04uICAyMC8x
+MC85OCBORVVST0xPR1kgUkVWSUVXLiAgTVMgSEFEIFNQT05UQU5FT1VTTFkgSU1QUk9WRUQgQUxN
+T1NUVE8gUFJFIEFETUlTU0lPTiBTVEFURS4gIERJU0NIQVJHRUQuICBUSEVSRSBTRUVNUyBMSVRU
+TEUgRE9VQlQgVEhBVCBUSEVSRSBXQVMgQU4gVU5ORUNFU1NBUlkgQU5EIEFWT0lEQUJMRSBERUxB
+WSBJTiBESUFHTk9TSU5HIEFQUEVORElDSVRJUywgQU5EIFRIQVQgVEhJUyBNQVlIQVZFIENPTlRS
+SUJVVEVEIFRPIFRIRSBBUFBFTkRJWCBIQVZJTkcgUEVSRk9SQVRFRCBCWSBUSEUgVElNRSBMQVBB
+Uk9UT01ZIFdBUyBET05FLiAgSEFEIElUIEJFRU4gRElBR05PU0VEIEVBUkxJRVIsIEEgTEVTUyBU
+UkFVTUFUSVZFIExBUEFST1NDT1BJQyBQUk9DRURVUkUgTUlHSFQgSEFWRSBTVUZGSUNFRCwgV0lU
+SCBBIFJFRFVDRUQgUE9TVCBPUEVSQVRJVkUgU1RBWS4gIElUIElTIEFMU08gUE9TU0lCTEUgVEhB
+VFRIRSBQUkVETklTT05FIEdJVkVOIEJZIFRIRSBHUCBCT1RIIE1BU0tFRCBUSEUgU0lHTlMgT0Yg
+QVBQRU5ESUNJVElTIEFORCBDT05UUklCVVRFRCBUTyBUSEUgUEVSRk9SQVRJT04ucgEAWU9VTkcg
+TUFMRSwgS05PV04gT0VTT1BIQUdFQUwgU1RSSUNUVVJFIEFORCBESUZGSUNVTFRZIFNXQUxMT1dJ
+TkcsIENBVVNFIFVOS05PV04uICBPTiA4LzEgSEFEIERJTEFUQVRJT04uICBHT1QgQ0hFU1QgUEFJ
+TiBWRVJZIFNPT04gQUZURVIuICBXT1JTRSBPTiBTV0FMTE9XSU5HLkNIRVNUIFgtUkFZIC0gTk8g
+QUlSIElOIE1FRElBU1RJTlVNLCBHQVNUUk9HUkFGSU4gU1dBTExPVyBOTyBMRUFLIC0gU09NRSBE
+RUxBWUFCT1ZFIFNUUklDVFVSRSBTVElMTC4gIERJU0NIQVJHRSBPTiBQQVJBQ0VUQU1PTCBXSVRI
+IEdBU1RSTyBDTElOSUMgRk9MTE9XIFVQLkRJQUdOT1NJUywgUFJPQkFCTEUgT0VTT1BIQUdFQUwg
+U1BBU00gUE9TVCBESUxBVEFUSU9OLj8BADkvMS85OCBBRE1JVFRFRCBGT0xMT1dJTkcgT0VTT1BI
+QUdFQUwgRElMQVRBVElPTiBGT1IgU1RSSUNUVVJFIFdJPAAfFgBUSCBSRVNVTFRBTlQgUEFJTi4g
+IDEwLzEvOTggR0FTVFJPR1JBRkZJTiAtIE5PIEVWSURFTkNFIE9GIFBFUkZPUkFUSU9OLiAgTk8g
+RElTVFJFU1MuICBOTyBQWVJFWElBLiAgUEFTVCBISVNUT1JZOiBBUFBBUkVOVCBPRVNPUEhBR0VB
+TCBQUk9CTEVNUyBGUk9NIFlPVU5HIEFHRSBXSVRIIERJRkZJQ1VMVFlJTiBTV0FMTE9XSU5HLiBL
+Tk9XTiBTWVNUT0xJQyBNVVJNVVIgTC5TLkUgKE1JVFJBTCBWQUxWRSBQUk9MQVBTRSkuICBNSUxE
+IEFTVEhNQbkBAFJFTkFMIFRSQU5TUExBTlQgKEVYIENBREFWRVIpIDE0LzEvOTguICBFQVJMWSBT
+SUdOUyBPRiBSRUpFQ1RJT04gKFVMVFJBU09VTkQpIE9OMTYvMS85OC4gIEdJVkVOIE9LVDMgRk9S
+IDE0IERBWVMgQVMgV0VMTCBBUyBQUkVETklTT05FLCBBWkFUSElPUElNIEFORCBDWUNMT1NQT1JJ
+Ti4gIENPTlRJTlVFRCBPTiBIQUVNT0RJQUxZU0lTLiAgUkVKRUNUSU9OIE5FVkVSIENPTlRST0xM
+RUQuICAgTkVQSFJFQ1RPTVkgT0ZUUkFOU1BMQU5URUQgS0lETkVZIDIyLzQvOTguICBCQUNLR1JP
+VU5EIEdMT01FUlVMT05FUEhSSVRJUyAoKyBBIExFRlQgTkVQSFJFQ1RPTVkgRk9SIExFSU1ZT01B
+KSBTTyBJTiBFUlNGIEZPUiBTT01FIFlFQVJTLiAgT04gQ0FQRCBXSElDSCBDQVVTRUQgUEVSSVRP
+TklUSVMgVEhFTiBIQUVNT0RJQUxZU0lTIEZPUiAyIFlFQVJTIFBSRSBUUkFOU1BMQU5ULvQDADQ1
+IFlFQVIgT0xEIEZFTUFMRSwgRU5EIFNUQUdFIFJFTkFMIEZBSUxVUkUsIEdMVU1FUlVMT05FUEhS
+SVRJUy4gIEhBRCAzIFlFQVJTIE9GQ0FQRCBBTkQgMiBZRUFSUyBPRiBIQUVNT0RJQUxZU0lTLiAg
+UFJFVklPVVNMWSBTTU9LRVIuICAxNC8xLzk4IEFETUlTU0lPTiBGT1IgQ0FEQVZFUklDIFJFTkFM
+IFRSQU5TUExBTlQuICAxNS8xLzk4IEFOVVJJQyBQT1NUIFRSQU5TUExBTlQuICBTQ0lOVElTQ0FO
+IFNIT1dFRCBHT09EIEJMT09EIEZMT1cuICBQUk9CQUJMWSBBQ1VURSBSRUpFQ1RJT04uICAxNy8x
+Lzk4IFNUSUxMIExPVyBPVVRQVVQsIFRSVU5LIEhBRU1BVFVSSUEuICAyOC8xLzk4IERJU0NIQVJH
+RUQuICBTVElMTCBPTiBIQUVNT0RJQUxZU0lTLCBPTiBJTU1VTk9TVVBQUkVTU0lPTiBUSEVSQVBZ
+IEFORCBHQU5DWUNMT0JJTi4gIDMwLzEvOTggSU4gRk9SIFRSQU5TUExBTlQgS0lETkVZIEJJT1BT
+WS4gIEJFVFRFUiBCTE9PRCBGTE9XT04gU0NJTlRJU0NBTi4gIEJJT1BTWSBTSE9XUyBHTE9NRVJV
+TElUSVMsIElOVElNQUwgRklCUk9TSVMuICBXRU5UIFRPIFRSQU5TUExBTlQgTkVQSFJSRUNUT01Z
+IDIwLzQvOTggRk9SIENIUk9OSUMgUkVKRUNUSU9OLiAgQVNTRVNTTUVOVDogVEhFIERFVkVMT1BN
+RU5UIE9GIFJFSkVDVElPTiBJTiBUSEUgRkFDRSBPRiBBUFBST1BSSUFURSBJTU1VTk9TVVBQUkVT
+U0lWRSBUSEVSQVBZIElTIFBBUlQgT0YgVEhFIEVYUEVDVEVEIFJBTkdFIE9GIE9VVENPTUVTIE9G
+IE9SR0FOIFRSQU5TUExBTlRBVElPTiwgQU5EIFNPIElTIE5PVCBBTiBBRFZFUlNFIEVWRU5ULlBF
+UlNVQURFRCBPRiBNWSBFUlJPUiEgIFRIT1VHSCBJTiBUSEUgUkFOR0UgT0YgRVhQRUNURUQgT1VU
+Q09NRVMsIFJFSkVDVElPTiBJU1VOREVTSVJFRCwgQU5EIElUUyBJTkNJREVOQ0UgQ0FOIEJFIFJF
+RFVDRUQgQlkgT1BUSU1BTCBNQU5BR0VNRU5ULiAgVEhFIERJU0FCSUxJVFkgU1VGRkVSRUQgSVMg
+VEhFIE5FQ0VTU0lUWSBGT1IgVFJBTlNQTEFOVCBORVBIUkVDVE9NWS7XAQBWQVNDVUxPUEFUSCBB
+R0VEIDYyLCBQUkVWSU9VUyBTTU9LRVIsIFRSRUFURUQgSEJQIEFORCBISUdIIENIT0xFU1RFUk9M
+LiAgMTIvNS85OFRJQS4gIExFRlQgQ0FST1RJRCBTVEVOT1NJUyAoSElHSCBHUkFERSkuICBPUEVS
+QVRFRCAxMy81IC0gRU5EQVJURUNUT01ZLiAgRElTQ0hBUkdFRCBPTiBBU1BJUklOIEFORCBVU1VB
+TCBNRURJQ0FUSU9OUyBGT1IgQkxPT0QgUFJFU1NVUkUgQU5EIENIT0xFU1RFUk9MLiAgMzAvNS85
+OCBBRE1JVFRFRCBXSVRIIFNFTlNPUlkgQUJOT1JNQUxJVElFUyBJTiBSSUdIVCBBUk0gQU5EIE1J
+TEQgRVhQUkVTU0lWRSBEWVNQSEFTSUEuICBDVCAtIFNNQUxMIElTQ0hBRU1JQyBTVFJPS0UgTEVG
+VCBDRU5UUlVNIE9DQUwgKDNNTSkuICBDT05TSURFUkVEIExJS0VMWSBFTUJPTElDIEZST00gRU5E
+QVJURVJFQ1RPTVkgU0lURS4gIFRSRUFURUQgV0FSRkFSSU4gMyBNT05USFMsIFRIRU4gQVNQSVJJ
+Ti5hAwA2MiBZRUFSIE9MRCBGRU1BTEUuICBJSEQgLSBDQUJHIDE5ODYsIE1JIDE5OTYsIEhZUEVS
+VEVOU0lPTiwgUFZELCBFWCBTTU9LRVIsIERZU0xJUElEQUVNSUEuICBIQUQgUkVDVVJSRU5UIFRJ
+QVMgRlJPTSBFQVJMWSBBUFJJTCA5OC4gIDEyLzUvOTggQURNSVNTSU9OIFRPIFZBU0NVTEFSIFVO
+SVQgMTMvNS85OCBMRUZUIENBUk9USUQgRU5EQVJURVJFQ1RPTVkuICBHT09EIFBPU1QgT1AgQ09V
+UlNFLiAgRElTQ0hBUkdFRDE2LzUvOTguICAzMC81Lzk4IE9ORSBXRUVLIEhJU1RPUlkgT0YgRVhQ
+UkVTU0lWRSBEWVNQSEFTSUEuICBCUklTSyBSRUZMRVhFUyBPTiBSSUdIVC4gIENUIEVYQ0xVREVE
+IEhBRU1PUlJIQUdFIEJVVCBESUQgTk9UIFBPU0lUSVZFTFkgU0hPVyBJU0NIQUVNSUEuICAzLzYv
+OTggTkVVUk9MT0dJQ0FMIE9QSU5JT04gVEhBVCBXQVMgUFJPQkFCTFkgQU4gSVNDSEFFTUlDIExF
+RlQgTUNBIFNUUk9LRSBEVUUgVE8gRU1CT0xJRlJPTSBUSEUgRU5EQVJURVJFQ1RPTVkgU0lURS4g
+IDQvNi85OCBTVEFSVEVEIE9OIFdBUkZBUklOLCBESVNDSEFSR0VELiAgSU1QUkVTU0lPTjogVEhJ
+UyBTVFJPS0UgSVMgQSBDT01QTElDQVRJT04gT0YgVEhFIEVOREFSVEVSRUNUT01ZLiAgVEhFIFBB
+VElFTlQgV0FTIE9OIEFOVElQTEFURUxFVCBUSEVSQVBZIFBPU1QgT1BFUkFUSVZFTFkgKEFTUElS
+SU4pLCBTTyBUSEVSRSBJUyBMSVRUTEUgSUYgQU5ZVEhJTkcgVEhBVCBDT1VMRCBIQVZFIEJFRU4g
+RE9ORSBUTyBQUkVWRU5UIFRIRSBQUk9CTEVNLiAgSVQgSVMgQ09OQ0VJVkFCTEUgVEhBVCBTSE9S
+VCBURVJNIEFOVElDT0FHVUxBTlRTIFdJVEggV0FSRkFSSU4gQVQgVEhFIFRJTUUgQ09VTEQgSEFW
+RSBQUkVWRU5URUQgSVQuWAEATUlMRCBBUlRIUklUSVMuICBQUkVWSU9VU0xZIE9OIE5TQUlEIEJV
+VCBBUFBBUkVOVExZIE5PTkUgTEFURUxZLiAgVE9PSyAyLTQgVEFCU05BUFJPU1lOICg/RE9TRSkg
+QUJPVVQgMjYtMjcvNS85OCBGT1IgSEVBREFDSEUuICBUSEVOIFdFQUsgQU5EIFNIT1JUIE9GIEJS
+RUFUSC5IQUVNT0dMT0JJTiA1Ni4gIEFETUlUVEVEIDI5LzUgLSBNQUxFQU5BICsrLiAgVFJBTlNG
+VVNFRC4gIEVORE9TQ09QWSwgQ0hST05JQyBHVSBBTkQgRFUuICBILlBZTE9SSSBQT1NJVElWRS4g
+IFRSRUFURUQgV0lUSCBUUklQTEUgVEhFUkFQWS4gIE5PIEZVUlRIRVIgUFJPQkxFTS5OTyBQUkVW
+SU9VUyBTWU1QVE9NUyBPRiBQVS7zAQAyOS81Lzk4IEtOT1dOIFJIRVVNQVRJQyBBUlRIUklUSVMg
+T04gTlNBSURTLiAgNSBEQVlTIFBSSU9SIFRPIEFETUlTU0lPTiBDT01QTEFJTklORyBPRiBIRUFE
+QUNIRSBBTkQgRkVFTElORyBVTldFTEwsIEdJVkVOIE5BUFJPU1lOIEJZIEdQLiAgRElaWklORVNT
+IDMgREFZUyBBTkRNQUxBRU5BIE5PVEVEIDEyIEhPVVJTIFBSSU9SIFRPIEFETUlTU0lPTi4gIEhB
+RU1PR0xPQklOIDU2LCBOTyBQQVNUIEhJU1RPUlkgT0YgUFUuICBUUkFOU0ZVU0VEIDUgVU5JVFMg
+UkVEIEJMT09EIENFTExTLCBCTE9PRCBQUkVTU1VSRSAxMTAvNjAgT04gQURNSVNTSU9OLiAgUE9T
+VCBUUkFOU0ZVU0lPTiAxMTUvNTYuICBHQVNUUk9TQ09QWSAzMS81Lzk4LiAgQ0hST05JQyBHVSBE
+SVZFUlRJQyBEVU9ERU5BTCBCVUxCIEFORCBTTUFMTCBEVSAtIFNUQUJMRSwgTk8gRlVSVEhFUiBN
+QUxBRU5BLiAgSC5QWUxPUidTIFBPU0lUSVZFLiAgRElTQ0hBUkdFRCAxLzYvOTggT04gVFJJUExF
+IFRIRVJBUFkupwEASU5ERVggQURNSVNTSU9OIEZPUiBWT01JVElORyAxIERBWS4gIFBBVElFTlQg
+SEFEIEJJTFJPVEggUFJPQ0VEVVJFIC0gUEFSVElBTCBHQVNUUkVDVE9NWSBBTkQgR0FTVFJPRU5U
+RVJPU1RPTVkgQU5EIENPTEVDWVNURUNUT01ZIEFQUFJPWCAxMC8zLzk4IElOIFBSSVZBVEUsIEZP
+UkVBUkxZIEdBU1RSSUMgQ0EgKE5PIE5PVEVTKS4gIFZPTUlURUQgT04gREFZIE9GIERJU0NIQVJH
+RSAxNS8zIEFORCBUSEVOIFNUQVJURURBR0FJTiAxOS8zLiAgQ0hFU1QgWC1SQVkgLSBOTyBPQlNU
+UlVDVElPTi4gIEJBIE1FQUwgLSBJTklUSUFMTFkgUkVUQUlORUQgRkxVSURJTiBTVE9NQUNIIEJV
+VCBUSEFUIFdBUyBURU1QT1JBUlkgQU5EIEdPT0QgRFJBSU5BR0UgREVNT05TVFJBVEVELiAgUEFU
+SUVOVCBESVNDSEFSR0VEIE9OIFBST0tJTkVUSUMgQUdFTlQudQEASU5ERVg6IDUxIFlFQVIgT0xE
+IEZFTUFMRSBBRE1JVFRFRCBBQ1VURUxZIFdJVEggMiBEQVkgSElTVE9SWSBOQVVTRUEgQU5EIFZP
+TUlUSU5HLiAgUEFSVElBTCBHQVNUUkVDVE9NWSBBVCBIT1NQSVRBTCBYIDE1IERBWVMgUFJFVklP
+VVNMWS4gIERJU0NIQVJHRUQgRlJPTSBIT1NQSVRBTCBYIDUgREFZUyBQUkVWSU9VU0xZLiAgT04g
+RVhBTUlOQVRJT04gU01BTEwgVU5IRUFMRUQgQVJFQVMgSU4gV09VTkRTLiAgTk8gRk9DQUwgU0lH
+TlMuICBHSVZFTiBMRUFWRSBBTkQgVE8gUkVUVVJOIEZPUiBCQVJJVU0gU1RVRElFUy4gIDIzLzMv
+OTggQkFSSVVNIFNUVURJRVNTSE9XRUQgR09PRCBTVVJHSUNBTCBSRVNVTFQuICBSRUFTU1VSRUQu
+ICBESVNDSEFSR0VELqIBAEZPVU5EIFRPIEhBVkUgUklHSFQgQU5HTEUgQ0xPU1VSRSBHTEFVQ09N
+QSBBTkQgSElHSCAxMDggTEVGVCBJTiBOT1ZFTUJFUiA5OC4gIFRIRU4gQVRURU1QVEVEIFlBRyBM
+QVNFUiBJUklHRUNUT01ZIElOIFBSSUNBVEUgOC8xMi4gIEFDVVRFTFkgQURNSVRURUQgKElOREVY
+KSA5LzEyIFdJVEggUEFJTiBJTiBFWUVTLCBISUdIIFBSRVNTVVJFLiAgSU5URU5TSVZFIE1FRElD
+QUwgVEhFUkFQWS4gIEhZUEhFTUEgTk9URUQgUklHSFQgUkVQRUFUIFlBRyBMQVNFUiBSSUdIVCAx
+Ni8xMiBBTkQgSU9QIElNUFJPVkVELCBCVVQgVklTVUFMIEFDVUlUWSBET1dOIFRPIENPVU5USU5H
+IEZJTkdFUlMgQU5EIE5FVkVSIFJFQ09WRVJFRC4gIExFRlQgRVlFIElSSURFQ1RPTVkgRE9ORSBB
+VUdVU1QgOTksIEdPT0QgUkVTVUxUUyBPTiBUSEFUIEVZRS4UAgA1MCBZRUFSIE9MRCBGRU1BTEUu
+ICBIWVBPVEVOU0lWRS4gIE5PIFBSRVZJT1VTIE9QSFRIQUxNT0xPR0lDQUwgSElTVE9SWS4gIDI0
+LzExLzk4IFBSRVNFTlRFRCBXSVRIIEFDVVRFIEJJTEFURVJBTCBDTE9TRUQgQU5HTEUgR0xBVUNP
+TUEuICA4LzEyLzk4IEJJTEFURVJBTCBZQUdJUklERUNUT01JRVMgQVRURU1QVEVELCBCVVQgRlVM
+TCBUSElDS05FU1MgTk9UIE9CVEFJTkVELiAgTUFOQUdFRCBPTiBESUFNT1ggQU5ETUFOTklUT0wg
+QU5EIFJFRkVSUkVEIFRPIElOREVYIEhPU1BJVEFMIEZPUiBUUkVBVE1FTlQgOS8xMi85OCAoSU5E
+RVgpLiAgMTEvMTIvOThBUkdPTiBMQVNFUiBJUklET1BMQVNUWSBBTkQgSVJJRE9UT01ZIFRPIExF
+RlQgRVlFLiAgQVVHVVNUIDk5IFRSQUJFQ1VMRUNUT01ZIFRPTEVGVCBFWUUuICBJTVBSRVNTSU9O
+OiBBUFBST1BSSUFURSBNSU5JTUFMTFkgSU5WQVNJVkUgU1VSR0VSWSBGQUlMRUQgVE8gQ1VSRSBE
+SVNFQVNFIEFORCBUSEVSRUZPUkUgUkVGRVJSRUQgRk9SIE1PUkUgQ0VSVEFJTiBUUkVBTVRFTlQu
+/wACBAgAWwYAAAwAAAAGBwAAtwAAAMEOAAByCAAAix4AADwYAACoMgAANQwAAMJHAAArAQAA2l4A
+AEMYAAAbdAAAYA0AAJuNAAC8BgAAoZ0AAMIWAADKtAAAxw0AAEHFAAA+HgAAI94AAPwWAAA/8wAA
+9AsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAoAAAAJCAgAAAYQANcJywcLAhgAAAAAAAAAAAAzAAAAAAAAACsSAQDNGwEADQACAAEADAAC
+AGQADwACAAEAEQACAAAAEAAIAPyp8dJNYlA/XwACAAEAKgACAAAAKwACAAAAggACAAEAgAAIAAAA
+AAAAAAAAJQIEAAAA/wCBAAIAwQQUAAUAAgAAJkEVAAoABwAAUGFnZSAmUIMAAgAAAIQAAgAAAKEA
+IgAAAABQAQABAAEARADMzMzMAAAAAAAA4D8AAAAAAADgP8zMVQACAAgAAAIOAAAAAAAzAAAAAAAJ
+AAAACAIQAAAAAAAJAP8AAAAAAAAADwAIAhAAAQAAAAkA/wAAAAAAAAAPAAgCEAACAAAACQD/AAAA
+AAAAAA8ACAIQAAMAAAAJAP8AAAAAAAAADwAIAhAABAAAAAkA/wAAAAAAAAAPAAgCEAAFAAAACQD/
+AAAAAAAAAA8ACAIQAAYAAAAJAP8AAAAAAAAADwAIAhAABwAAAAkA/wAAAAAAAAAPAAgCEAAIAAAA
+CQD/AAAAAAAAAA8ACAIQAAkAAAAJAP8AAAAAAAAADwAIAhAACgAAAAkA/wAAAAAAAAAPAAgCEAAL
+AAAACQD/AAAAAAAAAA8ACAIQAAwAAAAJAP8AAAAAAAAADwAIAhAADQAAAAkA/wAAAAAAAAAPAAgC
+EAAOAAAACQD/AAAAAAAAAA8ACAIQAA8AAAAJAP8AAAAAAAAADwAIAhAAEAAAAAkA/wAAAAAAAAAP
+AAgCEAARAAAACQD/AAAAAAAAAA8ACAIQABIAAAAJAP8AAAAAAAAADwAIAhAAEwAAAAkA/wAAAAAA
+AAAPAAgCEAAUAAAACQD/AAAAAAAAAA8ACAIQABUAAAAJAP8AAAAAAAAADwAIAhAAFgAAAAkA/wAA
+AAAAAAAPAAgCEAAXAAAACQD/AAAAAAAAAA8ACAIQABgAAAAJAP8AAAAAAAAADwAIAhAAGQAAAAkA
+/wAAAAAAAAAPAAgCEAAaAAAACQD/AAAAAAAAAA8ACAIQABsAAAAJAP8AAAAAAAAADwAIAhAAHAAA
+AAkA/wAAAAAAAAAPAAgCEAAdAAAACQD/AAAAAAAAAA8ACAIQAB4AAAAJAP8AAAAAAAAADwAIAhAA
+HwAAAAkA/wAAAAAAAAAPAP0ACgAAAAAADwAAAAAA/QAKAAAAAQAPAAEAAAD9AAoAAAACAA8AAgAA
+AP0ACgAAAAMADwADAAAA/QAKAAAABAAPAAQAAAD9AAoAAAAFAA8ABQAAAP0ACgAAAAYADwAGAAAA
+/QAKAAAABwAPAAcAAAD9AAoAAAAIAA8ACAAAAH4CCgABAAAADwAApq9A/QAKAAEAAQAPAAkAAAD9
+AAoAAQACAA8ACgAAAL0AEgABAAMADwAAAABADwAAAPA/BAD9AAoAAQAFAA8ACwAAAL0AGAABAAYA
+DwAAACBADwAAABhADwAAAPA/CAB+AgoAAgAAAA8AALCvQP0ACgACAAEADwAMAAAA/QAKAAIAAgAP
+AAoAAAC9ABIAAgADAA8AAAAYQA8AAADwPwQA/QAKAAIABQAPAA0AAAC9ABgAAgAGAA8AAAAgQA8A
+AAAYQA8AAADwPwgAfgIKAAMAAAAPAADmr0D9AAoAAwABAA8ADgAAAP0ACgADAAIADwAKAAAAvQAS
+AAMAAwAPAAAAFEAPAAAA8D8EAP0ACgADAAUADwAPAAAAvQAYAAMABgAPAAAAHEAPAAAAGEAPAAAA
+8D8IAH4CCgAEAAAADwAAArBA/QAKAAQAAQAPABAAAAD9AAoABAACAA8ACgAAAL0AEgAEAAMADwAA
+ABhADwAAAPA/BAD9AAoABAAFAA8AEQAAAL0AGAAEAAYADwAAABxADwAAABhADwAAAPA/CAB+AgoA
+BQAAAA8AAG6wQP0ACgAFAAEADwASAAAA/QAKAAUAAgAPAAoAAAC9ABIABQADAA8AAAAUQA8AAADw
+PwQA/QAKAAUABQAPABMAAAC9ABgABQAGAA8AAAAgQA8AAAAAQA8AAADwPwgAfgIKAAYAAAAPAABP
+sUD9AAoABgABAA8AFAAAAP0ACgAGAAIADwAKAAAAvQASAAYAAwAPAAAAAEAPAAAA8D8EAP0ACgAG
+AAUADwAVAAAAvQAYAAYABgAPAAAAHEAPAAAAAEAPAAAA8D8IAH4CCgAHAAAADwAArLFA/QAKAAcA
+AQAPABYAAAD9AAoABwACAA8ACgAAAL0AEgAHAAMADwAAAABADwAAAPA/BAD9AAoABwAFAA8AFwAA
+AL0AGAAHAAYADwAAABxADwAAAABADwAAAPA/CAB+AgoACAAAAA8AAMazQP0ACgAIAAEADwAYAAAA
+/QAKAAgAAgAPAAoAAAC9ABIACAADAA8AAAAYQA8AAADwPwQA/QAKAAgABQAPABkAAAC9ABgACAAG
+AA8AAAAgQA8AAAAAQA8AAADwPwgAfgIKAAkAAAAPAACntED9AAoACQABAA8AGgAAAP0ACgAJAAIA
+DwAKAAAAvQASAAkAAwAPAAAAGEAPAAAA8D8EAP0ACgAJAAUADwAbAAAAvQAYAAkABgAPAAAAHEAP
+AAAAGEAPAAAA8D8IAH4CCgAKAAAADwAAfrVA/QAKAAoAAQAPABwAAAD9AAoACgACAA8ACgAAAL0A
+EgAKAAMADwAAABhADwAAAPA/BAD9AAoACgAFAA8AHQAAAL0AGAAKAAYADwAAACJADwAAABhADwAA
+APA/CAB+AgoACwAAAA8AAJC1QP0ACgALAAEADwAeAAAA/QAKAAsAAgAPAAoAAAC9ABIACwADAA8A
+AAAYQA8AAADwPwQA/QAKAAsABQAPAB8AAAC9ABgACwAGAA8AAAAgQA8AAAAYQA8AAADwPwgAfgIK
+AAwAAAAPAACatUD9AAoADAABAA8AIAAAAP0ACgAMAAIADwAKAAAAvQASAAwAAwAPAAAACEAPAAAA
+8D8EAP0ACgAMAAUADwAhAAAAvQAYAAwABgAPAAAAIEAPAAAAEEAPAAAA8D8IAH4CCgANAAAADwAA
+6rdA/QAKAA0AAQAPACIAAAD9AAoADQACAA8ACgAAAL0AEgANAAMADwAAABhADwAAAPA/BAD9AAoA
+DQAFAA8AIwAAAL0AGAANAAYADwAAACZADwAAABhADwAAAPA/CAB+AgoADgAAAA8AAEq4QP0ACgAO
+AAEADwAkAAAA/QAKAA4AAgAPAAoAAAC9ABIADgADAA8AAAAYQA8AAADwPwQA/QAKAA4ABQAPACUA
+AAC9ABgADgAGAA8AAAAcQA8AAAAUQA8AAADwPwgAfgIKAA8AAAAPAAC9uED9AAoADwABAA8AJgAA
+AP0ACgAPAAIADwAKAAAAvQASAA8AAwAPAAAAGEAPAAAA8D8EAP0ACgAPAAUADwAnAAAAvQAYAA8A
+BgAPAAAAIkAPAAAAGEAPAAAA8D8IAH4CCgAQAAAADwAA67tA/QAKABAAAQAPACgAAAD9AAoAEAAC
+AA8ACgAAAL0AEgAQAAMADwAAABhADwAAAPA/BAD9AAoAEAAFAA8AKQAAAL0AGAAQAAYADwAAACZA
+DwAAABhADwAAAPA/CAB+AgoAEQAAAA8AAD+9QP0ACgARAAEADwAqAAAA/QAKABEAAgAPAAoAAAC9
+ABIAEQADAA8AAAAIQA8AAADwPwQA/QAKABEABQAPACsAAAC9ABgAEQAGAA8AAAAkQA8AAADwPw8A
+AAAAAAgAfgIKABIAAAAPAAB2vUD9AAoAEgABAA8ALAAAAP0ACgASAAIADwAKAAAAvQASABIAAwAP
+AAAA8D8PAAAAAAAEAP0ACgASAAUADwAtAAAAvQAYABIABgAPAAAAJEAPAAAAFEAPAAAA8D8IAH4C
+CgATAAAADwAAjL1A/QAKABMAAQAPAC4AAAD9AAoAEwACAA8ACgAAAL0AEgATAAMADwAAAABADwAA
+APA/BAD9AAoAEwAFAA8ALwAAAL0AGAATAAYADwAAABxADwAAAPA/DwAAAAAACAB+AgoAFAAAAA8A
+APrBQP0ACgAUAAEADwAwAAAA/QAKABQAAgAPAAoAAAC9ABIAFAADAA8AAAAYQA8AAADwPwQA/QAK
+ABQABQAPADEAAAC9ABgAFAAGAA8AAAAmQA8AAAAYQA8AAADwPwgAfgIKABUAAAAPAACaw0D9AAoA
+FQABAA8AMgAAAP0ACgAVAAIADwAKAAAAvQASABUAAwAPAAAAGEAPAAAA8D8EAP0ACgAVAAUADwAz
+AAAAvQAYABUABgAPAAAAIkAPAAAAGEAPAAAA8D8IAH4CCgAWAAAADwCAxMNA/QAKABYAAQAPADQA
+AAD9AAoAFgACAA8ACgAAAL0AEgAWAAMADwAAABBADwAAAPA/BAD9AAoAFgAFAA8ANQAAAL0AGAAW
+AAYADwAAADBADwAAABBADwAAAPA/CAB+AgoAFwAAAA8AAEHEQP0ACgAXAAEADwA2AAAA/QAKABcA
+AgAPAAoAAAC9ABIAFwADAA8AAAAYQA8AAADwPwQA/QAKABcABQAPADcAAAC9ABgAFwAGAA8AAAAs
+QA8AAAAYQA8AAADwPwgAfgIKABgAAAAPAIBVxED9AAoAGAABAA8AOAAAAP0ACgAYAAIADwAKAAAA
+vQASABgAAwAPAAAAFEAPAAAA8D8EAP0ACgAYAAUADwA5AAAAvQAYABgABgAPAAAAIkAPAAAAEEAP
+AAAA8D8IAH4CCgAZAAAADwCApcRA/QAKABkAAQAPADoAAAD9AAoAGQACAA8ACgAAAL0AEgAZAAMA
+DwAAABBADwAAAPA/BAD9AAoAGQAFAA8AOwAAAL0AGAAZAAYADwAAACJADwAAABBADwAAAPA/CAB+
+AgoAGgAAAA8AAKPFQP0ACgAaAAEADwA8AAAA/QAKABoAAgAPAAoAAAC9ABIAGgADAA8AAAAYQA8A
+AADwPwQA/QAKABoABQAPAD0AAAC9ABgAGgAGAA8AAAAuQA8AAAAYQA8AAADwPwgAfgIKABsAAAAP
+AACOxkD9AAoAGwABAA8APgAAAP0ACgAbAAIADwAKAAAAvQASABsAAwAPAAAAGEAPAAAA8D8EAP0A
+CgAbAAUADwA/AAAAvQAYABsABgAPAAAAMEAPAAAAAEAPAAAA8D8IAH4CCgAcAAAADwAAdsdA/QAK
+ABwAAQAPAEAAAAD9AAoAHAACAA8ACgAAAL0AEgAcAAMADwAAABhADwAAAPA/BAD9AAoAHAAFAA8A
+QQAAAL0AGAAcAAYADwAAADFADwAAABRADwAAAPA/CAB+AgoAHQAAAA8AgI3HQP0ACgAdAAEADwBC
+AAAA/QAKAB0AAgAPAAoAAAC9ABIAHQADAA8AAAAYQA8AAADwPwQA/QAKAB0ABQAPAEMAAAC9ABgA
+HQAGAA8AAAAiQA8AAAAYQA8AAADwPwgAfgIKAB4AAAAPAICqx0D9AAoAHgABAA8ARAAAAP0ACgAe
+AAIADwAKAAAAvQASAB4AAwAPAAAAGEAPAAAA8D8EAP0ACgAeAAUADwBFAAAAvQAYAB4ABgAPAAAA
+MUAPAAAAFEAPAAAA8D8IAH4CCgAfAAAADwCA8MdA/QAKAB8AAQAPAEYAAAD9AAoAHwACAA8ACgAA
+AL0AEgAfAAMADwAAABRADwAAAPA/BAD9AAoAHwAFAA8ARwAAAL0AGAAfAAYADwAAACJADwAAABRA
+DwAAAPA/CADXAEQA1A8AAGwCfgBqAGoAagBqAGoAagBqAGoAagBqAGoAagBqAGoAagBqAGoAagBq
+AGoAagBqAGoAagBqAGoAagBqAGoAagAIAhAAIAAAAAkA/wAAAAAAAAAPAAgCEAAhAAAACQD/AAAA
+AAAAAA8ACAIQACIAAAAJAP8AAAAAAAAADwAIAhAAIwAAAAkA/wAAAAAAAAAPAAgCEAAkAAAACQD/
+AAAAAAAAAA8ACAIQACUAAAAJAP8AAAAAAAAADwAIAhAAJgAAAAkA/wAAAAAAAAAPAAgCEAAnAAAA
+CQD/AAAAAAAAAA8ACAIQACgAAAAJAP8AAAAAAAAADwAIAhAAKQAAAAkA/wAAAAAAAAAPAAgCEAAq
+AAAACQD/AAAAAAAAAA8ACAIQACsAAAAJAP8AAAAAAAAADwAIAhAALAAAAAkA/wAAAAAAAAAPAAgC
+EAAtAAAACQD/AAAAAAAAAA8ACAIQAC4AAAAJAP8AAAAAAAAADwAIAhAALwAAAAkA/wAAAAAAAAAP
+AAgCEAAwAAAACQD/AAAAAAAAAA8ACAIQADEAAAAJAP8AAAAAAAAADwAIAhAAMgAAAAkA/wAAAAAA
+AAAPAH4CCgAgAAAADwCAHchA/QAKACAAAQAPAEgAAAD9AAoAIAACAA8ACgAAAL0AEgAgAAMADwAA
+ABhADwAAAPA/BAD9AAoAIAAFAA8ASQAAAL0AGAAgAAYADwAAACJADwAAABhADwAAAPA/CAB+AgoA
+IQAAAA8AgCHIQP0ACgAhAAEADwBKAAAA/QAKACEAAgAPAAoAAAC9ABIAIQADAA8AAAAYQA8AAADw
+PwQA/QAKACEABQAPAEsAAAC9ABgAIQAGAA8AAAAxQA8AAAAUQA8AAADwPwgAfgIKACIAAAAPAIB9
+yED9AAoAIgABAA8ATAAAAP0ACgAiAAIADwAKAAAAvQASACIAAwAPAAAAGEAPAAAA8D8EAP0ACgAi
+AAUADwBNAAAAvQAYACIABgAPAAAAIkAPAAAAGEAPAAAA8D8IAH4CCgAjAAAADwAAyclA/QAKACMA
+AQAPAE4AAAD9AAoAIwACAA8ACgAAAL0AEgAjAAMADwAAABBADwAAAPA/BAD9AAoAIwAFAA8ATwAA
+AL0AGAAjAAYADwAAACJADwAAABhADwAAAPA/CAB+AgoAJAAAAA8AAB/KQP0ACgAkAAEADwBQAAAA
+/QAKACQAAgAPAAoAAAC9ABIAJAADAA8AAAAYQA8AAADwPwQA/QAKACQABQAPAFEAAAC9ABgAJAAG
+AA8AAAAyQA8AAAAQQA8AAADwPwgAfgIKACUAAAAPAIBKykD9AAoAJQABAA8AUgAAAP0ACgAlAAIA
+DwAKAAAAvQASACUAAwAPAAAAGEAPAAAA8D8EAP0ACgAlAAUADwBTAAAAvQAYACUABgAPAAAAIkAP
+AAAAGEAPAAAA8D8IAH4CCgAmAAAADwAAm8tA/QAKACYAAQAPAFQAAAD9AAoAJgACAA8ACgAAAL0A
+EgAmAAMADwAAABBADwAAAPA/BAD9AAoAJgAFAA8AVQAAAL0AGAAmAAYADwAAACJADwAAABhADwAA
+APA/CAB+AgoAJwAAAA8AAKnLQP0ACgAnAAEADwBWAAAA/QAKACcAAgAPAAoAAAC9ABIAJwADAA8A
+AAAYQA8AAADwPwQA/QAKACcABQAPAFcAAAC9ABgAJwAGAA8AAAAzQA8AAAAYQA8AAADwPwgAfgIK
+ACgAAAAPAADJy0D9AAoAKAABAA8AWAAAAP0ACgAoAAIADwAKAAAAvQASACgAAwAPAAAAGEAPAAAA
+8D8EAP0ACgAoAAUADwBZAAAAvQAYACgABgAPAAAAM0APAAAAGEAPAAAA8D8IAH4CCgApAAAADwAA
+Tc1A/QAKACkAAQAPAFoAAAD9AAoAKQACAA8ACgAAAL0AEgApAAMADwAAABhADwAAAPA/BAD9AAoA
+KQAFAA8AWwAAAL0AGAApAAYADwAAADFADwAAABRADwAAAPA/CAB+AgoAKgAAAA8AgE7NQP0ACgAq
+AAEADwBcAAAA/QAKACoAAgAPAAoAAAC9ABIAKgADAA8AAADwPw8AAAAAAAQA/QAKACoABQAPAF0A
+AAC9ABgAKgAGAA8AAAAiQA8AAAAQQA8AAADwPwgAfgIKACsAAAAPAIB3zUD9AAoAKwABAA8AXgAA
+AP0ACgArAAIADwAKAAAAvQASACsAAwAPAAAAFEAPAAAA8D8EAP0ACgArAAUADwBfAAAAvQAYACsA
+BgAPAAAAMkAPAAAAFEAPAAAA8D8IAH4CCgAsAAAADwAAas9A/QAKACwAAQAPAGAAAAD9AAoALAAC
+AA8ACgAAAL0AEgAsAAMADwAAAPA/DwAAAAAABAD9AAoALAAFAA8AYQAAAL0AGAAsAAYADwAAACJA
+DwAAABhADwAAAPA/CAB+AgoALQAAAA8AANjPQP0ACgAtAAEADwBiAAAA/QAKAC0AAgAPAAoAAAC9
+ABIALQADAA8AAAAQQA8AAADwPwQA/QAKAC0ABQAPAGMAAAC9ABgALQAGAA8AAAAcQA8AAAAYQA8A
+AADwPwgAfgIKAC4AAAAPAADuz0D9AAoALgABAA8AZAAAAP0ACgAuAAIADwAKAAAAvQASAC4AAwAP
+AAAAGEAPAAAA8D8EAP0ACgAuAAUADwBlAAAAvQAYAC4ABgAPAAAAJkAPAAAAFEAPAAAA8D8IAH4C
+CgAvAAAADwCAC9BA/QAKAC8AAQAPAGYAAAD9AAoALwACAA8ACgAAAL0AEgAvAAMADwAAABRADwAA
+APA/BAD9AAoALwAFAA8AZwAAAL0AGAAvAAYADwAAACJADwAAABhADwAAAPA/CAB+AgoAMAAAAA8A
+wBHQQP0ACgAwAAEADwBoAAAA/QAKADAAAgAPAAoAAAC9ABIAMAADAA8AAAAYQA8AAADwPwQA/QAK
+ADAABQAPAGkAAAC9ABgAMAAGAA8AAAAcQA8AAAAUQA8AAADwPwgAfgIKADEAAAAPAAAU0ED9AAoA
+MQABAA8AagAAAP0ACgAxAAIADwAKAAAAvQASADEAAwAPAAAACEAPAAAA8D8EAP0ACgAxAAUADwBr
+AAAAvQAYADEABgAPAAAAIEAPAAAAFEAPAAAA8D8IAH4CCgAyAAAADwAAItBA/QAKADIAAQAPAGwA
+AAD9AAoAMgACAA8ACgAAAL0AEgAyAAMADwAAABRADwAAAPA/BAD9AAoAMgAFAA8AbQAAAL0AGAAy
+AAYADwAAAC5ADwAAABhADwAAAPA/CADXACoAWgkAAGgBagBqAGoAagBqAGoAagBqAGoAagBqAGoA
+agBqAGoAagBqAGoANAA4AAAAAAAyAFtNaWNyb3NvZnQgSkVUIENyZWF0ZWQgVGFibGVdMDA5MDcx
+MjEwMDcwNzEyMDcwNzA3PgISALYGAAAAAEAAAAAAAAAAAAAAAB0ADwADAAAAAAAAAQAAAAAAAAAK
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAP//////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////
+
+--_004_b6168e80fdc348959245b9f44f34d402uxcn13oggdUoAaucklandac_--
