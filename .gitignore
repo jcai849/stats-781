@@ -1,5 +1,4 @@
 
 *.bib.bak
 
-**/CassidyStuff
-**/data
+*.org~

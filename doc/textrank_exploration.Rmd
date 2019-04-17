@@ -1,0 +1,91 @@
+Original Attempt below:
+
+---
+
+```{r eval=FALSE}
+library(tidyverse)
+library(gutenbergr)
+library(udpipe)
+library(textrank)
+```
+
+We can load in a broad variety of literary texts with gutenbergr - the package
+follows the rules for robots by default, so we don't have to worry about pauses etc.
+```{r input, eval=FALSE}
+iliad <-
+  gutenberg_download(6130)
+alice <-
+  gutenberg_download(11)
+republic <-
+  gutenberg_download(1497)
+dante <-
+  gutenberg_download(8800)
+meditations <-
+  gutenberg_download(2680)
+odyssey <-
+  gutenberg_download(1727)
+romeo <-
+  gutenberg_download(1112)
+style <-
+  gutenberg_download(37134)
+macbeth <-
+  gutenberg_download(2264)
+test <-
+  "On Friday, Business Insider reported that Microsoft has held talks to buy GitHub - a $2 billion startup that claims 24 million software developers as users. It's not immediately clear what will come of these talks. Microsoft declined to comment, but you can read the full Business Insider report here. While we wait for further word on the future of GitHub, one thing is very clear: It would make perfect sense for Microsoft to buy the startup. If the stars align, and GitHub is integrated intelligently into Microsoft's products, it could give the company a big edge against Amazon Web Services, the leading player in the fast-growing cloud market. Just to catch you up: GitHub is an online service that allows developers to host their software projects. From there, anyone from all over the world can download those projects and submit their own improvements. That functionality has made GitHub the center of the open source software. development world."
+```
+
+tidytext seems to require the parts of speech to be tagged, recommending udpipe.
+Udpipe works based on an intelligent model, and takes a long time to run, but there
+are other options such as an inner join with a preclassified dictionary, or the openNLP
+package, which seems more generally favoured.
+```{r udpipe, eval=FALSE}
+# x_char <-
+#   paste(style$text, collapse = " ")
+# 
+ udmodel <-
+   udpipe_download_model(language = "english")
+x <-
+  udpipe(test, object = udmodel) # v. slow
+```
+
+We can perform keyword extraction with textrank as follows:
+
+```{r keyword extraction, eval=FALSE}
+keyw  <-
+    textrank_keywords(x$lemma, relevant = x$upos %in% c("NOUN", "VERB", "ADJ"))
+subset(keyw$keywords, ngram > 1 & freq > 1)
+```
+
+Fairly boring results - stopword removal may help, but I want to see how well it
+works without that process
+
+```{r define sentences, eval=FALSE}
+x$textrank_id <- unique_identifier(x, c("doc_id", "paragraph_id", "sentence_id"))
+sentences <- unique(x[, c("textrank_id", "sentence")])
+terminology <- subset(x, upos %in% c("NOUN", "ADJ"))
+terminology <- terminology[, c("textrank_id", "lemma")]
+head(terminology)
+```
+
+the textrank function is fairly slow as well - impossibly so, with this volume of sentences.
+The Minhash algorithm is intended to speed things up, implemented below
+
+```{r applying textrank_sentences, eval=FALSE}
+textreuse::lsh_probability(h = 1000, b = 500, s = 0.1)
+minhash <-
+  textreuse::minhash_generator(n = 1000, seed = 123)
+candidates <- textrank_candidates_lsh(x = terminology$lemma, 
+                                      sentence_id = terminology$textrank_id,
+                                      minhashFUN = minhash, 
+                                      bands = 500)
+```
+
+```{r eval=FALSE}
+tr <- textrank_sentences(data = sentences, terminology = terminology, textrank_candidates = candidates)
+s <- summary(tr, n = 4, keep.sentence.order = TRUE)
+cat(s, sep = "\n")
+# tr <- textrank_sentences(data = sentences, terminology = terminology)
+# plot(sort(tr$pagerank$vector, decreasing = TRUE), 
+#      type = "b", ylab = "Pagerank", main = "Textrank")
+```
+
