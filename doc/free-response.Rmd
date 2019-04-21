@@ -2,12 +2,16 @@
 title: Free-Response Analytics
 author: Jason Cairns
 ---
+# Initialisation
+
 ```{r}
 library(tidyverse)
 library(tidytext)
 library(lexRankr)
 library(textrank)
 library(widyr)
+library(topicmodels)
+library(tictoc)
 ```
 
 ```{r}
@@ -30,11 +34,15 @@ no_stop_cancer_soc <-
   anti_join(get_stopwords())
 ```
 
-Find common words
+# Within-text analytics
+
+## Common Terms
 ```{r}
 no_stop_cancer_soc %>%
   count(word, sort = TRUE)
 ```
+
+## Sentiment Analysis
 
 some quick sentiment analysis using NRC. Let's see what NRC has available:
 
@@ -53,22 +61,17 @@ no_stop_cancer_soc %>%
   count(word, sort = TRUE)
 ```
 
-Summarisation with lexRank
+## Summarisation
 
-```{r}
-lexRank(cancer_soc$sq6a)
-```
+There are too many responses, each being too short, for a summarisation for each response to be useful.
 
-Keywords with textrank
+## Keywords
 
-```{r}
-keyw <-
-  textrank_keywords(no_stop_cancer_soc$word)
+Same as above
 
-head(keyw$keywords, 10)
-```
+## Term Correlations
 
-Bigrams
+### Bigrams
 
 ```{r}
 cancer_soc_bigrams <-
@@ -95,9 +98,25 @@ bigram_counts <- bigrams_united %>%
 bigram_counts
 ```
 
-tf-idf - this is a measure of the important words within each response, ignoring those
-that are common throughout - not so useful in this analysis? too many observations,
-but may be useful under small n grouping variables.
+### Pairwise
+
+```{r}
+word_cors <- tokenised_cancer_soc %>%
+  group_by(word) %>%
+  filter(n() >= 20) %>%
+  pairwise_cor(word, id, sort = TRUE)
+
+word_cors
+```
+
+This is probably far more useful than bigrams.
+
+# Between-text analytics
+
+## tf-idf 
+
+This is a measure of the important words within each response, ignoring those
+that are common throughout - may be not so useful in this analysis? too many observations, but may be useful under small n grouping variables.
 
 ```{r}
 cancer_soc_words <-
@@ -120,21 +139,67 @@ tf_idf_cancer_soc %>%
   arrange(desc(tf_idf))
 ```
 
-pairwise correlation
+## Summarisation
+
+We have a summarisation of the overall common sentences between all responses
 
 ```{r}
-word_cors <- tokenised_cancer_soc %>%
-  group_by(word) %>%
-  filter(n() >= 20) %>%
-  pairwise_cor(word, id, sort = TRUE)
-
-word_cors
+lexRank(cancer_soc$sq6a)
 ```
 
-This is probably far more useful than bigrams.
+## Keywords 
 
----
+Found to be surprisingly fast with textrank
 
-There is still much to be done in between-item analysis. This should also be run on the
-nzqhs dataset as well
+```{r}
+keyw <-
+  textrank_keywords(no_stop_cancer_soc$word)
+
+head(keyw$keywords, 10)
+```
+
+## Topic Modelling
+
+```{r}
+cancer_soc_word_count <-
+  no_stop_cancer_soc %>%
+  count(id, word, sort = TRUE)
+  
+
+response_dtm <- cancer_soc_word_count %>%
+  cast_dtm(id, word, n)
+```
+
+```{r}
+tic()
+response_lda <- LDA(response_dtm, k = 4)
+toc()
+response_lda
+```
+LDA extremely fast here - less than a second
+
+```{r}
+response_lda_td <- tidy(response_lda)
+response_lda_td
+```
+
+```{r}
+top_terms <- response_lda_td %>%
+  group_by(topic) %>%
+  top_n(5, beta) %>%
+  ungroup() %>%
+  arrange(topic, -beta)
+
+top_terms
+```
+
+```{r}
+top_terms %>%
+  mutate(term = reorder(term, beta)) %>%
+  ggplot(aes(term, beta)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~ topic, scales = "free") +
+  theme(axis.text.x = element_text(size = 15, angle = 90, hjust = 1))
+```
+
 

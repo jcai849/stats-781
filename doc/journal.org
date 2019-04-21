@@ -1,4 +1,4 @@
-* [[file:comm][Meetings]]
+* [[file:comm][Meeting With Chris]]<2019-04-24 Wed 11:00-12:00 +1w>
   :PROPERTIES:
   :CUSTOM_ID: meetings
   :END:
@@ -227,7 +227,7 @@ what is capable in text analysis, and what is of interest to us and our
 end users. The UI will likely reflect this, dividing into seperate
 windows/panes/tabs to accomodate. Let's look at them in turn:
 
-*** Processing
+** Processing
     :PROPERTIES:
     :CUSTOM_ID: processing
     :END:
@@ -275,7 +275,7 @@ begins. My initial thoughts are of a tabbed import process, with each
 tab holding the processing tasks for each individual document, however
 this won't scale well to large corpus imports.
 
-*** Within-Text Analytics
+** Within-Text Analytics
     :PROPERTIES:
     :CUSTOM_ID: within-text-analytics
     :END:
@@ -306,7 +306,7 @@ Sentiment is a feature that has been heavily developed by the field of
 text analytics, seeing a broad variety of uses. here, it would be worth
 examining sentiment, by word and over the length of the text overall.
 
-*** Between-Text Analytics
+** Between-Text Analytics
     :PROPERTIES:
     :CUSTOM_ID: between-text-analytics
     :END:
@@ -367,7 +367,7 @@ this tutorial on incorporating textrank with tidy methods:
 
 Further summarisation experimentation is continued [[file:summarisation_experimentation.Rmd][here]]
 
---------------
+After further testing, I have found LexRank to work significantly faster, while generating similar results, thus being favourable for summarisation. It appears that Textrank wins in the ability to generate keywords, and does so extremely quickly. Despite the speed gain in using LexRank for summarisation, it still takes several seconds on my i5 dual-core, to run, however this is offset by the verbosity of the function assuring me that it isn't hanging.
 
 LexRank and textRank appear to exist complimentarily to one another.
 Below is a brief summary of how they work
@@ -398,6 +398,13 @@ LexRank is essentially the same as textRank, however uses
 [[https://en.wikipedia.org/wiki/Cosine_similarity][cosine similarity]] of tf-idf vectors as it's measure of similarity. LexRank is better at
 working across multiple texts, due to the inclusion of a heuristic known
 as "Cross-Sentence Information Subsumption (CSIS)"
+
+** Topic Modelling
+Topic Modelling appears to serve a useful purpose in text analytics, with LDA being the primary implementation, requiring multiple texts, and a Document-Term Matrix. My exploration with topic modelling is located [[file:topic-modelling.Rmd][here]]. It could be worth investigating other forms of topic modelling, especially within-text.
+** Sentiment Distribution
+Over a large /n/ dataset such as free-response surveys, it may be useful to calculate the sentiment for each response, and consider the statistical properties of the distribution of sentiments.
+** Conditional Analytics
+The idea of conditional analytics is of interest to me, especially for high /n/ datasets such as large free-response surveys. Particularly, I want to know, given some condition, how does the subset behave? For example, given a negative sentiment, what is the most representative response? Or, given that some common word, what is the distribution of sentiment
 * Data Types
 
 The application requires the capacity to smoothly work with diverse data types. For this to occur, a test corpus must be developed, and some important data types picked out.

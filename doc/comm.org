@@ -160,12 +160,28 @@ capabilities
 - [ ] Test grouping variables such as survey group in the analysis
 - [X] LexRank for keywords - Not possible
 
-* DONE 2019-04-10
-  CLOSED: [2019-04-16 Tue 23:31] SCHEDULED: <2019-04-10 Wed>
+* CLOSED 2019-04-10
+  CLOSED: [2019-04-19 Fri 17:52] SCHEDULED: <2019-04-10 Wed>
 
-** TODO Look into pairwise_cor function to determine order and remove repetition
+- [ ] Look into pairwise_cor function to determine order and remove repetition
+- [ ] Complete previous week's tasks
+* CLOSED Meeting Chris @his-office
+  CLOSED: [2019-04-19 Fri 17:52]
+  <2019-04-17 Wed>
+* CLOSED Discussion and tasks
+  CLOSED: [2019-04-20 Sat 14:20] SCHEDULED: <2019-04-20 Sat> DEADLINE: <2019-04-24 Wed>
+  <2019-04-24 Wed 11:00-12:00>
+** Preparation:
+- [X] Between-group analytics for free-response data
+- [X] Topic Modelling
+- [X] Consider grouping variables: Responses within each group is functionally equivalent to analysing chapters in a book, which our methods all provide for
+** To Discuss
+- [ ] Preparation
+- [ ] Conditional analytics
+- [ ] Sentiment Distributions
+** Summary
+* Discussion and tasks
+  SCHEDULED: <2019-04-25 Thu> DEADLINE: <2019-05-01 Wed>
+  <2019-05-01 Wed 11:00-12:00>
+** Preparation:
 
-** TODO Complete previous week's tasks
-
-* Meeting Chris @his-office
-  SCHEDULED: <2019-04-17 Wed>
