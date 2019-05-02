@@ -4,7 +4,9 @@
 #+options: author:t broken-links:nil c:nil creator:nil
 #+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
 #+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
-#+options: timestamp:t title:t toc:t todo:t |:t
+#+options: timestamp:t title:t toc:nil todo:t |:t
+
+#+PROPERTY: header-args :eval never-export~
 
 #+author: Jason Cairns
 #+email: jcai849@aucklanduni.ac.nz
@@ -16,6 +18,7 @@
 #+latex_class: article
 #+LATEX_CLASS_OPTIONS: [a4paper, 11pt]
 #+LATEX_HEADER: \usepackage{natbib}
+#+LATEX_HEADER: \usepackage{minted}
 #+latex_header_extra:
 #+description:
 #+keywords:
@@ -44,13 +47,26 @@ First, we will load in the nzqhs data and run a simple sentiment analysis on it
 * Handling the Distribution
 We can view a histogram of the distribution
 #+begin_src R :file ./assets/sent-dist.png :res 100 :height 400 :width 600 :results output graphics :colnames yes :session rsession1 :exports results
-  hist(sents$score)
+  ## hist(sents$score)
+  sents %>%
+    ggplot(aes(score)) +
+    geom_histogram()
 #+end_src
 
 #+RESULTS:
 [[file:./assets/sent-dist.png]]
 
-A further question is what to do now that we have a distribution? Some potential uses follow:
+A further question is what to do now that we have a distribution? 
+We can get a summary of the distribution:
+#+begin_src R :results output :colnames yes :session rsession1 :tangle yes :comments link :exports both
+summary(sents$score)
+#+end_src
+
+#+RESULTS:
+:    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+: -2.3333 -1.5000 -1.0000 -0.8449 -0.3839  1.3333
+
+Some potential uses follow:
 
 ** Conditioning
 Something that may be of use is to condition the data, answering the question, given some range of values in one dimension, what is the data like in another? In this case, given some range of values in sentiment, what are the keywords? Here we will assess for sentiment > 1, and sentiment < -2
@@ -78,7 +94,7 @@ Something that may be of use is to condition the data, answering the question, g
 
 Keywords for sentiment > 1:
 
-#+begin_src R :results output :colnames yes :session rsession1 :tangle yes :comments link :exports results
+#+begin_src R :results output :colnames yes :session rsession1 :tangle yes :comments link :exports both
   head(textrank::textrank_keywords(cond1$word)$keywords)
 #+end_src
 
@@ -93,7 +109,7 @@ Keywords for sentiment > 1:
 
 Keywords for sentiment < -2
 
-#+begin_src R :results output :colnames yes :session rsession1 :tangle yes :comments link :exports results
+#+begin_src R :results output :colnames yes :session rsession1 :tangle yes :comments link :exports both
   head(textrank::textrank_keywords(cond2$word)$keywords %>% filter(ngram == 1))
 #+end_src
 
@@ -105,3 +121,5 @@ Keywords for sentiment < -2
 : 4 hypertension     1    1
 : 5     catheter     1    1
 : 6      central     1    1
+
+This data is all fairly morbid, so the split is not entirely obvious to me. Perhaps it is worth attaining a more diverse dataset.

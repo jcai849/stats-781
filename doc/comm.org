@@ -181,12 +181,14 @@ capabilities
 ** Actions
    DEADLINE: <2019-05-02 Thu>
 Write more on observations as paragraphs for dissertation
-*** TODO Learn how textrank_keywords works
-    SCHEDULED: <2019-05-02 Thu 20:00>
+*** CLOSED Learn how textrank_keywords works
+    CLOSED: [2019-05-03 Fri 10:57] SCHEDULED: <2019-05-03 Fri>
 Especially in formatting n-grams, what is "freq" referring to. Figure out what's wrong with bigrams
+[[file:further-free-response.org][link]]
 *** CLOSED Condition actions, form sentiment distribution
     CLOSED: [2019-04-29 Mon 09:28] SCHEDULED: <2019-04-29 Mon>
 [[https://github.com/bnosac/BTM][This]] may be useful
+[[file:sent-dist.org][link]]
 * Meeting Chris
 <2019-05-08 Wed 11:00-12:00>
 ** Topics

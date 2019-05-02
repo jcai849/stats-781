@@ -4,7 +4,9 @@
 #+options: author:t broken-links:nil c:nil creator:nil
 #+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
 #+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
-#+options: timestamp:t title:t toc:t todo:t |:t
+#+options: timestamp:t title:t toc:nil todo:t |:t
+
+#+PROPERTY: header-args :eval never-export~
 
 #+author: Jason Cairns
 #+email: jcai849@aucklanduni.ac.nz
@@ -23,38 +25,79 @@
 #+subtitle:
 #+date: \today
 
-
 * Background
 Adding to the previous exploration, there were subtleties felt worth
 exploring further; namely, the base bigram count, and the
 =textrank_keywords= function, as well as their relation.
 
 * Bigram Count
-
-#+begin_src R :tangle portfolio.R
+Let's look at the most common bigrams in the Cancer Society data
+#+begin_src R :hline yes :colnames yes :session rsession1 :tangle yes :comments link :exports both
   library(tidyverse)
+  library(readxl)
+  library(tidytext)
 
-  a2_mean <- 0.05395
-  met_mean <- 0.01580
-  ch_mean <- 0.02176
+  cancersoc <- read_excel("../data/raw/Cancer Soc.xlsx")
 
-  a2_sd <- 0.13933
-  met_sd <- 0.03518
-  ch_sd <- 0.07545
-
-  x <- seq(-0.5,0.5,0.001)
-  a2_dist <- dnorm(x,a2_mean, a2_sd)
-  met_dist <- dnorm(x, met_mean, met_sd)
-  ch_dist <- dnorm(x, ch_mean, ch_sd)
-
-  dists <- cbind(x, a2_dist, met_dist, ch_dist) %>% as.data.frame
-
-  ggplot(dists, aes(x)) + 
-    geom_line(aes(y = a2_dist, colour = "AMT")) + 
-    geom_line(aes(y = met_dist, colour = "MET")) +
-    geom_line(aes(y = ch_dist, colour = "CNU")) +
-    labs(colour = "Companies") +
-    ylab("Density")
-
-  ggsave("portfolio.png")
+  cancersoc %>%
+    mutate(id = row_number()) %>%
+    unnest_tokens(bigram, sq6a, token = "ngrams", n = 2) %>%
+    count(bigram, sort = TRUE) %>%
+    head
 #+end_src
+
+#+RESULTS:
+| bigram      |   n |
+|-------------+-----|
+| nil         | 589 |
+| to help     | 284 |
+| to give     |  69 |
+| a good      |  67 |
+| help others |  65 |
+| good cause  |  61 |
+
+The previous attempt at assessing bigrams used the following code:
+
+#+begin_src R :hline yes :colnames yes :session rsession1 :tangle yes :comments link :exports both
+  cancer_soc_bigrams <-
+    cancersoc %>%
+    select(sq6a) %>%
+    mutate(id = row_number()) %>%
+    unnest_tokens(bigram, sq6a, token = "ngrams", n = 2) %>%
+    na.omit()
+
+  bigrams_separated <- cancer_soc_bigrams %>%
+    separate(bigram, c("word1", "word2"), sep = " ")
+
+  bigrams_filtered <- bigrams_separated %>%
+    filter(!word1 %in% stop_words$word) %>%
+    filter(!word2 %in% stop_words$word)
+
+  bigrams_united <- bigrams_filtered %>%
+    unite(bigram, word1, word2, sep = " ")
+
+  # new bigram counts:
+  bigram_counts <- bigrams_united %>% 
+    count(bigram, sort = TRUE)
+
+  head(bigram_counts)
+#+end_src
+
+#+RESULTS:
+| bigram         |  n |
+|----------------+----|
+| salvation army | 19 |
+| raise money    |  9 |
+| donated money  |  5 |
+| red cross      |  5 |
+| spare time     |  5 |
+| cancer society |  4 |
+
+These results are completely different. On closer inspection, it seems that stopword removal got rid of a lot of bigrams that would otherwise be useful. This raises the question of whether stopword removal is so essential when ngrams are needed?
+
+* Further exploration of =textrank_keywords=
+The results of =textrank_keywords= appeared extremely useful, but the lingering question was how they were generated. The documentation of =textrank_keywords= was helpful in this respect, showing that
+#+begin_quote
+In order to find relevant keywords, the textrank algorithm constructs a word network. This network is constructed by looking which words follow one another. A link is set up between two words if they follow one another, the link gets a higher weight if these 2 words occur more frequenctly next to each other in the text.
+On top of the resulting network the 'Pagerank' algorithm is applied to get the importance of each word. The top 1/3 of all these words are kept and are considered relevant. After this, a keywords table is constructed by combining the relevant words together if they appear following one another in the text. 
+#+end_quote
