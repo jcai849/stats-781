@@ -1,8 +1,4 @@
-* [[file:comm][Meeting With Chris]]<2019-04-24 Wed 11:00-12:00 +1w>
-  :PROPERTIES:
-  :CUSTOM_ID: meetings
-  :END:
-
+* [[file:comm.org][Meeting With Chris]]
 * Initial Survey
   :PROPERTIES:
   :CUSTOM_ID: initial-survey
@@ -214,7 +210,6 @@ other key measurements.
   :PROPERTIES:
   :CUSTOM_ID: feature-implementations
   :END:
-
 ** Introduction
    :PROPERTIES:
    :CUSTOM_ID: introduction
@@ -402,13 +397,11 @@ as "Cross-Sentence Information Subsumption (CSIS)"
 ** Topic Modelling
 Topic Modelling appears to serve a useful purpose in text analytics, with LDA being the primary implementation, requiring multiple texts, and a Document-Term Matrix. My exploration with topic modelling is located [[file:topic-modelling.Rmd][here]]. It could be worth investigating other forms of topic modelling, especially within-text.
 ** Sentiment Distribution
-Over a large /n/ dataset such as free-response surveys, it may be useful to calculate the sentiment for each response, and consider the statistical properties of the distribution of sentiments.
+Over a large /n/ dataset such as free-response surveys, it may be useful to calculate the sentiment for each response, and consider the statistical properties of the distribution of sentiments. [[file:sent-dist.org][Here]] is an exploration of free-response data forming a sentiment distribution.
 ** Conditional Analytics
-The idea of conditional analytics is of interest to me, especially for high /n/ datasets such as large free-response surveys. Particularly, I want to know, given some condition, how does the subset behave? For example, given a negative sentiment, what is the most representative response? Or, given that some common word, what is the distribution of sentiment
+The idea of conditional analytics is of interest to me, especially for high /n/ datasets such as large free-response surveys. Particularly, I want to know, given some condition, how does the subset behave? For example, [[file:sent-dist.org][given]] a negative sentiment, what is the most representative response? Or, given that some common word, what is the distribution of sentiment
 * Data Types
-
 The application requires the capacity to smoothly work with diverse data types. For this to occur, a test corpus must be developed, and some important data types picked out.
-
 ** Test Corpus
    :PROPERTIES:
    :CUSTOM_ID: test-corpus
@@ -441,4 +434,4 @@ developed. All data is stored in the folder [[file:c:/Users/User/Desktop/stats-7
   - technical user guide
 
 ** Free-Response Data
-Free Response Data (as in survey forms etc.) has been identified as an area of high potential for the application. Two datasets have been used to run typical text analyses upon, with the exploration [[file:free-response.Rmd][here]]
+Free Response Data (as in survey forms etc.) has been identified as an area of high potential for the application. Two datasets have been used to run typical text analyses upon, with the exploration [[file:free-response.Rmd][here]]. Upon close inspection, there are subtleties worth exploring [[file:further-free-response.org][further]] especially in bigrams and keywords.

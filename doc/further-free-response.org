@@ -1,0 +1,60 @@
+#+TITLE: Further Free Response Exploration
+
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+
+#+author: Jason Cairns
+#+email: jcai849@aucklanduni.ac.nz
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.1 (Org mode 9.2.3)
+
+#+latex_class: article
+#+LATEX_CLASS_OPTIONS: [a4paper, 11pt]
+#+LATEX_HEADER: \usepackage{natbib}
+#+LATEX_HEADER: \usepackage{minted}
+#+latex_header_extra:
+#+description:
+#+keywords:
+#+subtitle:
+#+date: \today
+
+
+* Background
+Adding to the previous exploration, there were subtleties felt worth
+exploring further; namely, the base bigram count, and the
+=textrank_keywords= function, as well as their relation.
+
+* Bigram Count
+
+#+begin_src R :tangle portfolio.R
+  library(tidyverse)
+
+  a2_mean <- 0.05395
+  met_mean <- 0.01580
+  ch_mean <- 0.02176
+
+  a2_sd <- 0.13933
+  met_sd <- 0.03518
+  ch_sd <- 0.07545
+
+  x <- seq(-0.5,0.5,0.001)
+  a2_dist <- dnorm(x,a2_mean, a2_sd)
+  met_dist <- dnorm(x, met_mean, met_sd)
+  ch_dist <- dnorm(x, ch_mean, ch_sd)
+
+  dists <- cbind(x, a2_dist, met_dist, ch_dist) %>% as.data.frame
+
+  ggplot(dists, aes(x)) + 
+    geom_line(aes(y = a2_dist, colour = "AMT")) + 
+    geom_line(aes(y = met_dist, colour = "MET")) +
+    geom_line(aes(y = ch_dist, colour = "CNU")) +
+    labs(colour = "Companies") +
+    ylab("Density")
+
+  ggsave("portfolio.png")
+#+end_src

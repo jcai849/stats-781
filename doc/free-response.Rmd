@@ -172,7 +172,7 @@ response_dtm <- cancer_soc_word_count %>%
 
 ```{r}
 tic()
-response_lda <- LDA(response_dtm, k = 4)
+response_lda <- LDA(response_dtm, k = 2)
 toc()
 response_lda
 ```

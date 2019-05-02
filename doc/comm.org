@@ -168,8 +168,7 @@ capabilities
 * CLOSED Meeting Chris @his-office
   CLOSED: [2019-04-19 Fri 17:52]
   <2019-04-17 Wed>
-* CLOSED Discussion and tasks
-  CLOSED: [2019-04-20 Sat 14:20] SCHEDULED: <2019-04-20 Sat> DEADLINE: <2019-04-24 Wed>
+* Discussion and tasks
   <2019-04-24 Wed 11:00-12:00>
 ** Preparation:
 - [X] Between-group analytics for free-response data
@@ -179,9 +178,22 @@ capabilities
 - [ ] Preparation
 - [ ] Conditional analytics
 - [ ] Sentiment Distributions
-** Summary
-* Discussion and tasks
-  SCHEDULED: <2019-04-25 Thu> DEADLINE: <2019-05-01 Wed>
-  <2019-05-01 Wed 11:00-12:00>
-** Preparation:
+** Actions
+   DEADLINE: <2019-05-02 Thu>
+Write more on observations as paragraphs for dissertation
+*** TODO Learn how textrank_keywords works
+    SCHEDULED: <2019-05-02 Thu 20:00>
+Especially in formatting n-grams, what is "freq" referring to. Figure out what's wrong with bigrams
+*** CLOSED Condition actions, form sentiment distribution
+    CLOSED: [2019-04-29 Mon 09:28] SCHEDULED: <2019-04-29 Mon>
+[[https://github.com/bnosac/BTM][This]] may be useful
+* Meeting Chris
+<2019-05-08 Wed 11:00-12:00>
+** Topics
+- Prior Actions
+- Look into in-text topic modelling
+- Implementation in Shiny (timeline) - possibility of python?
+- ggpage
+** CLOSED Schedule Meeting for Thurs/Fri
+   CLOSED: [2019-05-02 Thu 16:13] SCHEDULED: <2019-05-03 Fri>
 

@@ -1,0 +1,107 @@
+#+TITLE: Sentiment Distribution
+
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+
+#+author: Jason Cairns
+#+email: jcai849@aucklanduni.ac.nz
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.1 (Org mode 9.2.3)
+
+#+latex_class: article
+#+LATEX_CLASS_OPTIONS: [a4paper, 11pt]
+#+LATEX_HEADER: \usepackage{natbib}
+#+latex_header_extra:
+#+description:
+#+keywords:
+#+subtitle:
+#+date: \today
+
+* Introduction
+Once we have a distribution to work with, there are many properties that arise from one that can be useful to us, such as contextual summary statistics, modelling, etc. As an example, we will start with a sentiment distribution, but the concept (if useful) can be expanded to any other data with numerical variance.
+* Creating the Data
+First, we will load in the nzqhs data and run a simple sentiment analysis on it
+
+#+begin_src R :results output silent :colnames yes :session rsession1 :tangle yes :comments link :exports both
+  library(tidyverse)
+  library(tidytext)
+  library(readxl)
+
+  nzqhs <- read_excel("../data/raw/Schonlau1.xls")
+
+  sents <- nzqhs %>%
+       unnest_tokens(word, `expert clinical summary`) %>%
+    inner_join(get_sentiments("afinn")) %>%
+    group_by(`record ID`) %>%
+      summarise(score = mean(score))
+#+end_src
+
+* Handling the Distribution
+We can view a histogram of the distribution
+#+begin_src R :file ./assets/sent-dist.png :res 100 :height 400 :width 600 :results output graphics :colnames yes :session rsession1 :exports results
+  hist(sents$score)
+#+end_src
+
+#+RESULTS:
+[[file:./assets/sent-dist.png]]
+
+A further question is what to do now that we have a distribution? Some potential uses follow:
+
+** Conditioning
+Something that may be of use is to condition the data, answering the question, given some range of values in one dimension, what is the data like in another? In this case, given some range of values in sentiment, what are the keywords? Here we will assess for sentiment > 1, and sentiment < -2
+
+#+begin_src R :results output silent :colnames yes :session rsession1 :tangle yes :comments link :exports code
+  data(stop_words)
+
+  id_conds1 <- sents %>%
+    filter(score > 1)
+
+  cond1 <- nzqhs %>%
+    inner_join(id_conds1) %>%
+    unnest_tokens(word, `expert clinical summary`) %>%
+    anti_join(stop_words)
+
+  id_conds2 <- sents %>%
+    filter(score < -2)
+
+  cond2 <- nzqhs %>%
+    inner_join(id_conds2) %>%
+    unnest_tokens(word, `expert clinical summary`) %>%
+    anti_join(stop_words)
+
+#+end_src
+
+Keywords for sentiment > 1:
+
+#+begin_src R :results output :colnames yes :session rsession1 :tangle yes :comments link :exports results
+  head(textrank::textrank_keywords(cond1$word)$keywords)
+#+end_src
+
+#+RESULTS:
+:     keyword ngram freq
+: 1      turp     1    2
+: 2 operation     1    2
+: 3   voiding     1    2
+: 4   patient     1    2
+: 5     urine     1    2
+: 6 operative     1    2
+
+Keywords for sentiment < -2
+
+#+begin_src R :results output :colnames yes :session rsession1 :tangle yes :comments link :exports results
+  head(textrank::textrank_keywords(cond2$word)$keywords %>% filter(ngram == 1))
+#+end_src
+
+#+RESULTS:
+:        keyword ngram freq
+: 1         line     1    3
+: 2        staph     1    2
+: 3           98     1    2
+: 4 hypertension     1    1
+: 5     catheter     1    1
+: 6      central     1    1
