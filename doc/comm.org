@@ -178,8 +178,8 @@ capabilities
 - [ ] Preparation
 - [ ] Conditional analytics
 - [ ] Sentiment Distributions
-** Actions
-   DEADLINE: <2019-05-02 Thu>
+** CLOSED Actions
+   CLOSED: [2019-05-04 Sat 15:57] DEADLINE: <2019-05-02 Thu>
 Write more on observations as paragraphs for dissertation
 *** CLOSED Learn how textrank_keywords works
     CLOSED: [2019-05-03 Fri 10:57] SCHEDULED: <2019-05-03 Fri>
@@ -195,7 +195,34 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
 - Prior Actions
 - Look into in-text topic modelling
 - Implementation in Shiny (timeline) - possibility of python?
-- ggpage
+- ggpage: see later upon implementation
 ** CLOSED Schedule Meeting for Thurs/Fri
    CLOSED: [2019-05-02 Thu 16:13] SCHEDULED: <2019-05-03 Fri>
-
+** Actions
+   DEADLINE: <2019-05-15 Wed>
+- Look into alternative stopword lists and stopwords for different purposes
+- Sentiment frequencies of positive and negative words, coloured continuously by their sentiment score. (include even for diagnostic purposes)
+- Have a look at a few different displays (e.g. scatterplot of frequency ~ sentiment score).
+- Forms of Topic Modelling
+*** TODO Dissertation Work
+    SCHEDULED: <2019-05-14 Tue>
+* Meeting Chris
+<2019-05-15 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-05-22 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-05-29 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-06-05 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-06-12 Wed 11:00-12:00>
+** Topics
+** Actions
