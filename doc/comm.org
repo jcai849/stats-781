@@ -198,18 +198,28 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
 - ggpage: see later upon implementation
 ** CLOSED Schedule Meeting for Thurs/Fri
    CLOSED: [2019-05-02 Thu 16:13] SCHEDULED: <2019-05-03 Fri>
-** Actions
-   DEADLINE: <2019-05-15 Wed>
+** CLOSED Actions
+   CLOSED: [2019-05-17 Fri 09:06] DEADLINE: <2019-05-15 Wed>
 - Look into alternative stopword lists and stopwords for different purposes
 - Sentiment frequencies of positive and negative words, coloured continuously by their sentiment score. (include even for diagnostic purposes)
 - Have a look at a few different displays (e.g. scatterplot of frequency ~ sentiment score).
 - Forms of Topic Modelling
-*** TODO Dissertation Work
-    SCHEDULED: <2019-05-14 Tue>
+*** CLOSED Dissertation Work
+    CLOSED: [2019-05-14 Tue 20:22] SCHEDULED: <2019-05-14 Tue>
 * Meeting Chris
 <2019-05-15 Wed 11:00-12:00>
 ** Topics
-** Actions
+** Actions [4/5]
+   SCHEDULED: <2019-05-21 Tue>
+- [X] Write on contextual search function
+- [X] Write on necessity of temporary stopwords list
+  - [X] assess in future if it will be too slow if running in real time
+  - [X] good to have a running statistic of what has been done to the data (stopword removal etc.)
+- [X] Write on why LDA was chosen and others weren't considered
+- [X] Write on ggpage
+- [ ] Start building wrapper functions
+  - [ ]wrapper function for summarisation
+    - [ ]parameters may include different visualisation formats
 * Meeting Chris
 <2019-05-22 Wed 11:00-12:00>
 ** Topics

@@ -123,6 +123,10 @@ include:
   - [[https://rtweet.info/][rtweet]] :: from Twitter
   - [[https://cran.r-project.org/web/packages/WikipediaR/index.html][wikipediar]] :: from Wikipedia
 
+- [[https://github.com/EmilHvitfeldt/ggpage][ggpage]] :: produces impressive page-view charts with features such as word highlighting, allowing for a clear overview of a text and it's structure, with probable use in our search feature function
+
+- [[https://github.com/thomasp85/gganimate][gganimate]] :: produces animated charts, which can be useful if additional, regular, and low /n/ dimensions exist in the data
+
 --------------
 
 Additionally, there are some packages that may not necessarily be useful
@@ -333,6 +337,8 @@ After noting that stopword removal impacted important n-grams when a stopword ma
 The package we are using extensively, tidytext, has both SMART and snowball lists, as well as [[http://www.lextek.com/manuals/onix/stopwords1.html][onix]], which bills itself as " probably the most widely used stopword list. It covers a wide number of stopwords without getting too aggressive and including too many words which a user might search upon."
 Of note is that all of the lists are included in one dataframe, so it should be filtered before being used, unlike how we have been using it.
 snowball is clearly the shortest, and I think may be worth having as the default, with SMART (the most extensive) and onix as secondary options. We are not in the role of providing a computationally efficient search engine, only removing words that contribute little but noise.
+
+In terms of implementation within our program, we ought to have the ability to add custom stopwords. In keeping with the philosophy of having our data clearly visible, this will necessitate a "temporary stopwords" list. In the process of implementation, we will have to make assesments of whether it will run too slowly if allowed to influence charts and output in real timme, so manual refreshes would be required. Additionally, it will be good to have a running set of statistics keeping available what has been done to the data (including more than just stopword removal)
 ** Visualisation
 With so much of the conceptual space of text analytic visualisation being taken up with far from optimal charts, there is a need to experiment with alternative visualisations; We explore some [[file:sent-vis.org][here]]
 ** Text Summarisation
@@ -407,13 +413,41 @@ LexRank is essentially the same as textRank, however uses
 [[https://en.wikipedia.org/wiki/Cosine_similarity][cosine similarity]] of tf-idf vectors as it's measure of similarity. LexRank is better at
 working across multiple texts, due to the inclusion of a heuristic known
 as "Cross-Sentence Information Subsumption (CSIS)"
+** Search Function
+The analyst is not expected to be entirely familiar with the texts under analysis; this is partly the purpose of this program. Hence, there are likely to be terms, keywords, and relationships that the program reveals, and are a surprise to the analyst, and context is necessary to understand them. A search function has been identified as useful in meeting this problem, where a word is entered in search, and contextual passages are returned. Useful in the results would be indications of location of each passage in the greater text, as well as if multiple texts are present, the name of the text it belongs to.
 
 ** Topic Modelling
-Topic Modelling appears to serve a useful purpose in text analytics, with LDA being the primary implementation, requiring multiple texts, and a Document-Term Matrix. My exploration with topic modelling is located [[file:topic-modelling.Rmd][here]]. It could be worth investigating other forms of topic modelling, especially within-text.
+Topic Modelling appears to serve a useful purpose in text analytics, with LDA being the primary implementation, requiring multiple texts, and a Document-Term Matrix. My exploration with topic modelling is located [[file:topic-modelling.Rmd][here]]. It could be worth investigating other forms of topic modelling, especially within-text.[2019-05-17 Fri] I checked other forms - their complexity requires a great deal of time to understand if I want to implement them intelligently; better to stick with LDA, which, while also complex, is well used enough to be considered standard.
 ** Sentiment Distribution
 Over a large /n/ dataset such as free-response surveys, it may be useful to calculate the sentiment for each response, and consider the statistical properties of the distribution of sentiments. [[file:sent-dist.org][Here]] is an exploration of free-response data forming a sentiment distribution.
 ** Conditional Analytics
 The idea of conditional analytics is of interest to me, especially for high /n/ datasets such as large free-response surveys. Particularly, I want to know, given some condition, how does the subset behave? For example, [[file:sent-dist.org][given]] a negative sentiment, what is the most representative response? Or, given that some common word, what is the distribution of sentiment
+** Wrapper Functions
+In order to begin implementation, I have defined wrapper functions for
+the primary features. The intention is to create a higher layer of
+abstraction for the features as well as ease of use. I begin with the
+text summarisation feature; the details are below
+*** Text Summarisation
+Link to [[file:~/curr/stats-781/src/summ-wrapper.R][src]]
+Link to [[file:~/curr/stats-781/test/summ-wrapper-test.R][test]]
+Arguments:
+- x = input dataframe with column titled "word"
+- n = n-many sentences
+- style = style of output (chart, dataframe, text)
+- dim = dimension of chart
+- engine = textrank/lexrank
+- type = sentences/keywords etc.
+
+Working through, I have come to come realisation that a complete
+wrapper function may not necessarily be ideal; rather, a pipeline may
+be better - this is because a wrapper function, with, e.g., a plotting
+function at the outermost layer, would require a full recalculation of
+the inner functions for every parameter change in the plot - what may
+be better is the creation of a pipeline that leaves most functions as
+they are but just creates more suitable objects to pass as arguments
+to the functions. This is something of a "memory cheap; processing
+expensive" principle. The display wrapper functions would then be
+taking complete objects only
 * Data Types
 The application requires the capacity to smoothly work with diverse data types. For this to occur, a test corpus must be developed, and some important data types picked out.
 ** Test Corpus

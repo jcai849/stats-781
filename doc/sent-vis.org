@@ -32,7 +32,7 @@
 
   nzqhs <- read_excel("../data/raw/Schonlau1.xls")
 
-  stop_snow<- filter(stop_words, lexicon == "snowball")
+  stop_snow <- filter(stop_words, lexicon == "snowball")
 
   nzqhs_stopped <- nzqhs %>%
     unnest_tokens(word, `expert clinical summary`) %>%
@@ -49,8 +49,8 @@ Have a look at a few different displays (e.g. scatterplot of frequency ~ sentime
     inner_join(get_sentiments("afinn"))
 
   freq_score %>%
-    ggplot(aes(score, n, label=word)) +
-    geom_jitter() +
+    ggplot(aes(score, log10(n)+0.2*runif(length(n)), label=word)) +
+    geom_point() +
     geom_text(aes(label=word))
 #+end_src
 
