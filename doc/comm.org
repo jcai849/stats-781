@@ -209,8 +209,8 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
 * Meeting Chris
 <2019-05-15 Wed 11:00-12:00>
 ** Topics
-** Actions [4/5]
-   SCHEDULED: <2019-05-21 Tue>
+** CLOSED Actions [4/5]
+   CLOSED: [2019-05-22 Wed 12:35] SCHEDULED: <2019-05-21 Tue>
 - [X] Write on contextual search function
 - [X] Write on necessity of temporary stopwords list
   - [X] assess in future if it will be too slow if running in real time
@@ -223,16 +223,106 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
 * Meeting Chris
 <2019-05-22 Wed 11:00-12:00>
 ** Topics
-** Actions
+** Action [2/6]
+- [X] better name
+- [X] novel test set
+- [ ] automate processing for each df argument
+- [ ] construct word/ngram/keyword wrapper
+- [ ] construct sentence wrapper
+- [ ] write on a diagram wrapper
 * Meeting Chris
 <2019-05-29 Wed 11:00-12:00>
 ** Topics
 ** Actions
+   DEADLINE: <2019-06-12 Wed>
+*** Work on Dissertation [2/4]
+- [X] Create text import wrapper
+- [X] Create stopword removal wrapper
+- [ ] Create framework of word-level analytics, create for word frequency
+- [ ] Prove the recreation of the original text from the deconstructed text
 * Meeting Chris
-<2019-06-05 Wed 11:00-12:00>
+<2019-06-12 Wed 11:00-12:00>
 ** Topics
 ** Actions
 * Meeting Chris
-<2019-06-12 Wed 11:00-12:00>
+<2019-06-19 Wed 11:00-12:00>
+** Topics
+*** Work on Dissertation
+    SCHEDULED: <2019-06-13 Thu>
+** Actions
+* Meeting Chris
+<2019-06-26 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-07-03 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-07-10 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-07-17 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-07-24 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-07-31 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-08-07 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-08-14 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-08-21 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-08-28 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-09-04 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-09-11 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-09-18 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-09-25 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-10-02 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-10-09 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-10-16 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-10-23 Wed 11:00-12:00>
+** Topics
+** Actions
+* Meeting Chris
+<2019-10-30 Wed 11:00-12:00>
 ** Topics
 ** Actions

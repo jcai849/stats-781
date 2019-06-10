@@ -1,0 +1,2 @@
+source("../src/summ-wrapper.R")
+test_summ(plot, 1:4)

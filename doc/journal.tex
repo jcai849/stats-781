@@ -1,45 +1,74 @@
-* [[file:comm.org][Meeting With Chris]]
-* Initial Survey
-  :PROPERTIES:
-  :CUSTOM_ID: initial-survey
-  :END:
+% Created 2019-05-26 Sun 14:14
+% Intended LaTeX compiler: pdflatex
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+\author{Jason Cairns}
+\date{\today}
+\title{}
+\hypersetup{
+ pdfauthor={Jason Cairns},
+ pdftitle={},
+ pdfkeywords={},
+ pdfsubject={},
+ pdfcreator={Emacs 26.1 (Org mode 9.2.3)}, 
+ pdflang={English}}
+\begin{document}
 
-** Prescribed Reading
-   :PROPERTIES:
-   :CUSTOM_ID: prescribed-reading
-   :END:
-- [[https://www.tidytextmining.com][Text Mining with R]]: [[./text_mining_with_r.org][notes]]
-- [[https://m-clark.github.io/text-analysis-with-R/][Text Analysis with R]]
+\tableofcontents
 
-** Consideration of Application Features
+\section{\href{comm.org}{Meeting With Chris}}
+\label{sec:orga4fc5b6}
+\section{Initial Survey}
+\label{sec:org3d075c8}
+\subsection{Prescribed Reading}
+\label{sec:orge7dceda}
+\begin{itemize}
+\item \href{https://www.tidytextmining.com}{Text Mining with R}: \href{./text\_mining\_with\_r.org}{notes}
+\item \href{https://m-clark.github.io/text-analysis-with-R/}{Text Analysis with R}
+\end{itemize}
 
-*UX/UI* must be intuitive, modelling the inherently non-linear workflow,
+\subsection{Consideration of Application Features}
+\label{sec:org0c4d7cd}
+
+\textbf{UX/UI} must be intuitive, modelling the inherently non-linear workflow,
 while fitting in with the iNZight / lite environment. I wrote some notes
-on UX/UI [[./ux_ui.org][here]].
+on UX/UI \href{./ux\_ui.org}{here}.
 
-*Text Classification* seems to be a hot topic in sentiment analysis, but
+\textbf{Text Classification} seems to be a hot topic in sentiment analysis, but
 the question remains of whether it is within our scope (I suspect not).
-If it were, [[https://cran.r-project.org/web/packages/openNLP/][openNLP]], along with some pre-made [[https://datacube.wu.ac.at/src/contrib/][models]], would likely serve 
+If it were, \href{https://cran.r-project.org/web/packages/openNLP/}{openNLP}, along with some pre-made \href{https://datacube.wu.ac.at/src/contrib/}{models}, would likely serve 
 this topic well. An interesting example of text classification in the
-Dewey Decimal System is given [[http://creatingdata.us/models/SRP-classifiers][here]].
+Dewey Decimal System is given \href{http://creatingdata.us/models/SRP-classifiers}{here}.
 
-*[[../reading/Thurner2015%20-%20Understanding%20Zipfs%20Law%20of%20Word%20Frequencies%20through%20Sample%20Space%20Collapse%20in%20Sentence%20Formation.pdf][Zipf's Law]]* is referred to regularly in text analysis. Should we
+\textbf{\href{../reading/Thurner2015 - Understanding Zipfs Law of Word Frequencies through Sample Space Collapse in Sentence Formation.pdf}{Zipf's Law}} is referred to regularly in text analysis. Should we
 demonstrate this directly, as part of some other analysis, or not at
 all?
 
-The *form of analysis* will vary enormously with different forms of
+The \textbf{form of analysis} will vary enormously with different forms of
 text. There are some things constant for all forms of text, but a good
 deal is very specific. For example, the information of interest will
 differ between novels, discourse (interviews, plays, scripts), twitter
 posts, survey response data, or others. It may be worthwhile to either
 focus solely on one, or give the option to specify the type of text.
 
-*Data structures* will change based on the text type, and the packages
+\textbf{Data structures} will change based on the text type, and the packages
 used. With a tidy dataframe as our base structure, it is easy enough to
 convert to specific objects required by various packages, harder to
 convert back.
 
-There is a natural link between *text analysis and Linguistics*, and a
+There is a natural link between \textbf{text analysis and Linguistics}, and a
 significant amount of the terminology in the field reflects that. Our
 application requires far more market share than one that a mention in a
 third year linguistics paper provides, and so linguistics is not going
@@ -47,132 +76,133 @@ to be our primary focus. Regardless, many forms of analysis require some
 linguistic theory, such as those dependent on Part of Speech tagging, so
 it is still worthwhile to keep in mind
 
-** Twitter
-   :PROPERTIES:
-   :CUSTOM_ID: twitter
-   :END:
-
+\subsection{Twitter}
+\label{sec:org2c0e02f}
 Twitter data looks particularly interesting, as it is a constantly
 updating, rich source of information. I wrote up some notes on text
-mining twitter [[./text_mining_twitter.org][here]]. It would be
+mining twitter \href{./text\_mining\_twitter.org}{here}. It would be
 particularly interesting to view twitter data in the context of
 discourse analysis.
 
-** Subtitles
-   :PROPERTIES:
-   :CUSTOM_ID: subtitles
-   :END:
-
+\subsection{Subtitles}
+\label{sec:org2f4f9b7}
 Subtitles are a unique form of text that would be very interesting to
 analyse. Subtitles for films and TV Series can be obtained easily from
-the site [[https://www.opensubtitles.org/en/search/subs][opensubtitles]], though
+the site \href{https://www.opensubtitles.org/en/search/subs}{opensubtitles}, though
 obtaining subtitles programatically may be more difficult. It clearly is
-possible, as VLC has an inbuilt feature, as does [[https://github.com/zerratar/SubSync][subsync]], which is written in
-C#, so would require a port to R (probably not worth it for us at this
+possible, as VLC has an inbuilt feature, as does \href{https://github.com/zerratar/SubSync}{subsync}, which is written in
+C\#, so would require a port to R (probably not worth it for us at this
 point). Subtitles usually come as .srt files, and once the file is
 obtained, it's easy enough to import and work with it in R with the
-package [[https://github.com/fkeck/subtools][subtools]].
+package \href{https://github.com/fkeck/subtools}{subtools}.
 
-** R Packages
-   :PROPERTIES:
-   :CUSTOM_ID: r-packages
-   :END:
-
-[[https://quanteda.io/articles/pkgdown/comparison.html][Here]] is a useful comparison between the major text mining packages. CRAN also has
-a [[https://cran.r-project.org/web/views/NaturalLanguageProcessing.html][task view]] specifically for Natural Language Processing, offering many
+\subsection{R Packages}
+\label{sec:org507f11e}
+\href{https://quanteda.io/articles/pkgdown/comparison.html}{Here} is a useful comparison between the major text mining packages. CRAN also has
+a \href{https://cran.r-project.org/web/views/NaturalLanguageProcessing.html}{task view} specifically for Natural Language Processing, offering many
 packages relevant to this project. Interestingly, they are split by
 linguistic category; Syntax, Semantics, and Pragmatics. The further from
 syntax the package is, the far more interesting it intuitively appears
 (eg. word count vs sentiment analysis). Some packages of interest
 include:
 
-- [[https://github.com/juliasilge/tidytext][tidytext]] :: is a text-mining
-  package using tidy principles, providing excellent interactivity with
-  the tidyverse, as documented in the book
-  [[https://www.tidytextmining.com][Text Mining with R]]
-- [[http://tm.r-forge.r-project.org/][tm]] :: is a text-mining framework
-  that was the go-to for text mining in R, but appears to have been made
-  redundant by tidytext and quanteda of late
-- [[https://quanteda.io/][quanteda]] :: sits alone next to qdap in the
-  Pragmatics section of the NLP task view, and offers a similar
-  capability to tidytext, though from a more object-oriented paradigm,
-  revolving around /corpus/ objects. It also has extensions such as
-  offering readability scores, something that may be worth implementing.
-- [[https://trinker.github.io/qdap/vignettes/qdap_vignette.html][qdap]] ::  is a "quantitative discourse analysis package", an extremely rich set
-  of tools for the analysis of discourse in text, such as may arise from
-  plays, scripts, interviews etc. Includes output on length of discourse
-  for agents, turn-taking, and sentiment within passages of speech. This
-  looks to me like the most insight that could be gained from a text.
-- [[https://github.com/trinker/sentimentr][sentimentr]] :: is a rich
-  sentiment analysis and tokenising package, with features including
-  dealing with negation, amplification, etc. in multi-sentence level
-  analysis. An interesting feature is the ability to output text with
-  sentences highlighted according to their inferred sentiment
-- [[https://rstudio.github.io/dygraphs/][dygraphs]] :: is a time-series
-  visualisation package capable of outputting very clear interactive
-  time-series graphics, useful for any time-series in the text analysis
-  module
-- [[https://github.com/thomasp85/gganimate][gganimate]] :: produces  animations on top of the [[https://github.com/tidyverse/ggplot2][ggplot]] package, offering
-  powerful insights. [[https://www.r-bloggers.com/investigating-words-distribution-with-r-zipfs-law-2/][Here]] is an example demonstrating Zipf's Law
-- [[https://github.com/bnosac/textrank][textrank]] :: has the unique idea
-  of extracting keywords automatically from a text using the pagerank
-  algorithm (pagerank studied in depth in STATS 320) - my exploration of
-  the package is documented [[./textrank_exploration.Rmd][here]]
-- Packages for obtaining text:
+\begin{description}
+\item[{\href{https://github.com/juliasilge/tidytext}{tidytext}}] is a text-mining
+package using tidy principles, providing excellent interactivity with
+the tidyverse, as documented in the book
+\href{https://www.tidytextmining.com}{Text Mining with R}
+\item[{\href{http://tm.r-forge.r-project.org/}{tm}}] is a text-mining framework
+that was the go-to for text mining in R, but appears to have been made
+redundant by tidytext and quanteda of late
+\item[{\href{https://quanteda.io/}{quanteda}}] sits alone next to qdap in the
+Pragmatics section of the NLP task view, and offers a similar
+capability to tidytext, though from a more object-oriented paradigm,
+revolving around \emph{corpus} objects. It also has extensions such as
+offering readability scores, something that may be worth implementing.
+\item[{\href{https://trinker.github.io/qdap/vignettes/qdap\_vignette.html}{qdap}}] is a "quantitative discourse analysis package", an extremely rich set
+of tools for the analysis of discourse in text, such as may arise from
+plays, scripts, interviews etc. Includes output on length of discourse
+for agents, turn-taking, and sentiment within passages of speech. This
+looks to me like the most insight that could be gained from a text.
+\item[{\href{https://github.com/trinker/sentimentr}{sentimentr}}] is a rich
+sentiment analysis and tokenising package, with features including
+dealing with negation, amplification, etc. in multi-sentence level
+analysis. An interesting feature is the ability to output text with
+sentences highlighted according to their inferred sentiment
+\item[{\href{https://rstudio.github.io/dygraphs/}{dygraphs}}] is a time-series
+visualisation package capable of outputting very clear interactive
+time-series graphics, useful for any time-series in the text analysis
+module
+\item[{\href{https://github.com/thomasp85/gganimate}{gganimate}}] produces  animations on top of the \href{https://github.com/tidyverse/ggplot2}{ggplot} package, offering
+powerful insights. \href{https://www.r-bloggers.com/investigating-words-distribution-with-r-zipfs-law-2/}{Here} is an example demonstrating Zipf's Law
+\item[{\href{https://github.com/bnosac/textrank}{textrank}}] has the unique idea
+of extracting keywords automatically from a text using the pagerank
+algorithm (pagerank studied in depth in STATS 320) - my exploration of
+the package is documented \href{./textrank\_exploration.Rmd}{here}
+\item Packages for obtaining text:
 
-  - [[https://cran.r-project.org/web/packages/gutenbergr/index.html][gutenbergr]] :: from Project Gutenberg
-  - [[https://rtweet.info/][rtweet]] :: from Twitter
-  - [[https://cran.r-project.org/web/packages/WikipediaR/index.html][wikipediar]] :: from Wikipedia
+\begin{description}
+\item[{\href{https://cran.r-project.org/web/packages/gutenbergr/index.html}{gutenbergr}}] from Project Gutenberg
+\item[{\href{https://rtweet.info/}{rtweet}}] from Twitter
+\item[{\href{https://cran.r-project.org/web/packages/WikipediaR/index.html}{wikipediar}}] from Wikipedia
+\end{description}
 
-- [[https://github.com/EmilHvitfeldt/ggpage][ggpage]] :: produces impressive page-view charts with features such as
-     word highlighting, allowing for a clear overview of a text and
-     it's structure, with probable use in our search feature function
+\item[{\href{https://github.com/EmilHvitfeldt/ggpage}{ggpage}}] produces impressive page-view charts with features such as
+word highlighting, allowing for a clear overview of a text and
+it's structure, with probable use in our search feature function
 
-- [[https://github.com/thomasp85/gganimate][gganimate]] :: produces animated charts, which can be useful if
-     additional, regular, and low /n/ dimensions exist in the data
+\item[{\href{https://github.com/thomasp85/gganimate}{gganimate}}] produces animated charts, which can be useful if
+additional, regular, and low \emph{n} dimensions exist in the data
+\end{description}
 
---------------
+\noindent\rule{\textwidth}{0.5pt}
 
 Additionally, there are some packages that may not necessarily be useful
 for the end user, but may help for our development needs. These
 include:
-- [[https://github.com/bnosac/udpipe][udpipe]] performs
+\begin{itemize}
+\item \href{https://github.com/bnosac/udpipe}{udpipe} performs
+\end{itemize}
 tokenisation, parts of speech tagging (which serves as the foundation
 for textrank), and more, based on the well-recognised C++
-[[http://ufal.mff.cuni.cz/udpipe][udpipe library]], using the [[https://universaldependencies.org][Universal Treebank]]
-- [[https://github.com/bnosac/BTM][BTM]] performs Biterm Topic Modelling,
+\href{http://ufal.mff.cuni.cz/udpipe}{udpipe library}, using the \href{https://universaldependencies.org}{Universal Treebank}
+\begin{itemize}
+\item \href{https://github.com/bnosac/BTM}{BTM} performs Biterm Topic Modelling,
+\end{itemize}
 which is useful for "finding topics in short texts (as occurs in short
 survey answers or twitter data)". It uses a somewhat complex sampling
 procedure, and like LDA topic modelling, requires a corpus for
-comparison. Based on [[https://github.com/xiaohuiyan/BTM][C++ BTM]] 
-- [[https://github.com/bnosac/crfsuite][crfsuite]] provides a modelling
+comparison. Based on \href{https://github.com/xiaohuiyan/BTM}{C++ BTM} 
+\begin{itemize}
+\item \href{https://github.com/bnosac/crfsuite}{crfsuite} provides a modelling
+\end{itemize}
 framework, which is currently outside our current scope, but could be
 useful later 
-- In the analysis / removal of names, an important component of a text,
-[[https://github.com/ironholds/humaniformat/][humaniformat]] is likely to be useful
-- [[https://cran.r-project.org/web/views/WebTechnologies.html][CRAN Task View: Web Technologies and Services]] for importing texts from the
+\begin{itemize}
+\item In the analysis / removal of names, an important component of a text,
+\end{itemize}
+\href{https://github.com/ironholds/humaniformat/}{humaniformat} is likely to be useful
+\begin{itemize}
+\item \href{https://cran.r-project.org/web/views/WebTechnologies.html}{CRAN Task View: Web Technologies and Services} for importing texts from the
+\end{itemize}
 internet
 
-** Other Text Analytics Applications
-   :PROPERTIES:
-   :CUSTOM_ID: other-text-analytics-applications
-   :END:
-
+\subsection{Other Text Analytics Applications}
+\label{sec:orgd249c10}
 The field of text analytics applications is rather diverse, with most
 being general analytics applications with text analytics as a feature of
 the application. Some of the applications (general and specific) are
 given:
 
-- [[http://www.bnosac.be/index.php/products/txtminer][txtminer]] is a
-  web app for analysing text at a deep level (with something of a
-  linguistic focus) over multiple languages, for an "educated citizen
-  researcher"
+\begin{itemize}
+\item \href{http://www.bnosac.be/index.php/products/txtminer}{txtminer} is a
+web app for analysing text at a deep level (with something of a
+linguistic focus) over multiple languages, for an "educated citizen
+researcher"
+\end{itemize}
 
-** Scope Determination
-   :PROPERTIES:
-   :CUSTOM_ID: scope-determination
-   :END:
-
+\subsection{Scope Determination}
+\label{sec:org6dce74f}
 The scope of the project is naturally limited by the amount of time
 available to do it. As such, exploration of topics such as discourse
 analysis, while interesting, is beyond the scope of the project.
@@ -181,8 +211,8 @@ between them. The application must give the greatest amount of insight
 to a regular user, in the shortest amount of time, into what the text is
 actually about.
 
-[[http://usresp-student.shinyapps.io/text_analysis][Cassidy's project]]
-was intended to create this, and I have written notes on it [[./cassidy_notes.org][here]].
+\href{http://usresp-student.shinyapps.io/text\_analysis}{Cassidy's project}
+was intended to create this, and I have written notes on it \href{./cassidy\_notes.org}{here}.
 
 Ultimately, I am not completely sold on the idea that term frequencies
 and other base-level statistics really give that clear a picture of what
@@ -193,7 +223,7 @@ specific terms), but I think word frequencies are less useful to the
 analyst than to the algorithms they feed into, such as tf-idf, that may
 be more useful. As such, I don't think valuable screen space should be
 taken up by low-level statistics such as term frequencies. To me, the
-situation is somewhat akin to [[https://en.wikipedia.org/wiki/Anscombe's_quartet][Anscombe's Quartet]], where the base 
+situation is somewhat akin to \href{https://en.wikipedia.org/wiki/Anscombe's\_quartet}{Anscombe's Quartet}, where the base 
 statistics leave a good deal of information out, term frequencies being 
 analogous to the modal values.
 
@@ -210,31 +240,23 @@ ideal.
 I'm picturing a single page, where the analyst can take one look and
 have a fair idea of what a text is about. In reality it will have to be
 more complex than that, but that is my lead at the moment. With this in
-mind, I want to see keywords, more on /structure/ of a text, context,
-and clear, punchy graphics showing not /just/ sentiment, but several
+mind, I want to see keywords, more on \emph{structure} of a text, context,
+and clear, punchy graphics showing not \emph{just} sentiment, but several
 other key measurements.
 
-* Features
-  :PROPERTIES:
-  :CUSTOM_ID: feature-implementations
-  :END:
-** Introduction
-   :PROPERTIES:
-   :CUSTOM_ID: introduction
-   :END:
-
+\section{Features}
+\label{sec:org49cb9b1}
+\subsection{Introduction}
+\label{sec:org6011ea4}
 The application essentially consists of a feature-space, with the area
-being divided in three; [[*Processing][Processing]], [[*Within-Text Analytics][Within-Text Analytics]], and
-[[*Between-Text Analytics][Between-Text Analytics]]o. This follows the general format of much of
+being divided in three; \hyperref[sec:orga97ec2d]{Processing}, \hyperref[sec:org6f61dbb]{Within-Text Analytics}, and
+\hyperref[sec:org7b04ca9]{Between-Text Analytics}o. This follows the general format of much of
 what is capable in text analysis, and what is of interest to us and our
 end users. The UI will likely reflect this, dividing into seperate
 windows/panes/tabs to accomodate. Let's look at them in turn:
 
-** Processing
-    :PROPERTIES:
-    :CUSTOM_ID: processing
-    :END:
-
+\subsection{Processing}
+\label{sec:orga97ec2d}
 In order for text to be analysed, it must be imported and processed. A
 lot of this is an iterative process, coming back for further processing
 after analysis etc. Importing will have a "type" selection ability for
@@ -257,7 +279,7 @@ example, the known number of chapters match up with the number of
 divisions. We could implement a few basic division operators in regex,
 while following the philosophy of allowing custom input if wanted.
 Example regex for "Chapter" could be
-=/[Cc]hapter[.:]?[   ]{0,10}-?[  ]{0,10}([0-9]|[ivxIVX]*))/g=, something
+\texttt{/[Cc]hapter[.:]?[   ]\{0,10\}-?[  ]\{0,10\}([0-9]|[ivxIVX]*))/g}, something
 the end user is likely not wanting to input themselves.
 
 Removal and transformation is another important processing step for
@@ -278,11 +300,8 @@ begins. My initial thoughts are of a tabbed import process, with each
 tab holding the processing tasks for each individual document, however
 this won't scale well to large corpus imports.
 
-** Within-Text Analytics
-    :PROPERTIES:
-    :CUSTOM_ID: within-text-analytics
-    :END:
-
+\subsection{Within-Text Analytics}
+\label{sec:org6f61dbb}
 Within-text analytics should have options to look at the whole text as
 it is, whether to look by division, or whether to look at the entire
 imported corpus as a whole.
@@ -309,11 +328,8 @@ Sentiment is a feature that has been heavily developed by the field of
 text analytics, seeing a broad variety of uses. here, it would be worth
 examining sentiment, by word and over the length of the text overall.
 
-** Between-Text Analytics
-    :PROPERTIES:
-    :CUSTOM_ID: between-text-analytics
-    :END:
-
+\subsection{Between-Text Analytics}
+\label{sec:org7b04ca9}
 As in within-text analytics, between-text analytics should have
 options for specifying the component of the text that is of interest;
 here, the two major categories would be comparisons between divisions
@@ -329,7 +345,8 @@ texts.
 
 Summarisation between all texts would also be enormously useful.
 
-** Stopwords
+\subsection{Stopwords}
+\label{sec:org846233b}
 After noting that stopword removal impacted important n-grams when a
 stopword made up some component of the n-gram, it becomes very
 worthwhile to not only include an active capacity to view what current
@@ -337,21 +354,25 @@ stopwords exist, but also to have alternative lists of stopwords. The
 following summarises some research into stopwords and common practices
 around them;
 
-- StackOverflow removes the top 10,000 most common english words in
-  "related queries" for their SQL search engine
-  (https://stackoverflow.blog/2008/12/04/podcast-32/)
-- The [[https://github.com/quanteda/stopwords][stopwords]] =R= package includes several lists of stopwords. Among
-  these, of note are:
-  - [[http://www.ai.mit.edu/projects/jmlr/papers/volume5/lewis04a/a11-smart-stop-list/english.stop][SMART]]: The stopword lists based on the SMART (System for the
-    Mechanical Analysis and Retrieval of Text)Information Retrieval
-    System, an information retrieval system developed at Cornell
-    University inthe 1960s.
-  - [[http://snowball.tartarus.org/algorithms/english/stop.txt][snowball]]: It is a small string processing language designed for
-    creating stemming algorithms for use in Information Retrieval.
-  - [[https://github.com/stopwords-iso/stopwords-iso/blob/master/stopwords-iso.json][iso]]: The most comprehensive stopwords for any language
+\begin{itemize}
+\item StackOverflow removes the top 10,000 most common english words in
+"related queries" for their SQL search engine
+(\url{https://stackoverflow.blog/2008/12/04/podcast-32/})
+\item The \href{https://github.com/quanteda/stopwords}{stopwords} \texttt{R} package includes several lists of stopwords. Among
+these, of note are:
+\begin{itemize}
+\item \href{http://www.ai.mit.edu/projects/jmlr/papers/volume5/lewis04a/a11-smart-stop-list/english.stop}{SMART}: The stopword lists based on the SMART (System for the
+Mechanical Analysis and Retrieval of Text)Information Retrieval
+System, an information retrieval system developed at Cornell
+University inthe 1960s.
+\item \href{http://snowball.tartarus.org/algorithms/english/stop.txt}{snowball}: It is a small string processing language designed for
+creating stemming algorithms for use in Information Retrieval.
+\item \href{https://github.com/stopwords-iso/stopwords-iso/blob/master/stopwords-iso.json}{iso}: The most comprehensive stopwords for any language
+\end{itemize}
+\end{itemize}
 
 The package we are using extensively, tidytext, has both SMART and
-snowball lists, as well as [[http://www.lextek.com/manuals/onix/stopwords1.html][onix]], which bills itself as " probably the
+snowball lists, as well as \href{http://www.lextek.com/manuals/onix/stopwords1.html}{onix}, which bills itself as " probably the
 most widely used stopword list. It covers a wide number of stopwords
 without getting too aggressive and including too many words which a
 user might search upon." Of note is that all of the lists are included
@@ -371,51 +392,55 @@ influence charts and output in real timme, so manual refreshes would
 be required. Additionally, it will be good to have a running set of
 statistics keeping available what has been done to the data (including
 more than just stopword removal)
-** Visualisation
+\subsection{Visualisation}
+\label{sec:org8a46a18}
 With so much of the conceptual space of text analytic visualisation
 being taken up with far from optimal charts, there is a need to
-experiment with alternative visualisations; We explore some [[file:sent-vis.org][here]]
-** Text Summarisation
+experiment with alternative visualisations; We explore some \href{sent-vis.org}{here}
+\subsection{Text Summarisation}
+\label{sec:org1bdc583}
 
-[[https://en.wikipedia.org/wiki/Automatic_summarization][Wikipedia: Automatic Summarisation]]
+\href{https://en.wikipedia.org/wiki/Automatic\_summarization}{Wikipedia: Automatic Summarisation}
 
 Text summarisation creates enormous insight, especially from a long
 text. There are a variety of different techniques, of varying
 effectiveness and efficiency. A famous example of automatic text
-summarisation comes from [[https://www.reddit.com/user/autotldr][autotoldr]], a bot on reddit that automatically
+summarisation comes from \href{https://www.reddit.com/user/autotldr}{autotoldr}, a bot on reddit that automatically
 generates summaries of news articles in 4-5 sentences. Autotldr is
-powered by [[https://smmry.com/about][SMMRY]], which explains it's algorithm as working through the
+powered by \href{https://smmry.com/about}{SMMRY}, which explains it's algorithm as working through the
 following steps:
 
-1. Associate words with their grammatical counterparts. (e.g "city"
-   and "cities")
-2. Calculate the occurrence of each word in the text.
-3. Assign each word with points depending on their popularity.
-4. Detect which periods represent the end of a sentence. (e.g "Mr."
-   does not).
-5. Split up the text into individual sentences.
-6. Rank sentences by the sum of their words' points.
-7. Return X of the most highly ranked sentences in chronological
-   order.
+\begin{enumerate}
+\item Associate words with their grammatical counterparts. (e.g "city"
+and "cities")
+\item Calculate the occurrence of each word in the text.
+\item Assign each word with points depending on their popularity.
+\item Detect which periods represent the end of a sentence. (e.g "Mr."
+does not).
+\item Split up the text into individual sentences.
+\item Rank sentences by the sum of their words' points.
+\item Return X of the most highly ranked sentences in chronological
+order.
+\end{enumerate}
 
 The two main approaches to automatic summarisation are extractive and
-abstractive; *Extractive* uses some subset of the original text to
-form a summary, while *abstractive* techniques form semantic
+abstractive; \textbf{Extractive} uses some subset of the original text to
+form a summary, while \textbf{abstractive} techniques form semantic
 representations of the text. Here, we will stick to the clearer,
 simpler, extractive techniques for now.
 
-[[https://github.com/bnosac/textrank][textrank]] has the unique idea of extracting keywords automatically from
+\href{https://github.com/bnosac/textrank}{textrank} has the unique idea of extracting keywords automatically from
 a text using the pagerank algorithm (pagerank studied in depth in
-STATS 320) - my exploration of the package is documented [[./textrank_exploration.Rmd][here]]. At
+STATS 320) - my exploration of the package is documented \href{./textrank\_exploration.Rmd}{here}. At
 present, the R implementation of it creates errors for large text
 files, but it is worth exploring more into it - whether it is the
 implementation, or if it is the algorithm itself.
 
 Hvidfeldt is a prolific blogger focussing on text analysis - he put up
-this tutorial on incorporating textrank with tidy methods: [[https://www.hvitfeldt.me/blog/tidy-text-summarization-using-textrank/][tidy
-textRank]]
+this tutorial on incorporating textrank with tidy methods: \href{https://www.hvitfeldt.me/blog/tidy-text-summarization-using-textrank/}{tidy
+textRank}
 
-Further summarisation experimentation is continued [[file:summarisation_experimentation.Rmd][here]]
+Further summarisation experimentation is continued \href{summarisation\_experimentation.Rmd}{here}
 
 After further testing, I have found LexRank to work significantly
 faster, while generating similar results, thus being favourable for
@@ -428,7 +453,8 @@ verbosity of the function assuring me that it isn't hanging.
 LexRank and textRank appear to exist complimentarily to one another.
 Below is a brief summary of how they work
 
-*** TextRank
+\subsubsection{TextRank}
+\label{sec:org3fd094d}
 
 TextRank essentially finds the most representative sentence of a text
 based on some similarity measure to other sentence.
@@ -439,22 +465,20 @@ producing an adjacency matrix of a graph with nodes being sentences,
 edge weights being similarity. The PageRank algorithm is then run on
 this graph, deriving the best connected sentences, and thereby the most
 representative sentences. A list is produced giving sentences with their
-corresponding PageRank. The top $n$ sentences can be chosen, then output
+corresponding PageRank. The top \(n\) sentences can be chosen, then output
 in chronological order, to produce a summary.
 
 In the generation of keywords, the same process described is typically
 run on unigrams, with the similarity measure being co-occurance.
 
-*** LexRank
-    :PROPERTIES:
-    :CUSTOM_ID: lexrank
-    :END:
-
+\subsubsection{LexRank}
+\label{sec:orgb34038c}
 LexRank is essentially the same as textRank, however uses
-[[https://en.wikipedia.org/wiki/Cosine_similarity][cosine similarity]] of tf-idf vectors as it's measure of similarity. LexRank is better at
+\href{https://en.wikipedia.org/wiki/Cosine\_similarity}{cosine similarity} of tf-idf vectors as it's measure of similarity. LexRank is better at
 working across multiple texts, due to the inclusion of a heuristic known
 as "Cross-Sentence Information Subsumption (CSIS)"
-** Search Function
+\subsection{Search Function}
+\label{sec:orgaee944e}
 The analyst is not expected to be entirely familiar with the texts
 under analysis; this is partly the purpose of this program. Hence,
 there are likely to be terms, keywords, and relationships that the
@@ -465,44 +489,51 @@ contextual passages are returned. Useful in the results would be
 indications of location of each passage in the greater text, as well
 as if multiple texts are present, the name of the text it belongs to.
 
-** Topic Modelling
+\subsection{Topic Modelling}
+\label{sec:orga868453}
 Topic Modelling appears to serve a useful purpose in text analytics,
 with LDA being the primary implementation, requiring multiple texts,
 and a Document-Term Matrix. My exploration with topic modelling is
-located [[file:topic-modelling.Rmd][here]]. It could be worth investigating other forms of topic
+located \href{topic-modelling.Rmd}{here}. It could be worth investigating other forms of topic
 modelling, especially within-text.
 
-[2019-05-17 Fri] I checked other forms - their complexity requires a
+\textit{[2019-05-17 Fri] } I checked other forms - their complexity requires a
 great deal of time to understand if I want to implement them
 intelligently; better to stick with LDA, which, while also complex, is
 well used enough to be considered standard.
-** Sentiment Distribution
-Over a large /n/ dataset such as free-response surveys, it may be
+\subsection{Sentiment Distribution}
+\label{sec:orgd3cdbd0}
+Over a large \emph{n} dataset such as free-response surveys, it may be
 useful to calculate the sentiment for each response, and consider the
-statistical properties of the distribution of sentiments. [[file:sent-dist.org][Here]] is an
+statistical properties of the distribution of sentiments. \href{sent-dist.org}{Here} is an
 exploration of free-response data forming a sentiment distribution.
-** Conditional Analytics
+\subsection{Conditional Analytics}
+\label{sec:org052e200}
 The idea of conditional analytics is of interest to me, especially for
-high /n/ datasets such as large free-response surveys. Particularly, I
+high \emph{n} datasets such as large free-response surveys. Particularly, I
 want to know, given some condition, how does the subset behave? For
-example, [[file:sent-dist.org][given]] a negative sentiment, what is the most representative
+example, \href{sent-dist.org}{given} a negative sentiment, what is the most representative
 response? Or, given that some common word, what is the distribution of
 sentiment
-** Wrapper Functions
+\subsection{Wrapper Functions}
+\label{sec:orgeb814cd}
 In order to begin implementation, I have defined wrapper functions for
 the primary features. The intention is to create a higher layer of
 abstraction for the features as well as ease of use. I begin with the
 text summarisation feature; the details are below
-*** Text Summarisation
-Link to [[file:~/curr/stats-781/src/summ-wrapper.R][src]]
-Link to [[file:~/curr/stats-781/test/summ-wrapper-test.R][test]]
+\subsubsection{Text Summarisation}
+\label{sec:orgddd9ee7}
+Link to \href{file:///home/user/curr/stats-781/src/summ-wrapper.R}{src}
+Link to \href{file:///home/user/curr/stats-781/test/summ-wrapper-test.R}{test}
 Arguments:
-- x = input dataframe with column titled "word"
-- n = n-many sentences
-- style = style of output (chart, dataframe, text)
-- dim = dimension of chart
-- engine = textrank/lexrank
-- type = sentences/keywords etc.
+\begin{itemize}
+\item x = input dataframe with column titled "word"
+\item n = n-many sentences
+\item style = style of output (chart, dataframe, text)
+\item dim = dimension of chart
+\item engine = textrank/lexrank
+\item type = sentences/keywords etc.
+\end{itemize}
 
 Working through, I have come to come realisation that a complete
 wrapper function may not necessarily be ideal; rather, a pipeline may
@@ -515,118 +546,100 @@ to the functions. This is something of a "memory cheap; processing
 expensive" principle. The display wrapper functions would then be
 taking complete objects only 
 
-<2019-05-22 Wed> Chris clarified the role of wrappers here being more
+\textit{<2019-05-22 Wed> } Chris clarified the role of wrappers here being more
 of a "layer" level, layers being:
-- word/n-gram;
-  - Word frequency
-  - Bigram frequency
-  - pairwise word correlations
-  - textrank keywords
-- sentence;
-  - textrank
-  - lexrank
-- topic level
-- sentiment level
-* Data Types
+\begin{itemize}
+\item word/n-gram;
+\begin{itemize}
+\item Word frequency
+\item Bigram frequency
+\item pairwise word correlations
+\item textrank keywords
+\end{itemize}
+\item sentence;
+\begin{itemize}
+\item textrank
+\item lexrank
+\end{itemize}
+\item topic level
+\item sentiment level
+\end{itemize}
+\section{Data Types}
+\label{sec:org13f2daf}
 The application requires the capacity to smoothly work with diverse
 data types. For this to occur, a test corpus must be developed, and
 some important data types picked out.
-** Test Corpus
-   :PROPERTIES:
-   :CUSTOM_ID: test-corpus
-   :END:
-
+\subsection{Test Corpus}
+\label{sec:org4960e69}
 It is essential to test on a broad variety of texts in order to create
 the most general base application, so a "test set" will have to be
-developed. All data is stored in the folder [[file:c:/Users/User/Desktop/stats-781/data][data]]
+developed. All data is stored in the folder \href{c:/Users/User/Desktop/stats-781/data}{data}
 
-*Must have*
+\textbf{Must have}
 
-- Literature (eg. Dante's Divine Comedy)
-- Survey response data (eg. nzqhs, Cancer Society)
-- Transcript; lack of punctuation may cause difficulties in processing
-  sentences.
-- Twitter
+\begin{itemize}
+\item Literature (eg. Dante's Divine Comedy)
+\item Survey response data (eg. nzqhs, Cancer Society)
+\item Transcript; lack of punctuation may cause difficulties in processing
+sentences.
+\item Twitter
+\end{itemize}
 
-*Would be nice*
+\textbf{Would be nice}
 
-- article
-  - journal (scientific, social)
-  - news
-  - blog
-  - wikipedia
-- discourse
-  - interview
-  - subtitles
-- documentation
-  - product manual
-  - technical user guide
+\begin{itemize}
+\item article
+\begin{itemize}
+\item journal (scientific, social)
+\item news
+\item blog
+\item wikipedia
+\end{itemize}
+\item discourse
+\begin{itemize}
+\item interview
+\item subtitles
+\end{itemize}
+\item documentation
+\begin{itemize}
+\item product manual
+\item technical user guide
+\end{itemize}
+\end{itemize}
 
-** Free-Response Data
+\subsection{Free-Response Data}
+\label{sec:org7489ee5}
 Free Response Data (as in survey forms etc.) has been identified as an
 area of high potential for the application. Two datasets have been
-used to run typical text analyses upon, with the exploration [[file:free-response.Rmd][here]].
-Upon close inspection, there are subtleties worth exploring [[file:further-free-response.org][further]]
+used to run typical text analyses upon, with the exploration \href{free-response.Rmd}{here}.
+Upon close inspection, there are subtleties worth exploring \href{further-free-response.org}{further}
 especially in bigrams and keywords.
-** Data types for implementation
+\subsection{Data types for implementation}
+\label{sec:orgfce9ca0}
 In the production of wrapper functions, we require data types that
 work well with all functions that are required. For the purpose of
 word-level summarisation, the following features require functions with the
 associated data types as arguments:
-- Word frequency: =tidytext::unnest_tokens=
-  - @param tbl: A data frame
-- Bigram frequency: =tidytext::unnest_tokens=
-  - @param tbl: A data frame
-- pairwise word correlations: =widyr::pairwise_cor=
-  - @param tbl: Table
-  - @param: item: Item to compare; will end up in ‘item1’ and ‘item2’
-    columns
-  - @param feature: Column describing the feature that links one item
-    to others
-- textrank keywords: =textrank::textrank_keywords=
-  - @param x: a character vector of words.
-
-Thinking even earlier in the pipeline, the processing section requires
-functions to remove stopwords- this requires =tidytext::unnest_tokens=
-again, meaning a dataframe. The issue is that if we operate on groups,
-then we require a function that takes a vector as argument. Perhaps
-more thought is needed in understanding what grouped operations should
-look like in text analytics. Alternatively, we could create a function
-that takes a dataframe as input, with the option to name groups to
-perform group operations upon. 
-
-Another issue that arises is the elimination of sentences and
-structure upon the unnesting of tokens. What may be worthwhile is to
-create a dataframe such as the following:
-
-#+ATTR_LATEX: :booktabs :align l | l | l | l | l  :float t
-| grouping vars | ... | paragraph_id | sentence_id | word |
-|---------------+-----+--------------+-------------+------|
-|               |     |              |             |      |
-
-In which case, we should start at the very beginning, looking at text
-import wrapper functions, enabling them to output a dataframe of this
-type such that the remaining process is entirely predictable.
-
-Current files for wrappers:
-[[file:~/curr/stats-781/src/prep-for-insight.R][prep-for-insight.R]]
-[[file:~/curr/stats-781/test/prep-for-insight-test.R][prep-for-insight-test.R]]
-
-Note: [2019-06-10 Mon]: determined that line number is more general
-than paragraph: paragraph can be inferred from line number.
-
-*** Text Analytics wrappers
- [2019-05-29 Wed]: Chris approved the datatype. Work will begin on the
- wrappers, using this datatype. He raised the very valid point on how
- pairwise corelations between words should possibly use groups as
- their similarity component, rather than sentences. e.g., correlation
- of words between survey responses. *note: groups are always nested,
- and conditioning is actually filtering*
-
-Important to note: Different punctuation marks exist, and despite some
-visual similarities, are not recognised as equivalent on the computer:
-for example, "’" and "'" are different. Selecting "alice's" as a
-stopword will not filter out "alice’s". While on the topic, it may be
-worthwhile to incorporate regex ability for the application. CLI
-integration would be a dream, but not so useful for school and
-undergraduate students.
+\begin{itemize}
+\item Word frequency: \texttt{tidytext::unnest\_tokens}
+\begin{itemize}
+\item @param tbl: A data frame
+\end{itemize}
+\item Bigram frequency: \texttt{tidytext::unnest\_tokens}
+\begin{itemize}
+\item @param tbl: A data frame
+\end{itemize}
+\item pairwise word correlations: \texttt{widyr::pairwise\_cor}
+\begin{itemize}
+\item @param tbl: Table
+\item @param: item: Item to compare; will end up in ‘item1’ and ‘item2’
+columns
+\item @param feature: Column describing the feature that links one item
+to others
+\end{itemize}
+\item textrank keywords: \texttt{textrank::textrank\_keywords}
+\begin{itemize}
+\item @param x: a character vector of words.
+\end{itemize}
+\end{itemize}
+\end{document}

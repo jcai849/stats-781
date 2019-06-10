@@ -1,8 +1,10 @@
 library(textrank)
 library(lexRankr)
 
-summ_algo <- function(x,
-                      algorithm="lexRank",
+word_wrap <- function(sent_df,
+                      word_df,
+                      algorithm="freq",
+                      n=5
                       ...){
     if(algorithm == "lexRank-keywords"){
         print("lexRank")

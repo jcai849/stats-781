@@ -1,0 +1,8 @@
+source("../src/prep-for-insight.R")
+
+## Alice In Wonderland
+read_lines(filepath) %>% # Without import function
+    tibble(text=.)
+
+import_txt("../data/raw/11-0.txt") # Import function
+

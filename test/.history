@@ -1,0 +1,5 @@
+ ?read.table
+?textrank::textrank
+clear()
+cat("\014")
+shell("clear")

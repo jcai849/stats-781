@@ -1,0 +1,49 @@
+library(tidytext)
+
+#' removes stopwords
+#'
+#' @param data a dataframe containing a column named 'text' with text
+#'     of interest contained within
+#'
+#' @param sw_list char naming a default stopword list
+#'
+#' @param addl char vector of additional stopwords
+#'
+#' @return a dataframe equivalent to the input dataframe, with stopwords removed
+stopword_remove <- function(data, sw_list="snowball", addl="",
+                            to_lower=TRUE){
+    sw <- get_stopwords(source = sw_list)
+    data_words <- unnest_tokens(data, word, text, to_lower=to_lower)
+
+
+
+
+}
+
+
+
+
+    
+
+## #' Splits char vector into sentences
+## #'
+## #' @param char a char vector to be converted
+## #'
+## #' @return a data.frame with 1 row per sentence where the first column
+## #'     is an identifier of a sentence and the second column is the raw
+## #'     sentence.
+## char_to_sentences <- function(char){
+    
+## }
+
+## #' Splits char vector into words
+## #'
+## #' @param char a char vector to be converted
+## #'
+## #' @return a data.frame with with one row per word such that each word
+## #'     has an associated sentence. The first column in the data.frame
+## #'     is the sentence identifier, and the second column is the word
+## #'     itself
+## char_to_words <- function(text){
+
+## }
