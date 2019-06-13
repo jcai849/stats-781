@@ -233,8 +233,8 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
 * Meeting Chris
 <2019-05-29 Wed 11:00-12:00>
 ** Topics
-** Actions
-   DEADLINE: <2019-06-12 Wed>
+** CLOSED Actions
+   CLOSED: [2019-06-13 Thu 12:44] DEADLINE: <2019-06-12 Wed>
 *** Work on Dissertation [2/4]
 - [X] Create text import wrapper
 - [X] Create stopword removal wrapper

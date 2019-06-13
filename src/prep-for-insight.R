@@ -1,7 +1,3 @@
-library(tidytext)
-library(tidyverse)
-
-
 #' import text file to analysis-ready format
 #'
 #' @param filepath a string indicating the relative or absolut
@@ -12,10 +8,13 @@ library(tidyverse)
 import_txt <- function(filepath){
     read_lines(filepath) %>%
         tibble(text=.) %>%
-        mutate(line = row_number()) %>%
+        mutate(doc_id = 1,
+               line_id = row_number()) %>%
         unnest_tokens(output = sentence, input = text, token = "sentences") %>%
         mutate(sentence_id = row_number()) %>%
-        unnest_tokens(output = word, input = sentence, token = "words")
+        unnest_tokens(output = word, input = sentence, token = "words") %>%
+        mutate(word_id = row_number()) %>%
+        select(doc_id, line_id, sentence_id, word_id, word)
 }
 
 
@@ -44,6 +43,6 @@ get_sw <- function(sw_list = "snowball", addl = NA){
 #' @param sw_list tibble with single column of stopwords
 #'
 #' @return a dataframe equivalent to the input dataframe, with stopwords removed
-stopword_remove <- function(data, sw_list){
+remove_stopwords <- function(data, sw_list){
     anti_join(data, sw_list, by = "word")
 }

@@ -1,5 +1,4 @@
-library(textrank)
-library(lexRankr)
+source("depends.R")
 
 word_wrap <- function(sent_df,
                       word_df,

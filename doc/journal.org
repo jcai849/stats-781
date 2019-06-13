@@ -1,4 +1,4 @@
-* [[file:comm.org][Meeting With Chris]]
+* COLOPHON
 * Initial Survey
   :PROPERTIES:
   :CUSTOM_ID: initial-survey
@@ -600,9 +600,9 @@ structure upon the unnesting of tokens. What may be worthwhile is to
 create a dataframe such as the following:
 
 #+ATTR_LATEX: :booktabs :align l | l | l | l | l  :float t
-| grouping vars | ... | paragraph_id | sentence_id | word |
-|---------------+-----+--------------+-------------+------|
-|               |     |              |             |      |
+| grouping vars | ... | doc_id | paragraph_id | sentence_id | word_id | word |
+|---------------+-----+--------+--------------+-------------+---------+------|
+|               |     |        |              |             |         |      |
 
 In which case, we should start at the very beginning, looking at text
 import wrapper functions, enabling them to output a dataframe of this
@@ -610,11 +610,15 @@ type such that the remaining process is entirely predictable.
 
 Current files for wrappers:
 [[file:~/curr/stats-781/src/prep-for-insight.R][prep-for-insight.R]]
-[[file:~/curr/stats-781/test/prep-for-insight-test.R][prep-for-insight-test.R]]
 
 Note: [2019-06-10 Mon]: determined that line number is more general
 than paragraph: paragraph can be inferred from line number.
 
+As @ [2019-06-13 Thu], I have found the dataframe form as described
+prior to be extremely valuable. The implementation of all wrappers
+should have as the aim to preserve the structure as much as possible,
+only adding additional columns to the dataframe resulting from the
+function.
 *** Text Analytics wrappers
  [2019-05-29 Wed]: Chris approved the datatype. Work will begin on the
  wrappers, using this datatype. He raised the very valid point on how
@@ -630,3 +634,85 @@ stopword will not filter out "alice’s". While on the topic, it may be
 worthwhile to incorporate regex ability for the application. CLI
 integration would be a dream, but not so useful for school and
 undergraduate students.
+
+* Packaging 
+  [2019-06-13 Thu]:
+  - Read [[R-Packages][r-pkgs.org]]. Notes: A working prototype will be built before
+    formally packaging it; this is to allow for greater flexibility and
+    experimentation without worry about breaking the package structure.
+    All the source code for functions are located in the src folder,
+    grouped according to their functional category.
+  - Further intentions: a rigorous, clean implementation of grouping and
+    conditioning (generalised as filtering) is something I believe to be
+    important to make this package stand out from the crowd. Upon the
+    function set all working, I think this would be worth pursuing. The
+    structure of the internal datatype has been kept specifically so
+    that grouping and filtering are efficient, lossless, and simple
+    operations.
+  - Today's output consists of the following:
+** [[file:~/curr/stats-781/src/prep-for-insight.R][Preparation]] [3/6]
+   See [[Data types for implementation]] for the reasoning behind the
+   standard dataframe output form.
+   - [X] import_txt
+   - [ ] import_csv
+   - [X] get_sw
+   - [X] remove_stopwords
+   - [ ] lemmatise
+   - [ ] add_doc
+** [[file:~/curr/stats-781/src/word-insight.R][Word Insight]] [2/5]
+   Note: Intent is to maintain the standard dataframe form
+   - [X] word_freq
+   - [X] bigram_freq
+   - [ ] keywords_tr
+   - [ ] word_corr
+   - [ ] high_sent
+** Sentence Insight [0/2]
+   - [ ] keyphrase_lr
+   - [ ] high_sent_mean
+** Document Insight [0/3]
+   - [ ] topic_model
+   - [ ] tf_idf
+   - [ ] between_phrase_lr
+** [[file:~/curr/stats-781/src/vis-insight.R][Visualisation]] [2/7]
+   See [[Visualisation]] for the reasoning behind the standard visualisation types
+   - [X] word_hist
+   - [X] word_bar
+   - [ ] word_table
+   - [ ] corr_mat
+   - [ ] sentence_table
+   - [ ] ggpage
+** [[file:~/curr/stats-781/test/tests.R][Tests]]
+
+* Visualisation
+Visualisation of text is proving to be a more complex area than I
+first assumed. Prior to this project, the only visualisation I knew of
+was word clouds, which I have come to understand to be about as
+useless as an unlabelled pie chart.
+
+Text visualisation is essentially the attempt to efficiently relay
+insights gained from text analytics. In the
+preparation-insight-visualisation layers, it is the final layer.
+Visualisation is not limited to just charts; for our purposes, a well
+crafted and formatted table may be just as good at conveying
+information.
+
+The form of the insight determines the form of the visualisation. So
+far, insights all give a "score". Thus, the visualisation, showing a
+mapping between a text (categorical) and a numerical insight
+(numberical) varaiable, can only take a few forms, ideally showing the
+relative scores and ranking of specific text items, or a distribution
+of the entire set.
+
+At base, nearly everything is neatly categorical-numeric, able to be
+represented by bars/lollipops.
+
+Pairwise correlation is slightly different, being a numerical function
+of two categorical arguments; best represented in either a searchable
+table, or a correlation matrix
+
+Getting more advanced, for small data, ggpage type visualisations will
+be excellent for sentiment and word/bigram frequency, as well as
+ranking keywords.
+
+Finally, when grouping is implemented, colouring or facetting by group
+will be what makes this analysis package better than any competitors.
