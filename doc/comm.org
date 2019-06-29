@@ -247,16 +247,18 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
 * Meeting Chris
 <2019-06-19 Wed 11:00-12:00>
 ** Topics
-*** Work on Dissertation
-    SCHEDULED: <2019-06-13 Thu>
+*** CLOSED Work on Dissertation
+    CLOSED: [2019-06-14 Fri 14:14] SCHEDULED: <2019-06-13 Thu>
 ** Actions
 * Meeting Chris
-<2019-06-26 Wed 11:00-12:00>
+<2019-07-02 Tue 11:00-12:00>
 ** Topics
-** Actions
-* Meeting Chris
-<2019-07-03 Wed 11:00-12:00>
-** Topics
+*** Dissertation
+   SCHEDULED: <2019-06-30 Sun>
+- [ ] start on grouping
+- [ ] Try make column names of "insight" and "group" columns explicit in the name,
+  so that they can be accessed programmatically through a string search
+
 ** Actions
 * Meeting Chris
 <2019-07-10 Wed 11:00-12:00>

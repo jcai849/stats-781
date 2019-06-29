@@ -1,4 +1,4 @@
-#' import text file to analysis-ready format
+#' Import text file to analysis-ready format
 #'
 #' @param filepath a string indicating the relative or absolut
 #'     filepath of the file to import
