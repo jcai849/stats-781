@@ -1,15 +1,30 @@
+#' create a group-aware visualisation
+#'
+#' @param std_tib the standard dataframe, modified so the last column
+#'     is the output of some insight function (eg. output from
+#'     word_freq)
+#'
+#' @param vis visualisation function
+#'
+#' @param ... visualisation function arguments
+get_vis <- function(std_tib, operation, ...){
+    grouping <- group_vars(std_tib)
+    std_tib %>%
+    operation(...) + facet_wrap(grouping, scales="free_x", labeller = "label_both")
+}
+
 #' output a histogram of the distribution of some function of words
 #'
 #' @param std_tib the standard dataframe, modified so the last column
 #'     is the output of some insight function (eg. output from
 #'     word_freq)
 #'
-#' @param insight_col non-standard eval name of the column insight was
+#' @param insight_col string name of the column insight was
 #'     performed on
-word_hist <- function(std_tib, insight_col){
+word_dist <- function(std_tib, insight_col){
 std_tib %>%
-    ggplot(aes(x = !! enquo(insight_col))) +
-    geom_histogram()
+    ggplot(aes(x = !! sym(insight_col))) +
+    geom_density()
 }
 
 #' output a bar graph of the top words from some insight function
@@ -18,10 +33,10 @@ std_tib %>%
 #'     is the output of some insight function (eg. output from
 #'     word_freq)
 #'
-#' @param insight_name non-standard eval name of the column insight
+#' @param insight_name string name of the column insight
 #'     was performed on
 #' 
-#' @param insight_col non-standard eval name of the column insight was
+#' @param insight_col string name of the column insight was
 #'     outputted to
 #'
 #' @param n number of bars to display
@@ -30,14 +45,17 @@ std_tib %>%
 #'
 word_bar <- function(std_tib, insight_name, insight_col,
                      n = 15, desc = TRUE){
-std_tib %>%
-    distinct(!! enquo(insight_name), .keep_all = TRUE) %>%
-    arrange(desc(!! enquo(insight_col))) %>%
-    top_n(n, !! enquo(insight_col)) %>%
-    mutate(!! enquo(insight_name) := fct_reorder(!! enquo(insight_name),
-                                                 !! enquo(insight_col),
-                                                 .desc = desc)) %>%
-    ggplot(aes(x = !! enquo(insight_name))) +
-    geom_col(aes(y = !! enquo(insight_col)))
-
+    std_tib %>%
+        group_modify(~ {
+            .x %>%
+                distinct(!! sym(insight_name), .keep_all = TRUE) %>%
+                arrange(desc(!! sym(insight_col))) %>%
+                head(n)
+        }) %>%
+        ungroup() %>%
+        mutate(!! sym(insight_name) := fct_reorder(!! sym(insight_name),
+                                                   !! sym(insight_col),
+                                                   .desc = desc)) %>%
+        ggplot(aes(x = !! sym(insight_name))) +
+        geom_col(aes(y = !! sym(insight_col)))
 }

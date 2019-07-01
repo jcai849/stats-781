@@ -654,23 +654,34 @@ Dataframe form:
     structure of the internal datatype has been kept specifically so
     that grouping and filtering are efficient, lossless, and simple
     operations.
-  - Today's output consists of the following:
-** [[file:~/curr/stats-781/src/prep-for-insight.R][Preparation]] [3/7]
+** [[file:~/curr/stats-781/src/prep-for-insight.R][Preparation]] [5/10]
    See "Data Types for Implementation" for the reasoning behind the
-   standard dataframe output form.
+   standard dataframe output form. Preparation is now divided into
+   importation, grouping, formatting, then processing. In detail:
+- Import :: bringing in text from various formats, convert to simple table
+- Group :: section text by groups, for which later operations will be uniquely performed on
+- Format :: format the text into a standard object that can be operated on
+- Process :: remove stopwords, lemmatise, filter, other lossy transformations
+
    - [X] import_txt
    - [ ] import_csv
+   - [ ] import_gutenberg
+   - [ ] import_docx
    - [X] get_sw
    - [X] remove_stopwords
    - [ ] lemmatise
    - [ ] add_doc
-   - [ ] add_group
-     - [ ] chapter
-     - [ ] verse
-** [[file:~/curr/stats-781/src/word-insight.R][Word Insight]] [2/5]
+   - [X] get_search
+     - [X] get_chapters
+     - [X] get_parts
+     - [X] get_sections
+     - [X] get_verse
+   - [X] format_data
+** [[file:~/curr/stats-781/src/word-insight.R][Word Insight]] [2/6]
    Note: Intent is to maintain the standard dataframe form
    - [X] word_freq
    - [X] bigram_freq
+   - [ ] word_count
    - [ ] keywords_tr
    - [ ] word_corr
    - [ ] high_sentiment
@@ -683,8 +694,9 @@ Dataframe form:
    - [ ] between_phrase_lr
 ** [[file:~/curr/stats-781/src/vis-insight.R][Visualisation]] [2/7]
    See "Visualisation" for the reasoning behind the standard visualisation types
-   - [X] word_hist
+   - [X] word_dist
    - [X] word_bar
+   - [ ] word_boxplot
    - [ ] word_table. Note: Already implemented as /xtable/ - transform
      so it can interact with /xtable/
    - [ ] corr_mat
@@ -725,3 +737,11 @@ ranking keywords.
 
 Finally, when grouping is implemented, colouring or facetting by group
 will be what makes this analysis package better than any competitors.
+
+[2019-07-01 Mon] After implementing grouping, the issue with arranging
+bars in a barplot by rank within each group is that ggplot arranges
+bars through the ordering of factor levels. The problem is that each
+instance of a word in every group shares the same level ordering, so
+while a word may rank highly overall, but less than others in a
+particular group, it will retain the high ordering overall in the
+facet for that group, leading to inaccuracies.

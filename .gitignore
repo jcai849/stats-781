@@ -2,3 +2,5 @@
 *.bib.bak
 
 *.org~
+*Rhistory
+*~

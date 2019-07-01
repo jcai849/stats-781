@@ -1,20 +1,67 @@
-#' Import text file to analysis-ready format
+#' Import text file 
 #'
 #' @param filepath a string indicating the relative or absolut
 #'     filepath of the file to import
 #'
-#' @return a tibble formatted such that columns correspond to
-#'     identifiers of "line", "sentence_id", and "word"
+#' @return tibble of each row corrresponding to a line of the text
+#'     file, with the column named "text"
 import_txt <- function(filepath){
     read_lines(filepath) %>%
-        tibble(text=.) %>%
-        mutate(doc_id = 1,
-               line_id = row_number()) %>%
-        unnest_tokens(output = sentence, input = text, token = "sentences") %>%
-        mutate(sentence_id = row_number()) %>%
-        unnest_tokens(output = word, input = sentence, token = "words") %>%
-        mutate(word_id = row_number()) %>%
-        select(doc_id, line_id, sentence_id, word_id, word)
+        tibble(text=.)
+}
+
+#' creates a search closure to section text
+#'
+#' @param search a string regexp for the term to seperate on, e.g. "Chapter"
+#'
+#' @param name string name for the sectioning column
+#'
+#' @return closure over search expression and named column
+get_search <- function(search, name){
+#' add section column by occurance of words
+#' 
+#' @param data tibble of each row corrresponding to a line of the text
+#'     file, with the column named "text"
+#' @return the original data with the addition of a sectioned column
+    function(data){
+        data %>%
+            mutate(!! name := str_detect(text, search) %>% cumsum())
+    }
+}
+
+get_chapters <- get_search("^[\\s]*[Cc][Hh][Aa]?[Pp][Tt]([Ee][Rr])?", "chapter")
+get_parts <- get_search("^[\\s]*[Pp]([Aa][Rr])?[Tt]", "part")
+get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])", "section")
+get_verse <- get_search("^[\\s]*[Vv][Ee][Rr][Ss][Ee]", "verse")
+
+#' helper function to ungroup for dplyr. functions equivalently to
+#' group_by() but with standard (string) evaluation
+ungroup_by <- function(x,...){
+  group_by_at(x, group_vars(x)[!group_vars(x) %in% ...])
+}
+
+#' formats imported data into an analysis-ready format
+#'
+#' @param data a tibble formatted with a text and (optional) group
+#'     column
+#'
+#' @return a tibble formatted such that columns correspond to
+#'     identifiers of group, line, sentence, word (groups ignored)
+format_data <- function(data){
+    data %>%
+        mutate(line_id = row_number()) %>% 
+        group_modify(~ {
+            .x %>%
+                unnest_tokens(output = sentence, input = text, token = "sentences") %>%
+                mutate(sentence_id = row_number())
+        }) %>%
+        group_by(sentence_id, add=TRUE) %>%
+        group_modify(~ {
+            .x %>%
+                unnest_tokens(output = word, input = sentence, token = "words") %>%
+                mutate(word_id = row_number())
+        }) %>%
+        ungroup_by("sentence_id")
 }
 
 
