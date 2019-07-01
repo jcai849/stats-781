@@ -11,9 +11,10 @@ source("../src/prep-for-insight.R")
 filename <- "../data/raw/11-0.txt"
 
 imported <- import_txt(filename) %>%
-    get_parts %>%
+    ## get_parts() %>%
+    ## group_by(part) %>%
     get_chapters() %>%
-    group_by(chapter) %>%
+    group_by(chapter, add=TRUE) %>%
     format_data()
 
 stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",

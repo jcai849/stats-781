@@ -8,9 +8,14 @@
 #'
 #' @param ... visualisation function arguments
 get_vis <- function(std_tib, operation, ...){
-    grouping <- group_vars(std_tib)
-    std_tib %>%
-    operation(...) + facet_wrap(grouping, scales="free_x", labeller = "label_both")
+    if (is_grouped_df(std_tib)){
+        grouping <- group_vars(std_tib)
+        std_tib %>%
+            operation(...) + facet_wrap(grouping, scales="free_x", labeller = "label_both")
+    } else {
+        std_tib %>%
+            operation(...)
+    }
 }
 
 #' output a histogram of the distribution of some function of words
