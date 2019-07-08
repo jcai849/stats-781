@@ -74,7 +74,7 @@ filename <- "../data/raw/11-0.txt"
 
 imported <- import_txt(filename) 
 
-ggpage_quick(imported[["text"]]) #doesn't seem to work
+## ggpage_quick(imported[["text"]]) #doesn't seem to work
 
 imported %>%
     ggpage_build() %>%
@@ -87,7 +87,6 @@ imported %>%
 
 ## ------------------------------ ggpage_more
 
-filename <- "../data/raw/11-0.txt"
 stopwords <- get_sw()
 
 imported <- import_txt(filename) %>%

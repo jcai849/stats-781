@@ -50,10 +50,15 @@ std_tib %>%
 #'
 word_bar <- function(std_tib, insight_name, insight_col,
                      n = 15, desc = TRUE){
-    std_tib %>%
-        distinct(word, .keep_all=TRUE) %>%
-        arrange(rank) %>%
-        group_modify(~{.x %>% head(n)})%>%
+    dist <- std_tib %>%
+        distinct(word, .keep_all=TRUE)
+    if (desc) {
+        arr <-  arrange(dist, desc(!! sym(insight_col)))
+    }else{
+        arr <- arrange(dist, !! sym(insight_col))
+    }
+    arr %>%
+        group_modify(~{.x %>% head(n)}) %>%
         ungroup() %>%
         mutate(!! sym(insight_name) := fct_reorder(!! sym(insight_name),
                                                    !! sym(insight_col),
