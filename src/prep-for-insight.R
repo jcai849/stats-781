@@ -128,10 +128,8 @@ remove_stopwords <- function(data, sw_list){
 #' @return a tibble with one column; text
 reconstruct <- function(std_tib){
     std_tib %>%
-        group_by(line_id) %>%
-        group_modify( ~ tibble(text = {
-            as_vector(.x$word) %>%
-                paste(sep="\n", collapse = " ")})) %>%
+        group_by(line_id, add=TRUE) %>%
+        summarise(text = paste(word, collapse = " ")) %>%
         ungroup() %>%
         select(text)
 }

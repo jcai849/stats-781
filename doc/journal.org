@@ -679,12 +679,13 @@ Dataframe form:
   - Group :: section text by groups, for which later operations will be uniquely performed on
   - Format :: format the text into a standard object that can be operated on
   - Process :: remove stopwords, lemmatise, filter, other lossy transformations
-** [[file:~/curr/stats-781/src/word-insight.R][Word Insight]] [3/5]
+** [[file:~/curr/stats-781/src/word-insight.R][Word Insight]] [4/6]
    Note: Intent is to maintain the standard dataframe form
    + [X] word_freq
    + [X] bigram_freq
    + [X] keywords_tr
-   + [ ] high_sentiment
+   + [X] word_sentiment_AFINN
+   + [ ] other word_sentiment forms
    + [ ] word_corr
 ** Sentence/line/group Insight [0/3]
    + [ ] word_count

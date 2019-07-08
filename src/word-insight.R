@@ -52,6 +52,18 @@ keywords_tr <- function(std_tib){
     return(full_join(std_tib, kw, by="word"))
 }
 
+#' Determine AFINN sentiment of words
+#'
+#' @param std_tib
+#' 
+#' @return std_tib with additonal column of the sentiments of words
+word_sentiment_AFINN <- function(std_tib){
+    sentiments %>%
+        filter(lexicon == "AFINN") %>%
+        select(word, score) %>%
+        right_join(std_tib, by="word")
+}
+
 #' Determine correlation between words within a given group
 #'
 #' @param std_tib the standard dataframe given as per the import functions

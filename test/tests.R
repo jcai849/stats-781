@@ -49,6 +49,9 @@ bf <- std_tib %>%
 kw <- std_tib %>%
     get_insight(keywords_tr)
 
+ws <- std_tib %>%
+    get_insight(word_sentiment_AFINN)
+
 ## ------------------------------ Visualisation
 
 source("../src/vis-insight.R")
@@ -61,6 +64,9 @@ wf %>%
 
 kw %>%
     get_vis(word_bar, "word", "rank", desc=FALSE)
+
+ws %>%
+    get_vis(word_dist, "score")
 
 ## ------------------------------ ggpage
 
@@ -98,3 +104,12 @@ imported %>%
     ggpage_build() %>%
     get_insight(keywords_tr) %>%
     ggpage_plot(aes(fill=rank))
+
+## ------------------------------
+
+std_tib %>%
+    reconstruct() %>%
+    ggpage_build() %>%
+    get_insight(word_sentiment_AFINN) %>%
+    ggpage_plot(aes(fill=score)) +
+    scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0)
