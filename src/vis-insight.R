@@ -11,7 +11,7 @@ get_vis <- function(std_tib, operation, ...){
     if (is_grouped_df(std_tib)){
         grouping <- group_vars(std_tib)
         std_tib %>%
-            operation(...) + facet_wrap(grouping, scales="free_x", labeller = "label_both")
+            operation(...) + facet_wrap(syms(grouping), scales="free_x", labeller = "label_both") #
     } else {
         std_tib %>%
             operation(...)

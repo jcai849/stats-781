@@ -1,10 +1,8 @@
+## ------------------------------ Dependencies
 
 source("../src/depends.R")
 
-## ------------------------------ Importing
-
-read_lines("../data/raw/11-0.txt") %>% # Without import function
-    tibble(text=.)
+## ------------------------------ Importing Novel
 
 source("../src/prep-for-insight.R")
 
@@ -22,7 +20,22 @@ stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
 
 std_tib <- imported %>%
     remove_stopwords(stopwords)
+## ------------------------------ Importing Free-Response
 
+source("../src/prep-for-insight.R")
+
+filepath <- "../data/raw/Schonlau1.xls"
+textcol<- "expert clinical summary"
+
+imported <- import_excel(filepath, textcol) %>%
+    group_by(!! sym("record ID"), add=TRUE) %>%
+    group_by(!! sym("expert AE causation score"), add=TRUE) %>%
+    format_data()
+
+stopwords <- get_sw()
+
+std_tib <- imported %>%
+    remove_stopwords(stopwords)
 ## ------------------------------ Word-Level insights
 
 source("../src/word-insight.R")
@@ -37,27 +50,9 @@ bf <- std_tib %>%
 
 source("../src/vis-insight.R")
 
-n <- 10
-desc <- TRUE
-
-
 wf %>%
     get_vis(word_dist, "word_freq")
 
 wf %>%
     get_vis(word_bar, "word", "word_freq")
 
-wf %>%
-    word_dist("word_freq")
-
-insight_name <- "word"
-insight_col <- "word_freq"
-std_tib <- wf
-wf %>%
-    word_bar(insight_name, insight_col)
-
-bf %>%
-    word_dist(bigram_freq)
-
-bf %>%
-    word_bar(bigram, bigram_freq)

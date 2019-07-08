@@ -10,6 +10,19 @@ import_txt <- function(filepath){
         tibble(text=.)
 }
 
+#' Import excel file
+#'
+#' @param filepath a string indicating the relative or absolut
+#'     filepath of the file to import
+#'
+#' @param textcol a string name of the column containing the text of interest; to be renamed "text"
+#'
+#' @return tibble of each row corrresponding to a line of the text
+#'     file, with the column named "text"
+import_excel <- function(filepath, textcol){
+    read_excel(filepath) %>%
+        rename(text = textcol)}
+
 #' creates a search closure to section text
 #'
 #' @param search a string regexp for the term to seperate on, e.g. "Chapter"

@@ -253,15 +253,18 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
 * Meeting Chris
 <2019-07-02 Tue 11:00-12:00>
 ** Topics
-*** Dissertation
-   SCHEDULED: <2019-06-30 Sun>
+*** CLOSED Dissertation
+   CLOSED: [2019-07-07 Sun 18:10] SCHEDULED: <2019-06-30 Sun>
 - [ ] start on grouping
 - [ ] Try make column names of "insight" and "group" columns explicit in the name,
   so that they can be accessed programmatically through a string search
 
 ** Actions
+- [ ] Work on functions
+- [ ] Create more tests, including for free-response
+- [ ] Test ggpage, consider how to structure standard object
 * Meeting Chris
-<2019-07-10 Wed 11:00-12:00>
+<2019-07-09 Tue 11:00-12:00>
 ** Topics
 ** Actions
 * Meeting Chris

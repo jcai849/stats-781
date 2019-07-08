@@ -1,4 +1,6 @@
-library(tidytext)
 library(tidyverse)
+library(readr)
+library(readxl)
+library(tidytext)
 library(textrank)
 library(lexRankr)
