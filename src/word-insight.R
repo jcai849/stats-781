@@ -40,9 +40,17 @@ bigram_freq <- function(std_tib){
 #'
 #' @param std_tib the standard dataframe given as per the import functions
 #'
-#' @return std_tib with additional column of the textrank keyword ranking
-## keywords_tr
-
+#' @return std_tib with additional columns of the textrank keyword
+#'     ranking (rank) and pagerank score (pagerank)
+keywords_tr <- function(std_tib){
+    tr <- std_tib$word  %>%
+        textrank_keywords()
+    kw <- tibble(word = names(tr$pagerank$vector),
+           pagerank = tr$pagerank$vector) %>%
+        arrange(desc(pagerank)) %>%
+        mutate(rank = row_number())
+    return(full_join(std_tib, kw, by="word"))
+}
 
 #' Determine correlation between words within a given group
 #'

@@ -1,6 +1,6 @@
 #' Import text file 
 #'
-#' @param filepath a string indicating the relative or absolut
+#' @param filepath a string indicating the relative or absolute
 #'     filepath of the file to import
 #'
 #' @return tibble of each row corrresponding to a line of the text
@@ -12,7 +12,7 @@ import_txt <- function(filepath){
 
 #' Import excel file
 #'
-#' @param filepath a string indicating the relative or absolut
+#' @param filepath a string indicating the relative or absolute
 #'     filepath of the file to import
 #'
 #' @param textcol a string name of the column containing the text of interest; to be renamed "text"
@@ -23,6 +23,20 @@ import_excel <- function(filepath, textcol){
     read_excel(filepath) %>%
         rename(text = textcol)}
 
+#' Import csv file
+#'
+#' @param filepath a string indicating the relative or absolute
+#'     filepath of the file to import
+#'
+#' @param textcol a string name of the column containing the text of interest; to be renamed "text"
+#'
+#' @return tibble of each row corrresponding to a line of the text
+#'     file, with the column named "text"
+import_csv <- function(filepath, textcol){
+    read_csv(filepath) %>%
+        rename(text = textcol)}
+
+
 #' creates a search closure to section text
 #'
 #' @param search a string regexp for the term to seperate on, e.g. "Chapter"
@@ -31,11 +45,11 @@ import_excel <- function(filepath, textcol){
 #'
 #' @return closure over search expression and named column
 get_search <- function(search, name){
-#' add section column by occurance of words
-#' 
-#' @param data tibble of each row corrresponding to a line of the text
-#'     file, with the column named "text"
-#' @return the original data with the addition of a sectioned column
+    #' add section column by occurance of words
+    #' 
+    #' @param data tibble of each row corrresponding to a line of the text
+    #'     file, with the column named "text"
+    #' @return the original data with the addition of a sectioned column
     function(data){
         data %>%
             mutate(!! name := str_detect(text, search) %>% cumsum())
@@ -50,7 +64,7 @@ get_verse <- get_search("^[\\s]*[Vv][Ee][Rr][Ss][Ee]", "verse")
 #' helper function to ungroup for dplyr. functions equivalently to
 #' group_by() but with standard (string) evaluation
 ungroup_by <- function(x,...){
-  group_by_at(x, group_vars(x)[!group_vars(x) %in% ...])
+    group_by_at(x, group_vars(x)[!group_vars(x) %in% ...])
 }
 
 #' formats imported data into an analysis-ready format
@@ -105,4 +119,19 @@ get_sw <- function(sw_list = "snowball", addl = NA){
 #' @return a dataframe equivalent to the input dataframe, with stopwords removed
 remove_stopwords <- function(data, sw_list){
     anti_join(data, sw_list, by = "word")
+}
+
+#' Reconstructs basic text form from word form
+#'
+#' @param std_tib standard tibble
+#'
+#' @return a tibble with one column; text
+reconstruct <- function(std_tib){
+    std_tib %>%
+        group_by(line_id) %>%
+        group_modify( ~ tibble(text = {
+            as_vector(.x$word) %>%
+                paste(sep="\n", collapse = " ")})) %>%
+        ungroup() %>%
+        select(text)
 }

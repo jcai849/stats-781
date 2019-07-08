@@ -46,6 +46,9 @@ wf <- std_tib %>%
 bf <- std_tib %>%
     get_insight(bigram_freq)
 
+kw <- std_tib %>%
+    get_insight(keywords_tr)
+
 ## ------------------------------ Visualisation
 
 source("../src/vis-insight.R")
@@ -56,3 +59,42 @@ wf %>%
 wf %>%
     get_vis(word_bar, "word", "word_freq")
 
+kw %>%
+    get_vis(word_bar, "word", "rank", desc=FALSE)
+
+## ------------------------------ ggpage
+
+filename <- "../data/raw/11-0.txt"
+
+imported <- import_txt(filename) 
+
+ggpage_quick(imported[["text"]]) #doesn't seem to work
+
+imported %>%
+    ggpage_build() %>%
+    ggpage_plot()
+
+imported %>%
+    ggpage_build() %>%
+    get_insight(word_freq) %>%
+    ggpage_plot(aes(fill=word_freq))
+
+## ------------------------------ ggpage_more
+
+filename <- "../data/raw/11-0.txt"
+stopwords <- get_sw()
+
+imported <- import_txt(filename) %>%
+    format_data() %>%
+    remove_stopwords(stopwords) %>%
+    reconstruct()
+
+imported %>%
+    ggpage_build() %>%
+    get_insight(word_freq) %>%
+    ggpage_plot(aes(fill=word_freq))
+
+imported %>%
+    ggpage_build() %>%
+    get_insight(keywords_tr) %>%
+    ggpage_plot(aes(fill=rank))

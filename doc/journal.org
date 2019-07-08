@@ -635,7 +635,7 @@ worthwhile to incorporate regex ability for the application. CLI
 integration would be a dream, but not so useful for school and
 undergraduate students.
 
-* Packaging 
+* Packaging
 Dataframe form:
 #+ATTR_LATEX: :booktabs :align l | l | l | l | l  :float t
 | grouping vars | ... | doc_id | paragraph_id | sentence_id | word_id | word |
@@ -654,49 +654,54 @@ Dataframe form:
     structure of the internal datatype has been kept specifically so
     that grouping and filtering are efficient, lossless, and simple
     operations.
-** [[file:~/curr/stats-781/src/prep-for-insight.R][Preparation]] [5/10]
+** [[file:~/curr/stats-781/src/prep-for-insight.R][Preparation]] [8/12]
+  - [X] import_txt
+  - [X] import_excel
+  - [X] import_csv
+  - [ ] import_gutenberg
+  - [ ] import_docx
+  - [X] get_sw
+  - [X] remove_stopwords
+  - [ ] lemmatise
+  - [ ] add_doc
+  - [X] get_search
+    - [X] get_chapters
+    - [X] get_parts
+    - [X] get_sections
+    - [X] get_verse
+  - [X] format_data
+  - [X] reconstruct
+
    See "Data Types for Implementation" for the reasoning behind the
    standard dataframe output form. Preparation is now divided into
    importation, grouping, formatting, then processing. In detail:
-- Import :: bringing in text from various formats, convert to simple table
-- Group :: section text by groups, for which later operations will be uniquely performed on
-- Format :: format the text into a standard object that can be operated on
-- Process :: remove stopwords, lemmatise, filter, other lossy transformations
-
-   - [X] import_txt
-   - [ ] import_csv
-   - [ ] import_gutenberg
-   - [ ] import_docx
-   - [X] get_sw
-   - [X] remove_stopwords
-   - [ ] lemmatise
-   - [ ] add_doc
-   - [X] get_search
-     - [X] get_chapters
-     - [X] get_parts
-     - [X] get_sections
-     - [X] get_verse
-   - [X] format_data
-** [[file:~/curr/stats-781/src/word-insight.R][Word Insight]] [2/6]
+  - Import :: bringing in text from various formats, convert to simple table
+  - Group :: section text by groups, for which later operations will be uniquely performed on
+  - Format :: format the text into a standard object that can be operated on
+  - Process :: remove stopwords, lemmatise, filter, other lossy transformations
+** [[file:~/curr/stats-781/src/word-insight.R][Word Insight]] [3/5]
    Note: Intent is to maintain the standard dataframe form
-   - [X] word_freq
-   - [X] bigram_freq
-   - [ ] word_count
-   - [ ] keywords_tr
-   - [ ] word_corr
-   - [ ] high_sentiment
-** Sentence/line/group Insight [0/2]
-   - [ ] keyphrase_lr
-   - [ ] high_sentiment_mean
+   + [X] word_freq
+   + [X] bigram_freq
+   + [X] keywords_tr
+   + [ ] high_sentiment
+   + [ ] word_corr
+** Sentence/line/group Insight [0/3]
+   + [ ] word_count
+   + [ ] keyphrase_lr
+   + [ ] high_sentiment_mean
 ** Document Insight [0/3]
    - [ ] topic_model
    - [ ] tf_idf
    - [ ] between_phrase_lr
-** [[file:~/curr/stats-781/src/vis-insight.R][Visualisation]] [2/7]
+
+Note: Document is effectively a group like any other - consider it thus!
+** [[file:~/curr/stats-781/src/vis-insight.R][Visualisation]] [2/8]
    See "Visualisation" for the reasoning behind the standard visualisation types
    - [X] word_dist
    - [X] word_bar
    - [ ] word_boxplot
+   - [ ] ungrouped_boxplot
    - [ ] word_table. Note: Already implemented as /xtable/ - transform
      so it can interact with /xtable/
    - [ ] corr_mat
@@ -745,3 +750,61 @@ instance of a word in every group shares the same level ordering, so
 while a word may rank highly overall, but less than others in a
 particular group, it will retain the high ordering overall in the
 facet for that group, leading to inaccuracies.
+
+** ggpage
+ggpage is an extension to ggplot to allow the rendering of text in a
+page-like representation as a manipulable image. 
+Example
+#+begin_src R :results value :colnames yes :hline yes :session rsession1 :tangle yes :comments link :exports both :eval never-export
+library(tidyverse)
+library(ggpage)
+head(tinderbox)
+#+end_src
+
+#+RESULTS
+# A tibble: 6 x 2
+  text                                                              book        
+  <chr>                                                             <chr>       
+1 "A soldier came marching along the high road: \"Left, right - le… The tinder-…
+2 had his knapsack on his back, and a sword at his side; he had be… The tinder-…
+3 and was now returning home. As he walked on, he met a very frigh… The tinder-…
+4 witch in the road. Her under-lip hung quite down on her breast, … The tinder-…
+5 "and said, \"Good evening, soldier; you have a very fine sword, … The tinder-…
+6 knapsack, and you are a real soldier; so you shall have as much … The tinder-…
+
+ggpage can make immediate plots, but using =ggpage_build= and
+=ggpage_plot=, complex functions can be formed in the immediate
+representation from build before plotting. The representation takes
+the following form:
+#+begin_src R :results output :colnames yes :hline yes :session rsession1 :tangle yes :comments link :exports both :eval never-export
+tinderbox %>%
+  ggpage_build() 
+#+end_src
+
+#+RESULTS:
+# A tibble: 2,908 x 9
+   word     book            page  line  xmin  xmax  ymin  ymax index_line
+   <chr>    <chr>          <int> <int> <dbl> <dbl> <dbl> <dbl> <chr>     
+ 1 a        The tinder-box     1     1    91    90  -114  -117 1-1       
+ 2 soldier  The tinder-box     1     1    99    92  -114  -117 1-1       
+ 3 came     The tinder-box     1     1   104   100  -114  -117 1-1       
+ 4 marching The tinder-box     1     1   113   105  -114  -117 1-1       
+ 5 along    The tinder-box     1     1   119   114  -114  -117 1-1       
+ 6 the      The tinder-box     1     1   123   120  -114  -117 1-1       
+ 7 high     The tinder-box     1     1   128   124  -114  -117 1-1       
+ 8 road     The tinder-box     1     1   133   129  -114  -117 1-1       
+ 9 left     The tinder-box     1     1   138   134  -114  -117 1-1       
+10 right    The tinder-box     1     1   144   139  -114  -117 1-1       
+# … with 2,898 more rows
+
+This is set up solely for novels, and there is no way yet to implement
+grouping (as at ggpage v0.2.2.9000), but this may be useful. ggpage
+requires the scoring to be defined within the ggpage_build dataframe
+form - we can make use of this if we apply the insight functions to
+it. Entirely coincidentally, we have used precisely the same naming
+conventions for the input dataframe to ggpage_build (column named
+'text'), and the insight functions inside ggpage_build (working on
+column named "word"). Some tests are given in the test file. The
+primary issue with using ggpage is that the insight is applied as a
+/part/ of the visualisation, rather than being seperate to it, as with
+all the others.
