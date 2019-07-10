@@ -654,6 +654,33 @@ Dataframe form:
     structure of the internal datatype has been kept specifically so
     that grouping and filtering are efficient, lossless, and simple
     operations.
+[2019-07-10 Wed] I have done some further thinking today, especially
+following the meeting yesterday; destructive edits to the text are a
+serious problem to the integrity of the text, where all insight
+actions require starting from scratch as soon as any different types
+of input are needed. An example stems from experimenting with ggpage and
+realising that when stopwords are removed, the structure of the text
+is heavily hollowed out. After some thought, my solution is the following;
+
+*Processing*: Start with the importation and formatting of text,
+ keeping every single word and it's identification, down to the
+ capitalisation. Further options include (for example) lemmatisation,
+ and stopwords. In keeping with the spirit of non-destructive edits,
+ each add a column: lemmatisation adds a lemmatised form of row's
+ word, and stopwords adds a boolean value regarding the status of the
+ lemma. A final processing function creates a new row for the insight to be
+ performed on, based on the processing options (to use lemmas,
+ stopwords etc.). Groups are then declared.
+
+*Insights* looks for the insight column, and adds some output column
+ based upon it. The only changes I will have to make to the existing
+ functions will be to look for the insight column. A potential
+ difficulty is that they will have to be capable of dealing with
+ missing values (now that stopwords are just removed with NA in place)
+
+*Visualisations* will be exactly the same. A new, neat bit will be
+ that ggpage is simply a case of =ggpage_build= of the original import
+ and a =cbind=, then =ggpage_plot(aes(fill = insight))=.
 ** [[file:~/curr/stats-781/src/prep-for-insight.R][Preparation]] [8/12]
   - [X] import_txt
   - [X] import_excel
