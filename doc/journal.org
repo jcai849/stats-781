@@ -681,6 +681,18 @@ is heavily hollowed out. After some thought, my solution is the following;
 *Visualisations* will be exactly the same. A new, neat bit will be
  that ggpage is simply a case of =ggpage_build= of the original import
  and a =cbind=, then =ggpage_plot(aes(fill = insight))=.
+
+(End of Solution) In addition, I have been thinking about UI. Shiny
+apps often have a paged, scrolling structure like a webpage, but I
+think text analytics may require a different format, due to the
+continual return to the processing stage, as well as the large amount
+of processing required for many operations, thus leading to slow,
+laggy pages. I think the "SAS format" may be a winning formula, where
+tickboxes, radios, and inputs on one high level page are tweaked, then
+a button is pressed to produce the output. This would lend itself
+really well to going back and tweaking, as well as the feature of code
+generation. It obeys the KISS principle, which wins it points in my
+book.
 ** [[file:~/curr/stats-781/src/prep-for-insight.R][Preparation]] [8/12]
   - [X] import_txt
   - [X] import_excel
