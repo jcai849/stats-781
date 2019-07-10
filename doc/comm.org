@@ -267,6 +267,9 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
 <2019-07-09 Tue 11:00-12:00>
 ** Topics
 ** Actions
+- [ ] get_insight functions work on named column rather than "word" as default - word may still be the keyword argument
+- [ ] additional processing functions to add/alter columns around insight (e.g. stopwords scans named word column, removes corresponding insight entry, lemmatise adds additional lemma column to words, in order to have text insight performed on lemma column)
+- [ ] sentence/group level summary insights
 * Meeting Chris
 <2019-07-17 Wed 11:00-12:00>
 ** Topics

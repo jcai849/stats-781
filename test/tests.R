@@ -20,6 +20,7 @@ stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
 
 std_tib <- imported %>%
     remove_stopwords(stopwords)
+
 ## ------------------------------ Importing Free-Response
 
 source("../src/prep-for-insight.R")
@@ -78,10 +79,12 @@ imported <- import_txt(filename)
 
 imported %>%
     ggpage_build() %>%
+    filter(page == 1) %>%
     ggpage_plot()
 
 imported %>%
     ggpage_build() %>%
+    filter(page == 1) %>%
     get_insight(word_freq) %>%
     ggpage_plot(aes(fill=word_freq))
 
