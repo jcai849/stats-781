@@ -1,18 +1,10 @@
 * COLOPHON
+Work was all done in emacs, with the code in R, tangled through org mode
 * Initial Survey
-  :PROPERTIES:
-  :CUSTOM_ID: initial-survey
-  :END:
-
 ** Prescribed Reading
-   :PROPERTIES:
-   :CUSTOM_ID: prescribed-reading
-   :END:
 - [[https://www.tidytextmining.com][Text Mining with R]]: [[./text_mining_with_r.org][notes]]
 - [[https://m-clark.github.io/text-analysis-with-R/][Text Analysis with R]]
-
-** Consideration of Application Features
-
+** Initial Consideration of Application Features
 *UX/UI* must be intuitive, modelling the inherently non-linear workflow,
 while fitting in with the iNZight / lite environment. I wrote some notes
 on UX/UI [[./ux_ui.org][here]].
@@ -46,23 +38,12 @@ third year linguistics paper provides, and so linguistics is not going
 to be our primary focus. Regardless, many forms of analysis require some
 linguistic theory, such as those dependent on Part of Speech tagging, so
 it is still worthwhile to keep in mind
-
 ** Twitter
-   :PROPERTIES:
-   :CUSTOM_ID: twitter
-   :END:
-
 Twitter data looks particularly interesting, as it is a constantly
 updating, rich source of information. I wrote up some notes on text
-mining twitter [[./text_mining_twitter.org][here]]. It would be
-particularly interesting to view twitter data in the context of
-discourse analysis.
-
+mining twitter [[./text_mining_twitter.org][here]]. It would be particularly interesting to view
+twitter data in the context of discourse analysis.
 ** Subtitles
-   :PROPERTIES:
-   :CUSTOM_ID: subtitles
-   :END:
-
 Subtitles are a unique form of text that would be very interesting to
 analyse. Subtitles for films and TV Series can be obtained easily from
 the site [[https://www.opensubtitles.org/en/search/subs][opensubtitles]], though
@@ -72,12 +53,7 @@ C#, so would require a port to R (probably not worth it for us at this
 point). Subtitles usually come as .srt files, and once the file is
 obtained, it's easy enough to import and work with it in R with the
 package [[https://github.com/fkeck/subtools][subtools]].
-
 ** R Packages
-   :PROPERTIES:
-   :CUSTOM_ID: r-packages
-   :END:
-
 [[https://quanteda.io/articles/pkgdown/comparison.html][Here]] is a useful comparison between the major text mining packages. CRAN also has
 a [[https://cran.r-project.org/web/views/NaturalLanguageProcessing.html][task view]] specifically for Natural Language Processing, offering many
 packages relevant to this project. Interestingly, they are split by
@@ -154,10 +130,6 @@ useful later
 internet
 
 ** Other Text Analytics Applications
-   :PROPERTIES:
-   :CUSTOM_ID: other-text-analytics-applications
-   :END:
-
 The field of text analytics applications is rather diverse, with most
 being general analytics applications with text analytics as a feature of
 the application. Some of the applications (general and specific) are
@@ -167,12 +139,7 @@ given:
   web app for analysing text at a deep level (with something of a
   linguistic focus) over multiple languages, for an "educated citizen
   researcher"
-
 ** Scope Determination
-   :PROPERTIES:
-   :CUSTOM_ID: scope-determination
-   :END:
-
 The scope of the project is naturally limited by the amount of time
 available to do it. As such, exploration of topics such as discourse
 analysis, while interesting, is beyond the scope of the project.
@@ -181,8 +148,8 @@ between them. The application must give the greatest amount of insight
 to a regular user, in the shortest amount of time, into what the text is
 actually about.
 
-[[http://usresp-student.shinyapps.io/text_analysis][Cassidy's project]]
-was intended to create this, and I have written notes on it [[./cassidy_notes.org][here]].
+[[http://usresp-student.shinyapps.io/text_analysis][Cassidy's project]] was intended to create this, and I have written
+notes on it [[./cassidy_notes.org][here]].
 
 Ultimately, I am not completely sold on the idea that term frequencies
 and other base-level statistics really give that clear a picture of what
@@ -214,27 +181,15 @@ mind, I want to see keywords, more on /structure/ of a text, context,
 and clear, punchy graphics showing not /just/ sentiment, but several
 other key measurements.
 
-* Features
-  :PROPERTIES:
-  :CUSTOM_ID: feature-implementations
-  :END:
+* Initial Feature Considerations
 ** Introduction
-   :PROPERTIES:
-   :CUSTOM_ID: introduction
-   :END:
-
 The application essentially consists of a feature-space, with the area
 being divided in three; [[*Processing][Processing]], [[*Within-Text Analytics][Within-Text Analytics]], and
-[[*Between-Text Analytics][Between-Text Analytics]]o. This follows the general format of much of
+[[*Between-Text Analytics][Between-Text Analytics]]. This follows the general format of much of
 what is capable in text analysis, and what is of interest to us and our
 end users. The UI will likely reflect this, dividing into seperate
 windows/panes/tabs to accomodate. Let's look at them in turn:
-
 ** Processing
-    :PROPERTIES:
-    :CUSTOM_ID: processing
-    :END:
-
 In order for text to be analysed, it must be imported and processed. A
 lot of this is an iterative process, coming back for further processing
 after analysis etc. Importing will have a "type" selection ability for
@@ -279,10 +234,6 @@ tab holding the processing tasks for each individual document, however
 this won't scale well to large corpus imports.
 
 ** Within-Text Analytics
-    :PROPERTIES:
-    :CUSTOM_ID: within-text-analytics
-    :END:
-
 Within-text analytics should have options to look at the whole text as
 it is, whether to look by division, or whether to look at the entire
 imported corpus as a whole.
@@ -310,10 +261,6 @@ text analytics, seeing a broad variety of uses. here, it would be worth
 examining sentiment, by word and over the length of the text overall.
 
 ** Between-Text Analytics
-    :PROPERTIES:
-    :CUSTOM_ID: between-text-analytics
-    :END:
-
 As in within-text analytics, between-text analytics should have
 options for specifying the component of the text that is of interest;
 here, the two major categories would be comparisons between divisions
@@ -376,7 +323,6 @@ With so much of the conceptual space of text analytic visualisation
 being taken up with far from optimal charts, there is a need to
 experiment with alternative visualisations; We explore some [[file:sent-vis.org][here]]
 ** Text Summarisation
-
 [[https://en.wikipedia.org/wiki/Automatic_summarization][Wikipedia: Automatic Summarisation]]
 
 Text summarisation creates enormous insight, especially from a long
@@ -527,15 +473,110 @@ of a "layer" level, layers being:
   - lexrank
 - topic level
 - sentiment level
-* Data Types
+** Visualisation
+ Visualisation of text is proving to be a more complex area than I
+ first assumed. Prior to this project, the only visualisation I knew of
+ was word clouds, which I have come to understand to be about as
+ useless as an unlabelled pie chart.
+
+ Text visualisation is essentially the attempt to efficiently relay
+ insights gained from text analytics. In the
+ preparation-insight-visualisation layers, it is the final layer.
+ Visualisation is not limited to just charts; for our purposes, a well
+ crafted and formatted table may be just as good at conveying
+ information.
+
+ The form of the insight determines the form of the visualisation. So
+ far, insights all give a "score". Thus, the visualisation, showing a
+ mapping between a text (categorical) and a numerical insight
+ (numberical) varaiable, can only take a few forms, ideally showing the
+ relative scores and ranking of specific text items, or a distribution
+ of the entire set.
+
+ At base, nearly everything is neatly categorical-numeric, able to be
+ represented by bars/lollipops.
+
+ Pairwise correlation is slightly different, being a numerical function
+ of two categorical arguments; best represented in either a searchable
+ table, or a correlation matrix
+
+ Getting more advanced, for small data, ggpage type visualisations will
+ be excellent for sentiment and word/bigram frequency, as well as
+ ranking keywords.
+
+ Finally, when grouping is implemented, colouring or facetting by group
+ will be what makes this analysis package better than any competitors.
+
+ [2019-07-01 Mon] After implementing grouping, the issue with arranging
+ bars in a barplot by rank within each group is that ggplot arranges
+ bars through the ordering of factor levels. The problem is that each
+ instance of a word in every group shares the same level ordering, so
+ while a word may rank highly overall, but less than others in a
+ particular group, it will retain the high ordering overall in the
+ facet for that group, leading to inaccuracies.
+
+** ggpage
+ggpage is an extension to ggplot to allow the rendering of text in a
+page-like representation as a manipulable image. 
+Example
+#+begin_src R :results value :colnames yes :hline yes :session rsession1 :tangle no :comments link :exports both :eval never-export
+library(tidyverse)
+library(ggpage)
+head(tinderbox)
+#+end_src
+
+#+RESULTS
+# A tibble: 6 x 2
+  text                                                              book        
+  <chr>                                                             <chr>       
+1 "A soldier came marching along the high road: \"Left, right - le… The tinder-…
+2 had his knapsack on his back, and a sword at his side; he had be… The tinder-…
+3 and was now returning home. As he walked on, he met a very frigh… The tinder-…
+4 witch in the road. Her under-lip hung quite down on her breast, … The tinder-…
+5 "and said, \"Good evening, soldier; you have a very fine sword, … The tinder-…
+6 knapsack, and you are a real soldier; so you shall have as much … The tinder-…
+
+ggpage can make immediate plots, but using =ggpage_build= and
+=ggpage_plot=, complex functions can be formed in the immediate
+representation from build before plotting. The representation takes
+the following form:
+#+begin_src R :results output :colnames yes :hline yes :session rsession1 :tangle no :comments link :exports both :eval never-export
+tinderbox %>%
+  ggpage_build() 
+#+end_src
+
+#+RESULTS:
+# A tibble: 2,908 x 9
+   word     book            page  line  xmin  xmax  ymin  ymax index_line
+   <chr>    <chr>          <int> <int> <dbl> <dbl> <dbl> <dbl> <chr>     
+ 1 a        The tinder-box     1     1    91    90  -114  -117 1-1       
+ 2 soldier  The tinder-box     1     1    99    92  -114  -117 1-1       
+ 3 came     The tinder-box     1     1   104   100  -114  -117 1-1       
+ 4 marching The tinder-box     1     1   113   105  -114  -117 1-1       
+ 5 along    The tinder-box     1     1   119   114  -114  -117 1-1       
+ 6 the      The tinder-box     1     1   123   120  -114  -117 1-1       
+ 7 high     The tinder-box     1     1   128   124  -114  -117 1-1       
+ 8 road     The tinder-box     1     1   133   129  -114  -117 1-1       
+ 9 left     The tinder-box     1     1   138   134  -114  -117 1-1       
+10 right    The tinder-box     1     1   144   139  -114  -117 1-1       
+# … with 2,898 more rows
+
+This is set up solely for novels, and there is no way yet to implement
+grouping (as at ggpage v0.2.2.9000), but this may be useful. ggpage
+requires the scoring to be defined within the ggpage_build dataframe
+form - we can make use of this if we apply the insight functions to
+it. Entirely coincidentally, we have used precisely the same naming
+conventions for the input dataframe to ggpage_build (column named
+'text'), and the insight functions inside ggpage_build (working on
+column named "word"). Some tests are given in the test file. The
+primary issue with using ggpage is that the insight is applied as a
+/part/ of the visualisation, rather than being seperate to it, as with
+all the others.
+* Initial Data Types Survey
 The application requires the capacity to smoothly work with diverse
 data types. For this to occur, a test corpus must be developed, and
 some important data types picked out.
 ** Test Corpus
-   :PROPERTIES:
-   :CUSTOM_ID: test-corpus
-   :END:
-
 It is essential to test on a broad variety of texts in order to create
 the most general base application, so a "test set" will have to be
 developed. All data is stored in the folder [[file:c:/Users/User/Desktop/stats-781/data][data]]
@@ -635,13 +676,8 @@ worthwhile to incorporate regex ability for the application. CLI
 integration would be a dream, but not so useful for school and
 undergraduate students.
 
-* Packaging
-Dataframe form:
-#+ATTR_LATEX: :booktabs :align l | l | l | l | l  :float t
-| grouping vars | ... | doc_id | paragraph_id | sentence_id | word_id | word |
-|---------------+-----+--------+--------------+-------------+---------+------|
-|               |     |        |              |             |         |      |
-  [2019-06-13 Thu]:
+* Initial Considerations of Program Structure
+**  [2019-06-13 Thu] Notes
   - Read [[http://r-pkgs.org][r-pkgs.org]]. Notes: A working prototype will be built before
     formally packaging it; this is to allow for greater flexibility and
     experimentation without worry about breaking the package structure.
@@ -654,7 +690,13 @@ Dataframe form:
     structure of the internal datatype has been kept specifically so
     that grouping and filtering are efficient, lossless, and simple
     operations.
-[2019-07-10 Wed] I have done some further thinking today, especially
+Dataframe form:
+#+ATTR_LATEX: :booktabs :align l | l | l | l | l  :float t
+| grouping vars | ... | doc_id | paragraph_id | sentence_id | word_id | word |
+|---------------+-----+--------+--------------+-------------+---------+------|
+|               |     |        |              |             |         |      |
+** [2019-07-10 Wed] Notes
+I have done some further thinking today, especially
 following the meeting yesterday; destructive edits to the text are a
 serious problem to the integrity of the text, where all insight
 actions require starting from scratch as soon as any different types
@@ -692,159 +734,752 @@ tickboxes, radios, and inputs on one high level page are tweaked, then
 a button is pressed to produce the output. This would lend itself
 really well to going back and tweaking, as well as the feature of code
 generation. It obeys the KISS principle, which wins it points in my
-book.
-** [[file:~/curr/stats-781/src/prep-for-insight.R][Preparation]] [8/12]
-  - [X] import_txt
-  - [X] import_excel
-  - [X] import_csv
-  - [ ] import_gutenberg
-  - [ ] import_docx
-  - [X] get_sw
-  - [X] remove_stopwords
-  - [ ] lemmatise
-  - [ ] add_doc
-  - [X] get_search
-    - [X] get_chapters
-    - [X] get_parts
-    - [X] get_sections
-    - [X] get_verse
-  - [X] format_data
-  - [X] reconstruct
+book. 
 
-   See "Data Types for Implementation" for the reasoning behind the
-   standard dataframe output form. Preparation is now divided into
-   importation, grouping, formatting, then processing. In detail:
-  - Import :: bringing in text from various formats, convert to simple table
-  - Group :: section text by groups, for which later operations will be uniquely performed on
-  - Format :: format the text into a standard object that can be operated on
-  - Process :: remove stopwords, lemmatise, filter, other lossy transformations
-** [[file:~/curr/stats-781/src/word-insight.R][Word Insight]] [4/6]
-   Note: Intent is to maintain the standard dataframe form
-   + [X] word_freq
-   + [X] bigram_freq
-   + [X] keywords_tr
-   + [X] word_sentiment_AFINN
-   + [ ] other word_sentiment forms
-   + [ ] word_corr
-** Sentence/line/group Insight [0/3]
-   + [ ] word_count
-   + [ ] keyphrase_lr
-   + [ ] high_sentiment_mean
-** Document Insight [0/3]
-   - [ ] topic_model
-   - [ ] tf_idf
-   - [ ] between_phrase_lr
+Preparation is now divided into importation, grouping, formatting,
+then processing. In detail:
+- Import :: bringing in text from various formats, convert to simple table
+- Group :: section text by groups, for which later operations will be uniquely performed on
+- Format :: format the text into a standard object that can be operated on
+- Process :: remove stopwords, lemmatise, filter, other lossy transformations
+** Note on Non-Destructive Editing
+ Destructive editing is the practice where the original input can't be
+ attained after the transformation. It is non-Injective, and
+ non-invertible. Thus, when certain changes are required, an earlier
+ state is needed. Tidytext has made the decision to encourage
+ destructive edits, which is acceptable when the user is a programmer
+ with full control over every possible variable assignment, but not for
+ a GUI user. Hence, we have made the explicit decision to have
+ non-destructive transformations only, after hitting repeated
+ roadblocks related to Destructive edits. Memory is cheap for
+ computers, and summarisation functions can always be delayed, to
+ retain as much information, as many degrees of freedom as possible.
+ The concept of nondestructive edits is not new; graphic design relies
+ upon it, with an example given for photoshop at the [[https://helpx.adobe.com/photoshop/using/nondestructive-editing.html][Adobe Website]]
+* Program Dependencies
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
+library(tidyverse)
+library(readr)
+library(readxl)
+library(tidytext)
+library(textrank)
+library(lexRankr)
+library(ggpage)
+library(textstem)
+#+end_src
+* Program Layer: Preparation
+Here I lay out the preparation layer in detail. The culmination of all
+preparation functions is one wrapper, requesting the possible
+preparation features, and outputting a final tibble that is worked on
+by the next insight layer.
 
-Note: Document is effectively a group like any other - consider it thus!
-** [[file:~/curr/stats-781/src/vis-insight.R][Visualisation]] [2/8]
-   See "Visualisation" for the reasoning behind the standard visualisation types
-   - [X] word_dist
-   - [X] word_bar
-   - [ ] word_boxplot
-   - [ ] ungrouped_boxplot
-   - [ ] word_table. Note: Already implemented as /xtable/ - transform
-     so it can interact with /xtable/
-   - [ ] corr_mat
-   - [ ] sentence_table
-   - [ ] ggpage
-** [[file:~/curr/stats-781/test/tests.R][Tests]]
+Multiple documents are input the same as singular, though with an
+additional "document" column that can be grouped upon.
 
-* Visualisation
-Visualisation of text is proving to be a more complex area than I
-first assumed. Prior to this project, the only visualisation I knew of
-was word clouds, which I have come to understand to be about as
-useless as an unlabelled pie chart.
+The following sections detail the components of text preparation.
+** TODO [#B] Importing
+A variety of filetypes are able to be imported, with one wrapper
+function intelligently determining the appropriate import function
+from the file extension. Files with unrecognised extensions are
+treated as plaintext. Importantly, as we are working in a tidy
+paradigm, everything is imported as a tibble, with plaintext being one
+line per row, and tabular data maintaining the original form. Tabular
+data requires the specification of which column is the text column for
+analytics. All imports have a document ID, which is an identifier column.
+*** TODO Get Document Info [0/3]
+These are some helper functions to attain the document name and type
 
-Text visualisation is essentially the attempt to efficiently relay
-insights gained from text analytics. In the
-preparation-insight-visualisation layers, it is the final layer.
-Visualisation is not limited to just charts; for our purposes, a well
-crafted and formatted table may be just as good at conveying
-information.
+TODO:
+- [ ] get doc name (for ID)
+- [ ] stamp doc_id
+- [ ] get doc type (for wrapper)
+*** Import .txt
+Plaintext is the most important and simplest to work with of all text
+representations; entire operating systems are built around the
+concept. 
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#' Import text file 
+#'
+#' @param filepath a string indicating the relative or absolute
+#'     filepath of the file to import
+#'
+#' @return tibble of each row corrresponding to a line of the text
+#'     file, with the column named "text"
+import_txt <- function(filepath){
+    read_lines(filepath) %>%
+        tibble(text=.)
+}
+#+end_src
+*** Import .csv
+CSV is a plaintext tabular format, with columns typically delimited by
+commas, and rows by new lines. A particular point of difference in the
+importation of tabular data and regular plaintext is that the text of
+interest for the analysis should be (as per tidy principles) in one
+column, with the rest being additional information that can be used
+for grouping or filtering. Thus, additional user input is required, in
+the specification of which column is the text column of interest.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#' Import csv file
+#'
+#' @param filepath a string indicating the relative or absolute
+#'     filepath of the file to import
+#'
+#' @param textcol a string name of the column containing the text of interest; to be renamed "text"
+#'
+#' @return tibble of each row corrresponding to a line of the text
+#'     file, with the column named "text"
+import_csv <- function(filepath, textcol){
+    read_csv(filepath) %>%
+        rename(text = textcol)}
+#+end_src
+*** Import Excel
+Unfortunately, much data exists in the Microsoft Excel format, but
+this must be catered for. As tabular data, it is treated equivalently
+to csv.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#' Import excel file
+#'
+#' @param filepath a string indicating the relative or absolute
+#'     filepath of the file to import
+#'
+#' @param textcol a string name of the column containing the text of interest; to be renamed "text"
+#'
+#' @return tibble of each row corrresponding to a line of the text
+#'     file, with the column named "text"
+import_excel <- function(filepath, textcol){
+    read_excel(filepath) %>%
+        rename(text = textcol)}
+#+end_src
+*** TODO Import Gutenberg
+Project Gutenberg is an online library containing, at the time of
+writing, over 57,000 items, primarily plaintext ebooks. This is a
+goldmine of text ripe for analysis, and once the basic frontend is
+complete, I will dedicate some thought to the in-app importation of
+Gutenberg texts
+*** TODO Import
+The wrapper function takes in the filename, and other relevent
+information, handling the importation process. It also stamps in the
+name of the document as a column
+** Formatting
+To work in a tidy paradigm, following the lead of tidytext, we
+separate and ID by token. To do this, we take the line ID, the
+sentence ID, then the word ID, producing a dataframe that takes the
+following form:
 
-The form of the insight determines the form of the visualisation. So
-far, insights all give a "score". Thus, the visualisation, showing a
-mapping between a text (categorical) and a numerical insight
-(numberical) varaiable, can only take a few forms, ideally showing the
-relative scores and ranking of specific text items, or a distribution
-of the entire set.
+| line_id | sentence_id | word_id | word  |
+|---------+-------------+---------+-------|
+|       1 |           1 |       1 | the   |
+|       1 |           1 |       2 | quick |
+|       2 |           1 |       3 | brown |
 
-At base, nearly everything is neatly categorical-numeric, able to be
-represented by bars/lollipops.
+The reason for the ID columns is the preservation of the structure of
+the text; If required, the original text can be reconstructed in
+entirety, sans minor punctuation differences. The =unnest_tokens=
+function from tidytext doesn't play as expected with groups at
+present, so much of grouping is (not ideally) taking place internally
+in the first =group_modify=. When I have the luxury of time, I will
+try to optimise this.
 
-Pairwise correlation is slightly different, being a numerical function
-of two categorical arguments; best represented in either a searchable
-table, or a correlation matrix
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#' formats imported data into an analysis-ready format
+#'
+#' @param data a tibble formatted with a text and (optional) group
+#'     column
+#'
+#' @return a tibble formatted such that columns correspond to
+#'     identifiers of group, line, sentence, word (groups ignored)
+format_data <- function(data){
+    data %>%
+        mutate(line_id = row_number()) %>% 
+        group_modify(~ {
+            .x %>%
+                unnest_tokens(output = sentence, input = text, token = "sentences", to_lower = FALSE) %>%
+                mutate(sentence_id = row_number())
+        }) %>%
+        group_by(sentence_id, add=TRUE) %>%
+        group_modify(~ {
+            .x %>%
+                unnest_tokens(output = word, input = sentence, token = "words", to_lower=FALSE) %>%
+                mutate(word_id = row_number())
+        }) %>%
+        ungroup_by("sentence_id")
+}
+#+end_src
+** TODO [#B] Filtering
+Filtering has to be done with code at present, but the intention is
+that once I have a frontend up, it's design will inform an interactive
+filter. After some initial analytics have been done in the insight
+layer, then preparation can be returned to and the text can be
+filtered on based on the analytics.
+** Lemmatisation
+Lemmatisation is effectively the process of getting words into
+dictionary form. It is actually a very complex, stochastic procedure,
+as natural languages don't follow consistent and clear rules all the
+time. Hence, models have to be used. Despite the burden, it is
+generally worthwhile to lemmatise words for analytics, as there are
+many cases of words not being considered significant, purely due to
+taking so many different forms relative to others. Additionally,
+stopwords work better when considering just the lemmatised form,
+rather than attempting to exhaustively cover every possible form of a
+word. [[https://github.com/trinker/textstem/][textstem]] is an R package allowing for easy lemmatisation, with
+it's function =lemmatize_words= transforming a vector of words into
+their lemmatised forms (thus being compatible with =mutate= straight
+out of the box). Udpipe was another option, but it requires
+downloading model files, and performs far more in depth linguistic
+determinations such as parts-of-speech tagging, that we don't need at
+this point. Worth noting is that, like stopwords, there are different
+dictionaries available for the lemmatisation process, but we will use
+the default, as testing has shown it to be the simplest to set up and
+just as reliable as the rest.
+** Stemming
+Stemming is far simpler than lemmatisation, being the removal of word
+endings. This doesn't require as complex a model, as it is
+deterministic. It is not quite as effective, as the base word ending
+is not tacked back on at the end, so we are left with word stumps and
+morphemes. However, it may sometimes be useful when the lemmatisation
+model isn't working effectively, and textstem provides the capability
+with =stem_words=
+** Stopwords
+Stopwords are syntactical features of text that are superfluous and
+get in the way of text analytics. Typical examples include articles
+and pronouns, like "the", "to", "I", etc. They would clutter the
+output of insights such as word frequency. We need a way of generating
+a list of stopwords, from both a default source, as well as allowing
+the user to add their own stopwords. =get_sw= performs that, detailed
+below.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#' Gets stopwords from a default list and user-provided list
+#'
+#' @param sw_list a string name of a stopword list, one of "smart",
+#'     "snowball", or "onix"
+#'
+#' @param addl user defined character vector of additional stopwords,
+#'     each element being a stopword
+#'
+#' @return a tibble with one column named "word"
+get_sw <- function(sw_list = "snowball", addl = NA){
+    get_stopwords(source=sw_list) %>%
+        select(word) %>%
+        bind_rows(tibble(word = addl)) %>%
+        na.omit() %>%
+        mutate(word = tolower(word))
+}
+#+end_src
+The status of the stopwords are then added to the data with =determine_stopwords=
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#' Adds stopwords column
+#'
+#' @param data a tibble formatted such that columns correspond to
+#'     identifiers of line, sentence, and word
+#'
+#' @param sw_list tibble with single column of stopwords
+#'
+#' @return a dataframe equivalent to the input dataframe, with an additional stopword column
+determine_stopwords <- function(data, sw_list){
+    data %>%
+        mutate(stopword = word %in% sw_list$word)
+}
+#+end_src
+** Sectioning
+Plaintext, as might exist as a Gutenberg Download, differs from more
+complex representations in many ways, including a lack of sectioning -
+Chapters require a specific search in order to jump to them. Here, I
+compose a closure that searches and sections text based on a Regular
+Expression intended to capture a particular section. Several functions
+are created from that. In time, advanced users could be given the
+option to compose their own regular expressions for sectioning.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#' creates a search closure to section text
+#'
+#' @param search a string regexp for the term to seperate on, e.g. "Chapter"
+#'
+#' @param name string name for the sectioning column
+#'
+#' @return closure over search expression and named column
+get_search <- function(search, name){
+    #' add section column by occurance of words
+    #' 
+    #' @param data tibble of each row corrresponding to a line of the text
+    #'     file, with the column named "text"
+    #' @return the original data with the addition of a sectioned column
+    function(data){
+        data %>%
+            mutate(!! name := str_detect(text, search) %>% cumsum())
+    }
+}
 
-Getting more advanced, for small data, ggpage type visualisations will
-be excellent for sentiment and word/bigram frequency, as well as
-ranking keywords.
+get_chapters <- get_search("^[\\s]*[Cc][Hh][Aa]?[Pp][Tt]([Ee][Rr])?", "chapter")
+get_parts <- get_search("^[\\s]*[Pp]([Aa][Rr])?[Tt]", "part")
+get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])", "section")
+get_verse <- get_search("^[\\s]*[Vv][Ee][Rr][Ss][Ee]", "verse")
+#+end_src
+** TODO [#C] Grouping 
+Grouping is a killer feature of our app. The intention is to run a
+=group_by= dplyr command in the wrapper over user-specified groups,
+and all further insights and visualisations are performed groupwise.
+This allows for immediate and clear comparisons.
 
-Finally, when grouping is implemented, colouring or facetting by group
-will be what makes this analysis package better than any competitors.
+Like filtering, after some initial analytics have been done in the
+insight layer, then preparation can be returned to and the text can be
+groupedon based on the analytics.
 
+Also needed, but surprisingly missing from dplyr, is an "ungroup_by"
+function, that allows specifice groups to be removed. Currently
+standard evaluation only, will switch to NSE when time allows
+
+TODO:
+- [ ] Make =ungroup_by= NSE
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#' helper function to ungroup for dplyr. functions equivalently to
+#' group_by() but with standard (string) evaluation
+ungroup_by <- function(x,...){
+    group_by_at(x, group_vars(x)[!group_vars(x) %in% ...])
+}
+#+end_src
+** TODO [#A] Wrapper
+The =preparation= wrapper takes all combinations of features and
+intelligently connects them for the "insight column", which the
+insight is performed upon. Right now, the only user options are which
+file is to be imported, stopword options, and what groups are to be
+selected. Lemmatisation is automatic, but in the future this will be a
+user option, including whether to perform stopword selection on
+lemmatised forms or not, and whether or not to use stemming. This is
+because the control structure is complex and program correctness is
+far more important at this point.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#+end_src
+* Program Layer: Insight
+Insight is the meat of this package. After some initial resistance, I
+have decided to jump all-in with tidyverse-style transformations,
+especially for the non-destructive editing, as an immutable functional
+programming paradigm suits such functions. Insight may be divided into
+word insight, and higher-level (aggregated) insights. The higher level
+insights include sentence and document level insights, such as
+sentence sentiment, tf-idf, etc. Importantly for the document level
+insights is that our program doesn't necessarily have to work purely
+on documents - any identifying column could potentially stand in.
+
+At present, all insight functions haven't yet been tested with the new
+output of the Preparation layer. I want to make the following changes
+to all of them for this to be effective:
+
+TODO:
+- [ ] Have all insight functions work on vector input and output, so
+  as to work with =mutate=
+- [ ] Ensure correctness of output under grouping
+** Word Insight
+*** Word Frequency
+Frequencies of words are useful in getting an understanding of what
+terms are common in a text. This is one insight in particular that
+requires stopwords to have been previously removed, otherwise the top
+words will always be syntactical glue, such as articles
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+#' Determine word frequency
+#'
+#' @param std_tib the standard dataframe given as per the import functions
+#'
+#' @return std_tib with an additional column of counts.
+word_freq <- function(std_tib){
+    std_tib %>%
+        add_count(word) %>%
+        rename(word_freq = n)
+}
+#+end_src
+*** TODO [#C] Bigram Frequency [0/1]
+Bigrams are two words that occur in sequence. For example, in the
+phrase, "The quick brown dog.", the following bigrams exist: "The
+quick", "quick brown", "brown dog". This can be generalised to any
+number of sequential words as /n-grams/. They are useful in text
+analytics to determine word sequences, as well as common adverb-verb
+and adjective-noun pairs. This exists partly between word and
+aggregate insight, but by measure is closer to the word-level.
+
+TODO:
+- [ ] generalise to n-grams (make closure, have bigrams as special
+  case)
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+#' Determine bigram frequency
+#'
+#' @param std_tib the standard dataframe given as per the import functions
+#'
+#' @return std_tib with an additional column of associated bigrams for each word and their counts
+bigram_freq <- function(std_tib){
+    std_tib %>%
+        mutate(bigram = paste(word, lead(word)))%>%
+        add_count(bigram) %>%
+        rename(bigram_freq = n)
+}
+#+end_src
+*** Key Words (TextRank)
+Key words are another killer feature of this app. The algorithm is
+explained previously. The =textrank= package is used to perform textrank.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+#' Determine keyword ranking
+#'
+#' @param std_tib the standard dataframe given as per the import functions
+#'
+#' @return std_tib with additional columns of the textrank keyword
+#'     ranking (rank) and pagerank score (pagerank)
+keywords_tr <- function(std_tib){
+    tr <- std_tib$word  %>%
+        textrank_keywords()
+    kw <- tibble(word = names(tr$pagerank$vector),
+           pagerank = tr$pagerank$vector) %>%
+        arrange(desc(pagerank)) %>%
+        mutate(rank = row_number())
+    return(full_join(std_tib, kw, by="word"))
+}
+#+end_src
+*** TODO [#C] Word Sentiment [0/1]
+Sentiment has been discussed earlier. Effectively, for any text
+analytics it is essential. There are numerous sentiment dictionaries,
+but we will use AFINN for the nice numeric properties it has, allowing
+for statistics on them. Categorical dictionaries will be implemented
+later.
+
+TODO:
+- [ ] Include option for additional dictionaries
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+#' Determine AFINN sentiment of words
+#'
+#' @param std_tib
+#' 
+#' @return std_tib with additonal column of the sentiments of words
+word_sentiment_AFINN <- function(std_tib){
+    sentiments %>%
+        filter(lexicon == "AFINN") %>%
+        select(word, score) %>%
+        right_join(std_tib, by="word")
+}
+#+end_src
+*** TODO [#B] Word Correlation
+This is the word-level insight that will be the most difficult to
+perform, due to my requirements that the dataframe remains tidy and
+lossless. The only way I can conceive of doing this is by adding
+columns for each distinct word, giving correlations there. The best
+form of visualisation would be individual words with their scores, a
+correlation matrix for some words, or a table and search like the one
+Cassidy created.
+** TODO [#A] Aggregate Insight
+This should work effectively the same as the word-level insight,
+however the wrapper may have to be different. This is TBC
+*** Word Count
+*** Key Sentence (LexRank)
+*** Aggregate Sentiment
+*** Term Frequency - Inverse Document Frequency (tf-idf)
+*** Topic Modelling
+** TODO [#B] Wrapper
+The insights of choice can all be combined into a wrapper function,
+taking the forms and arguments of the insights and applying those
+chosen.
+
+TODO:
+- [ ] Take multiple insights
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+#' perform group-aware operation on the standard dataframe
+#'
+#' @param std_tib the standard dataframe given as the output of the format_data function
+#'
+#' @param operation insight function to be performed on the dataframe
+#'
+#' @return grouped output from the operation
+get_insight <- function(std_tib, operation){
+    std_tib %>%
+        group_modify(~ {
+            .x %>%
+                operation
+        })
+}
+#+end_src
+* Program Layer: Visualisation
+I have grouped visualisations by their output intention, rather than
+their implementation, as an ends-based focus, with the means being
+mere details. The following are the most useful visualisations. A
+present issue with visualisation is how grouping is performed; If I
+want to have a set of charts separated by group, performing by group
+creates as many separate charts as there are groups, as separate
+graphics. I want to make use of =facet_wrap= from ggplot, which
+requires some maneuvering with a wrapper function
+** Distribution [1/4]
+*** CLOSED Density
+    CLOSED: [2019-07-13 Sat 23:20]
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R
+#' output a histogram of the distribution of some function of words
+#'
+#' @param std_tib the standard dataframe, modified so the last column
+#'     is the output of some insight function (eg. output from
+#'     word_freq)
+#'
+#' @param insight_col string name of the column insight was
+#'     performed on
+word_dist <- function(std_tib, insight_col){
+std_tib %>%
+    ggplot(aes(x = !! sym(insight_col))) +
+    geom_density()
+}
+#+end_src
+*** TODO Histogram
+*** TODO Boxplot
+*** TODO Ungrouped Boxplot
+** TODO Rank
+** TODO Score
+*** TODO [#B] Barplot [0/2]
+There are issues with the barplot, as documented by:
+#+begin_quote
 [2019-07-01 Mon] After implementing grouping, the issue with arranging
 bars in a barplot by rank within each group is that ggplot arranges
 bars through the ordering of factor levels. The problem is that each
 instance of a word in every group shares the same level ordering, so
 while a word may rank highly overall, but less than others in a
 particular group, it will retain the high ordering overall in the
-facet for that group, leading to inaccuracies.
+facet for that group, leading to potential confusion
+#+end_quote
+Which I do want to fix, though it isn't necessarily /incorrect/.
+Additionally, this function takes too many arguments.
 
-** ggpage
-ggpage is an extension to ggplot to allow the rendering of text in a
-page-like representation as a manipulable image. 
-Example
-#+begin_src R :results value :colnames yes :hline yes :session rsession1 :tangle yes :comments link :exports both :eval never-export
-library(tidyverse)
-library(ggpage)
-head(tinderbox)
+TODO:
+- [ ] Find way to better order score
+- [ ] Find way to lower number of arguments
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R
+#' output a bar graph of the top words from some insight function
+#'
+#' @param std_tib the standard dataframe, modified so the last column
+#'     is the output of some insight function (eg. output from
+#'     word_freq)
+#'
+#' @param insight_name string name of the column insight
+#'     was performed on
+#' 
+#' @param insight_col string name of the column insight was
+#'     outputted to
+#'
+#' @param n number of bars to display
+#'
+#' @param desc bool: show bars in descending order
+#'
+word_bar <- function(std_tib, insight_name, insight_col,
+                     n = 15, desc = TRUE){
+    dist <- std_tib %>%
+        distinct(word, .keep_all=TRUE)
+    if (desc) {
+        arr <-  arrange(dist, desc(!! sym(insight_col)))
+    }else{
+        arr <- arrange(dist, !! sym(insight_col))
+    }
+    arr %>%
+        group_modify(~{.x %>% head(n)}) %>%
+        ungroup() %>%
+        mutate(!! sym(insight_name) := fct_reorder(!! sym(insight_name),
+                                                   !! sym(insight_col),
+                                                   .desc = desc)) %>%
+        ggplot(aes(x = !! sym(insight_name))) +
+        geom_col(aes(y = !! sym(insight_col)))
+}
 #+end_src
-
-#+RESULTS
-# A tibble: 6 x 2
-  text                                                              book        
-  <chr>                                                             <chr>       
-1 "A soldier came marching along the high road: \"Left, right - le… The tinder-…
-2 had his knapsack on his back, and a sword at his side; he had be… The tinder-…
-3 and was now returning home. As he walked on, he met a very frigh… The tinder-…
-4 witch in the road. Her under-lip hung quite down on her breast, … The tinder-…
-5 "and said, \"Good evening, soldier; you have a very fine sword, … The tinder-…
-6 knapsack, and you are a real soldier; so you shall have as much … The tinder-…
-
-ggpage can make immediate plots, but using =ggpage_build= and
-=ggpage_plot=, complex functions can be formed in the immediate
-representation from build before plotting. The representation takes
-the following form:
-#+begin_src R :results output :colnames yes :hline yes :session rsession1 :tangle yes :comments link :exports both :eval never-export
-tinderbox %>%
-  ggpage_build() 
+** TODO Structure
+*** TODO [#A] ggpage
+ ggpage allows us to show off the importance of our non-destructive
+ editing - the original document can be displayed, with the insights
+ highlighted. There was more discussion on ggpage under an earlier section.
+** TODO [#C] Relation
+*** Correlation Matrix
+** TODO [#B] Wrapper
+This is an attempt to create a group-aware visualisation,
+automatically facetting by group. I feel like it is not ideal, though
+haven't had any major bugs with it yet
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R
+#' create a group-aware visualisation
+#'
+#' @param std_tib the standard dataframe, modified so the last column
+#'     is the output of some insight function (eg. output from
+#'     word_freq)
+#'
+#' @param vis visualisation function
+#'
+#' @param ... visualisation function arguments
+get_vis <- function(std_tib, operation, ...){
+    if (is_grouped_df(std_tib)){
+        grouping <- group_vars(std_tib)
+        std_tib %>%
+            operation(...) + facet_wrap(syms(grouping), scales="free_x", labeller = "label_both") #
+    } else {
+        std_tib %>%
+            operation(...)
+    }
+}
 #+end_src
+* Testing / Demonstration
+** Source
+ #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+   source("../src/depends.R")
+   source("../src/prep-for-insight.R")
+   source("../src/word-insight.R")
+   source("../src/vis-insight.R")
+ #+end_src
+** Novel - Ungrouped
+*** Preparation
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+  filename <- "../data/raw/11-0.txt"
 
-#+RESULTS:
-# A tibble: 2,908 x 9
-   word     book            page  line  xmin  xmax  ymin  ymax index_line
-   <chr>    <chr>          <int> <int> <dbl> <dbl> <dbl> <dbl> <chr>     
- 1 a        The tinder-box     1     1    91    90  -114  -117 1-1       
- 2 soldier  The tinder-box     1     1    99    92  -114  -117 1-1       
- 3 came     The tinder-box     1     1   104   100  -114  -117 1-1       
- 4 marching The tinder-box     1     1   113   105  -114  -117 1-1       
- 5 along    The tinder-box     1     1   119   114  -114  -117 1-1       
- 6 the      The tinder-box     1     1   123   120  -114  -117 1-1       
- 7 high     The tinder-box     1     1   128   124  -114  -117 1-1       
- 8 road     The tinder-box     1     1   133   129  -114  -117 1-1       
- 9 left     The tinder-box     1     1   138   134  -114  -117 1-1       
-10 right    The tinder-box     1     1   144   139  -114  -117 1-1       
-# … with 2,898 more rows
+  stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
+			       "EbOoK", "said", "project", "gutenberg"))
 
-This is set up solely for novels, and there is no way yet to implement
-grouping (as at ggpage v0.2.2.9000), but this may be useful. ggpage
-requires the scoring to be defined within the ggpage_build dataframe
-form - we can make use of this if we apply the insight functions to
-it. Entirely coincidentally, we have used precisely the same naming
-conventions for the input dataframe to ggpage_build (column named
-'text'), and the insight functions inside ggpage_build (working on
-column named "word"). Some tests are given in the test file. The
-primary issue with using ggpage is that the insight is applied as a
-/part/ of the visualisation, rather than being seperate to it, as with
-all the others.
+  std_tib <- import_txt(filename) %>%
+      format_data() %>%
+      determine_stopwords(stopwords)
+#+end_src
+*** Insights
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+wf <- std_tib %>%
+    get_insight(word_freq)
+
+bf <- std_tib %>%
+    get_insight(bigram_freq)
+
+kw <- std_tib %>%
+    get_insight(keywords_tr)
+
+ws <- std_tib %>%
+    get_insight(word_sentiment_AFINN)
+#+end_src
+*** Visualisation
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+wf %>%
+    get_vis(word_dist, "word_freq")
+
+wf %>%
+    get_vis(word_bar, "word", "word_freq")
+
+kw %>%
+    get_vis(word_bar, "word", "rank", desc=FALSE)
+
+ws %>%
+    get_vis(word_dist, "score")
+#+end_src
+*** ggpage
+ggpage is a very interesting piece of visualisation, tested here. Once I build up the correct preparation format, I will perform more intensive testing here
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+filename <- "../data/raw/11-0.txt"
+
+imported <- import_txt(filename) 
+
+imported %>%
+    ggpage_build() %>%
+    filter(page == 1) %>%
+    ggpage_plot()
+
+imported %>%
+    ggpage_build() %>%
+    filter(page == 1) %>%
+    get_insight(word_freq) %>%
+    ggpage_plot(aes(fill=word_freq))
+
+stopwords <- get_sw()
+
+imported <- import_txt(filename) %>%
+    format_data() %>%
+    remove_stopwords(stopwords) %>%
+    reconstruct()
+
+imported %>%
+    ggpage_build() %>%
+    get_insight(word_freq) %>%
+    ggpage_plot(aes(fill=word_freq))
+
+imported %>%
+    ggpage_build() %>%
+    get_insight(keywords_tr) %>%
+    ggpage_plot(aes(fill=rank))
+
+imported %>%
+    ggpage_build() %>%
+    get_insight(word_sentiment_AFINN) %>%
+    ggpage_plot(aes(fill=score)) +
+    scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0)
+#+end_src
+** Novel - Grouped
+*** Preparation
+We import a file downloaded from Project Gutenberg, and run through
+some basic preparation, with additional stopwords to be removed
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+filename <- "../data/raw/11-0.txt"
+
+stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
+                             "EbOoK", "said", "project", "gutenberg"))
+
+std_tib <- import_txt(filename) %>%
+    format_data() %>%
+    determine_stopwords(stopwords) %>%
+    get_chapters() %>%
+    group_by(chapter, add=TRUE)
+#+end_src
+*** Insights
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+wf <- std_tib %>%
+    get_insight(word_freq)
+
+bf <- std_tib %>%
+    get_insight(bigram_freq)
+
+kw <- std_tib %>%
+    get_insight(keywords_tr)
+
+ws <- std_tib %>%
+    get_insight(word_sentiment_AFINN)
+#+end_src
+*** Visualisation
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+wf %>%
+    get_vis(word_dist, "word_freq")
+
+wf %>%
+    get_vis(word_bar, "word", "word_freq")
+
+kw %>%
+    get_vis(word_bar, "word", "rank", desc=FALSE)
+
+ws %>%
+    get_vis(word_dist, "score")
+#+end_src
+** Free Response
+*** Preparation
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+filepath <- "../data/raw/Schonlau1.xls"
+textcol<- "expert clinical summary"
+
+stopwords <- get_sw()
+
+std_tib <- import_excel(filepath, textcol) %>%
+    format_data() %>%
+    group_by(!! sym("record ID"), add=TRUE) %>%
+    group_by(!! sym("expert AE causation score"), add=TRUE) %>%
+    determine_stopwords()
+#+end_src
+*** Insights
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+wf <- std_tib %>%
+    get_insight(word_freq)
+
+bf <- std_tib %>%
+    get_insight(bigram_freq)
+
+kw <- std_tib %>%
+    get_insight(keywords_tr)
+
+ws <- std_tib %>%
+    get_insight(word_sentiment_AFINN)
+#+end_src
+*** Visualisation
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+wf %>%
+    get_vis(word_dist, "word_freq")
+
+wf %>%
+    get_vis(word_bar, "word", "word_freq")
+
+kw %>%
+    get_vis(word_bar, "word", "rank", desc=FALSE)
+
+ws %>%
+    get_vis(word_dist, "score")
+#+end_src

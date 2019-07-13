@@ -1,18 +1,3 @@
-#' perform group-aware operation on the standard dataframe
-#'
-#' @param std_tib the standard dataframe given as the output of the format_data function
-#'
-#' @param operation insight function to be performed on the dataframe
-#'
-#' @return grouped output from the operation
-get_insight <- function(std_tib, operation){
-    std_tib %>%
-        group_modify(~ {
-            .x %>%
-                operation
-        })
-}
-
 #' Determine word frequency
 #'
 #' @param std_tib the standard dataframe given as per the import functions
@@ -64,13 +49,17 @@ word_sentiment_AFINN <- function(std_tib){
         right_join(std_tib, by="word")
 }
 
-#' Determine correlation between words within a given group
+#' perform group-aware operation on the standard dataframe
 #'
-#' @param std_tib the standard dataframe given as per the import functions
+#' @param std_tib the standard dataframe given as the output of the format_data function
 #'
-#' @param within_group group within which to calculate pairwise correlation between words
+#' @param operation insight function to be performed on the dataframe
 #'
-#' @return non_std_tib; dataframe with two word columns, and a column of their pairwise correlation coefficients
-## word_corr
-
-
+#' @return grouped output from the operation
+get_insight <- function(std_tib, operation){
+    std_tib %>%
+        group_modify(~ {
+            .x %>%
+                operation
+        })
+}

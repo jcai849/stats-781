@@ -266,71 +266,29 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
 * Meeting Chris
 <2019-07-09 Tue 11:00-12:00>
 ** Topics
-** Actions
-- [ ] get_insight functions work on named column rather than "word" as default - word may still be the keyword argument
-- [ ] additional processing functions to add/alter columns around insight (e.g. stopwords scans named word column, removes corresponding insight entry, lemmatise adds additional lemma column to words, in order to have text insight performed on lemma column)
+** Dissertation Work
+   SCHEDULED: <2019-07-13 Sat 17:30>
+   SCHEDULED: <2019-07-16 Tue>
+- [ ] get_insight functions work on named column rather than "word" as
+  default - word may still be the keyword argument
+- [ ] additional processing functions to add/alter columns around
+  insight (e.g. stopwords scans named word column, removes
+  corresponding insight entry, lemmatise adds additional lemma column
+  to words, in order to have text insight performed on lemma column)
 - [ ] sentence/group level summary insights
-* Meeting Chris
+- [ ] Start on latex dissertation formatting
+* Contact Chris
 <2019-07-17 Wed 11:00-12:00>
 ** Topics
 ** Actions
-* Meeting Chris
+* Contact Chris
 <2019-07-24 Wed 11:00-12:00>
 ** Topics
 ** Actions
-* Meeting Chris
+* Contact Chris
 <2019-07-31 Wed 11:00-12:00>
 ** Topics
 ** Actions
-* Meeting Chris
+* Chris Back: contact Chris
 <2019-08-07 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-08-14 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-08-21 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-08-28 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-09-04 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-09-11 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-09-18 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-09-25 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-10-02 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-10-09 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-10-16 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-10-23 Wed 11:00-12:00>
-** Topics
-** Actions
-* Meeting Chris
-<2019-10-30 Wed 11:00-12:00>
-** Topics
-** Actions
+- [ ] Reschedule meetings
