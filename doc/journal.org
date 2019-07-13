@@ -757,7 +757,7 @@ then processing. In detail:
  retain as much information, as many degrees of freedom as possible.
  The concept of nondestructive edits is not new; graphic design relies
  upon it, with an example given for photoshop at the [[https://helpx.adobe.com/photoshop/using/nondestructive-editing.html][Adobe Website]]
-* Program Dependencies
+* <<Program Dependencies>>
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
 library(tidyverse)
 library(readr)
