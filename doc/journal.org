@@ -1,4 +1,64 @@
-[2019-07-14 Sun]: GOTO [[Program Dependencies]], continue through Preparation, Insight, and Visualisation
+[2019-07-14 Sun]: GOTO [[#program-dependencies][Program Dependencies]] section, continue through Preparation, Insight, and Visualisation
+* Table of Contents                                                     :TOC:
+- [[#colophon][COLOPHON]]
+- [[#initial-survey][Initial Survey]]
+  - [[#prescribed-reading][Prescribed Reading]]
+  - [[#initial-consideration-of-application-features][Initial Consideration of Application Features]]
+  - [[#twitter][Twitter]]
+  - [[#subtitles][Subtitles]]
+  - [[#r-packages][R Packages]]
+  - [[#other-text-analytics-applications][Other Text Analytics Applications]]
+  - [[#scope-determination][Scope Determination]]
+- [[#initial-feature-considerations][Initial Feature Considerations]]
+  - [[#introduction][Introduction]]
+  - [[#processing][Processing]]
+  - [[#within-text-analytics][Within-Text Analytics]]
+  - [[#between-text-analytics][Between-Text Analytics]]
+  - [[#stopwords][Stopwords]]
+  - [[#visualisation][Visualisation]]
+  - [[#text-summarisation][Text Summarisation]]
+  - [[#search-function][Search Function]]
+  - [[#topic-modelling][Topic Modelling]]
+  - [[#sentiment-distribution][Sentiment Distribution]]
+  - [[#conditional-analytics][Conditional Analytics]]
+  - [[#wrapper-functions][Wrapper Functions]]
+  - [[#visualisation-1][Visualisation]]
+  - [[#ggpage][ggpage]]
+- [[#initial-data-types-survey][Initial Data Types Survey]]
+  - [[#test-corpus][Test Corpus]]
+  - [[#free-response-data][Free-Response Data]]
+  - [[#data-types-for-implementation][Data types for implementation]]
+- [[#initial-considerations-of-program-structure][Initial Considerations of Program Structure]]
+  -  [[#2019-06-13-thu-notes][[2019-06-13 Thu] Notes]]
+  - [[#2019-07-10-wed-notes][[2019-07-10 Wed] Notes]]
+  - [[#note-on-non-destructive-editing][Note on Non-Destructive Editing]]
+- [[#program-dependencies][Program Dependencies]]
+- [[#program-layer-preparation][Program Layer: Preparation]]
+  - [[#formatting][Formatting]]
+  - [[#filtering][Filtering]]
+  - [[#lemmatisation][Lemmatisation]]
+  - [[#stemming][Stemming]]
+  - [[#stopwords-1][Stopwords]]
+  - [[#sectioning][Sectioning]]
+  - [[#grouping][Grouping]]
+  - [[#wrapper][Wrapper]]
+- [[#program-layer-insight][Program Layer: Insight]]
+  - [[#word-insight][Word Insight]]
+  - [[#aggregate-insight][Aggregate Insight]]
+  - [[#wrapper-1][Wrapper]]
+- [[#program-layer-visualisation][Program Layer: Visualisation]]
+  - [[#distribution-14][Distribution]]
+  - [[#rank][Rank]]
+  - [[#score][Score]]
+  - [[#structure][Structure]]
+  - [[#relation][Relation]]
+  - [[#wrapper-2][Wrapper]]
+- [[#testing--demonstration][Testing / Demonstration]]
+  - [[#source][Source]]
+  - [[#novel---ungrouped][Novel - Ungrouped]]
+  - [[#novel---grouped][Novel - Grouped]]
+  - [[#free-response][Free Response]]
+
 * COLOPHON
 Work was all done in emacs, with the code in R, tangled through org mode
 * Initial Survey
@@ -757,7 +817,7 @@ then processing. In detail:
  retain as much information, as many degrees of freedom as possible.
  The concept of nondestructive edits is not new; graphic design relies
  upon it, with an example given for photoshop at the [[https://helpx.adobe.com/photoshop/using/nondestructive-editing.html][Adobe Website]]
-* <<Program Dependencies>>
+* Program Dependencies
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
 library(tidyverse)
 library(readr)
