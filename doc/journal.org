@@ -1,3 +1,4 @@
+[2019-07-14 Sun]: GOTO [[Program Dependencies]], continue through Preparation, Insight, and Visualisation
 * COLOPHON
 Work was all done in emacs, with the code in R, tangled through org mode
 * Initial Survey
@@ -777,7 +778,7 @@ Multiple documents are input the same as singular, though with an
 additional "document" column that can be grouped upon.
 
 The following sections detail the components of text preparation.
-** TODO [#B] Importing
+p** TODO [#B] Importing
 A variety of filetypes are able to be imported, with one wrapper
 function intelligently determining the appropriate import function
 from the file extension. Files with unrecognised extensions are
