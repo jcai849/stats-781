@@ -34,6 +34,7 @@
   - [[#note-on-non-destructive-editing][Note on Non-Destructive Editing]]
 - [[#program-dependencies][Program Dependencies]]
 - [[#program-layer-preparation][Program Layer: Preparation]]
+  - [[#importing][Importing]]
   - [[#formatting][Formatting]]
   - [[#filtering][Filtering]]
   - [[#lemmatisation][Lemmatisation]]
@@ -840,7 +841,7 @@ Multiple documents are input the same as singular, though with an
 additional "document" column that can be grouped upon.
 
 The following sections detail the components of text preparation.
-p** TODO [#B] Importing
+** TODO [#C] Importing
 A variety of filetypes are able to be imported, with one wrapper
 function intelligently determining the appropriate import function
 from the file extension. Files with unrecognised extensions are
