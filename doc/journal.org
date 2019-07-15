@@ -819,14 +819,16 @@ then processing. In detail:
  upon it, with an example given for photoshop at the [[https://helpx.adobe.com/photoshop/using/nondestructive-editing.html][Adobe Website]]
 * Program Dependencies
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
-library(tidyverse)
-library(readr)
-library(readxl)
-library(tidytext)
-library(textrank)
-library(lexRankr)
-library(ggpage)
-library(textstem)
+  library(tidyverse)
+  library(readr)
+  library(readxl)
+  library(tidytext)
+  library(textrank)
+  library(lexRankr)
+  library(ggpage)
+  library(textstem)
+  library(glue)
+  library(tcltk)
 #+end_src
 * Program Layer: Preparation
 Here I lay out the preparation layer in detail. The culmination of all
@@ -847,29 +849,71 @@ paradigm, everything is imported as a tibble, with plaintext being one
 line per row, and tabular data maintaining the original form. Tabular
 data requires the specification of which column is the text column for
 analytics. All imports have a document ID, which is an identifier column.
-*** TODO Get Document Info [0/3]
-These are some helper functions to attain the document name and type
-
-TODO:
-- [ ] get doc name (for ID)
-- [ ] stamp doc_id
-- [ ] get doc type (for wrapper)
+*** Helpers
+A helper function to attain the document filetype from the file name.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+  #' Get filetype
+  #'
+  #' @param filepath string filepath of document
+  #'
+  #' @return filetype (string) - NA if no extension
+  get_filetype <- function(filepath){
+    filepath %>%
+      basename %>%
+      str_extract('[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$') %>% #ensure filename.extension form
+      str_extract('[a-zA-Z0-9]+$')                  #extract extension
+  }
+#+end_src
+A helper function to determine and mark the text column of a table
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+  #' Interactively determine and automatically mark the text column of a table
+  #'
+  #' @param data dataframe with column requiring marking
+  #'
+  #' @return same dataframe with text column renamed to "text"
+  table_textcol <- function(data){
+  cols <- colnames(data)
+  print("Please enter the number of the column you want selected for text analytics")
+  print(cols)
+  textcol_index <- get_valid_input(as.character(1:ncol(data))) %>%
+    as.integer 
+  textcol <- cols[textcol_index]  
+  data %>%
+      rename(text = !! sym(textcol))
+  }
+#+end_src
+A helper function to get valid user input
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+  #' helper function to get valid input (recursively)
+  #'
+  #' @param options vector of options that valid input should be drawn from
+  #'
+  #' @return readline output that exists in the vector of options
+  get_valid_input <- function(options, init=TRUE){
+    input <- ifelse(init,
+		    readline(),
+		    readline(prompt = "Invalid option. Please try again: "))
+    ifelse(input %in% options,
+	   input,
+	   get_valid_input(options, init=FALSE))
+  }
+#+end_src
 *** Import .txt
 Plaintext is the most important and simplest to work with of all text
 representations; entire operating systems are built around the
 concept. 
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-#' Import text file 
-#'
-#' @param filepath a string indicating the relative or absolute
-#'     filepath of the file to import
-#'
-#' @return tibble of each row corrresponding to a line of the text
-#'     file, with the column named "text"
-import_txt <- function(filepath){
-    read_lines(filepath) %>%
-        tibble(text=.)
-}
+  #' Import text file 
+  #'
+  #' @param filepath a string indicating the relative or absolute
+  #'     filepath of the file to import
+  #'
+  #' @return tibble of each row corrresponding to a line of the text
+  #'     file, with the column named "text"
+  import_txt <- function(filepath){
+      read_lines(filepath) %>%
+	  tibble(text=.)
+  }
 #+end_src
 *** Import .csv
 CSV is a plaintext tabular format, with columns typically delimited by
@@ -880,36 +924,34 @@ column, with the rest being additional information that can be used
 for grouping or filtering. Thus, additional user input is required, in
 the specification of which column is the text column of interest.
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-#' Import csv file
-#'
-#' @param filepath a string indicating the relative or absolute
-#'     filepath of the file to import
-#'
-#' @param textcol a string name of the column containing the text of interest; to be renamed "text"
-#'
-#' @return tibble of each row corrresponding to a line of the text
-#'     file, with the column named "text"
-import_csv <- function(filepath, textcol){
+  #' Import csv file
+  #'
+  #' @param filepath a string indicating the relative or absolute
+  #'     filepath of the file to import
+  #'
+  #' @return tibble of each row corrresponding to a line of the text
+  #'     file, with the column named "text"
+  import_csv <- function(filepath){
     read_csv(filepath) %>%
-        rename(text = textcol)}
+    table_textcol()
+  }
 #+end_src
 *** Import Excel
 Unfortunately, much data exists in the Microsoft Excel format, but
 this must be catered for. As tabular data, it is treated equivalently
 to csv.
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-#' Import excel file
-#'
-#' @param filepath a string indicating the relative or absolute
-#'     filepath of the file to import
-#'
-#' @param textcol a string name of the column containing the text of interest; to be renamed "text"
-#'
-#' @return tibble of each row corrresponding to a line of the text
-#'     file, with the column named "text"
-import_excel <- function(filepath, textcol){
-    read_excel(filepath) %>%
-        rename(text = textcol)}
+  #' Import excel file
+  #'
+  #' @param filepath a string indicating the relative or absolute
+  #'     filepath of the file to import
+  #'
+  #' @return tibble of each row corrresponding to a line of the text
+  #'     file, with the column named "text"
+  import_excel <- function(filepath){
+      read_excel(filepath) %>%
+	  table_textcol()
+  }
 #+end_src
 *** TODO Import Gutenberg
 Project Gutenberg is an online library containing, at the time of
@@ -917,10 +959,41 @@ writing, over 57,000 items, primarily plaintext ebooks. This is a
 goldmine of text ripe for analysis, and once the basic frontend is
 complete, I will dedicate some thought to the in-app importation of
 Gutenberg texts
-*** TODO Import
-The wrapper function takes in the filename, and other relevent
+*** Import
+The base wrapper function takes in the filename, and other relevent
 information, handling the importation process. It also stamps in the
 name of the document as a column
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+  #' Base case for file import
+  #'
+  #' @param filepath string filepath of file for import
+  #'
+  #' return imported file with document id
+  import_base_file <- function(filepath){
+    filetype <- get_filetype(filepath)
+    filename <- basename(filepath)
+    if (filetype == "csv"){
+      imported <- import_csv(filepath)
+    } else if (filetype == "xlsx" | filetype == "xls") {
+      imported <- import_excel(filepath)
+    } else {
+      imported <- import_txt(filepath)
+    }
+    imported %>%
+      mutate(doc_id = filename)
+  }
+#+end_src
+The base file import is generalised to multiple files with a multiple
+import function: this will be our sole import function (until we get
+direct Gutenburg import)
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+  import_files <- function(){
+    filepaths <- tk_choose.files()
+    filepaths %>%
+      map(import_base_file) %>%
+      bind_rows
+  }
+#+end_src
 ** Formatting
 To work in a tidy paradigm, following the lead of tidytext, we
 separate and ID by token. To do this, we take the line ID, the
@@ -1050,29 +1123,29 @@ Expression intended to capture a particular section. Several functions
 are created from that. In time, advanced users could be given the
 option to compose their own regular expressions for sectioning.
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-#' creates a search closure to section text
-#'
-#' @param search a string regexp for the term to seperate on, e.g. "Chapter"
-#'
-#' @param name string name for the sectioning column
-#'
-#' @return closure over search expression and named column
-get_search <- function(search, name){
-    #' add section column by occurance of words
-    #' 
-    #' @param data tibble of each row corrresponding to a line of the text
-    #'     file, with the column named "text"
-    #' @return the original data with the addition of a sectioned column
-    function(data){
-        data %>%
-            mutate(!! name := str_detect(text, search) %>% cumsum())
-    }
-}
+  #' creates a search closure to section text
+  #'
+  #' @param search a string regexp for the term to seperate on, e.g. "Chapter"
+  #'
+  #' @param name string name for the sectioning column
+  #'
+  #' @return closure over search expression and named column
+  get_search <- function(search, name){
+      #' add section column by occurance of words
+      #' 
+      #' @param data tibble of each row corrresponding to a line of the text
+      #'     file, with the column named "text"
+      #' @return the original data with the addition of a sectioned column
+      function(data){
+	  data %>%
+	      mutate(!! name := str_detect(text, search) %>% cumsum())
+      }
+  }
 
-get_chapters <- get_search("^[\\s]*[Cc][Hh][Aa]?[Pp][Tt]([Ee][Rr])?", "chapter")
-get_parts <- get_search("^[\\s]*[Pp]([Aa][Rr])?[Tt]", "part")
-get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])", "section")
-get_verse <- get_search("^[\\s]*[Vv][Ee][Rr][Ss][Ee]", "verse")
+  get_chapters <- get_search("^[\\s]*[Cc][Hh][Aa]?[Pp][Tt]([Ee][Rr])?", "chapter")
+  get_parts <- get_search("^[\\s]*[Pp]([Aa][Rr])?[Tt]", "part")
+  get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])", "section")
+  get_verse <- get_search("^[\\s]*[Vv][Ee][Rr][Ss][Ee]", "verse")
 #+end_src
 ** TODO [#C] Grouping 
 Grouping is a killer feature of our app. The intention is to run a
@@ -1295,6 +1368,9 @@ while a word may rank highly overall, but less than others in a
 particular group, it will retain the high ordering overall in the
 facet for that group, leading to potential confusion
 #+end_quote
+
+[2019-07-15 Mon]: https://juliasilge.com/blog/reorder-within/ may be a solution
+
 Which I do want to fix, though it isn't necessarily /incorrect/.
 Additionally, this function takes too many arguments.
 

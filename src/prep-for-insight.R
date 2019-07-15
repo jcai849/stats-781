@@ -1,3 +1,45 @@
+#' Get filetype
+#'
+#' @param filepath string filepath of document
+#'
+#' @return filetype (string) - NA if no extension
+get_filetype <- function(filepath){
+  filepath %>%
+    basename %>%
+    str_extract('[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$') %>% #ensure filename.extension form
+    str_extract('[a-zA-Z0-9]+$')                  #extract extension
+}
+
+#' Interactively determine and automatically mark the text column of a table
+#'
+#' @param data dataframe with column requiring marking
+#'
+#' @return same dataframe with text column renamed to "text"
+table_textcol <- function(data){
+cols <- colnames(data)
+print("Please enter the number of the column you want selected for text analytics")
+print(cols)
+textcol_index <- get_valid_input(as.character(1:ncol(data))) %>%
+  as.integer 
+textcol <- cols[textcol_index]  
+data %>%
+    rename(text = !! sym(textcol))
+}
+
+#' helper function to get valid input (recursively)
+#'
+#' @param options vector of options that valid input should be drawn from
+#'
+#' @return readline output that exists in the vector of options
+get_valid_input <- function(options, init=TRUE){
+  input <- ifelse(init,
+		  readline(),
+		  readline(prompt = "Invalid option. Please try again: "))
+  ifelse(input %in% options,
+	 input,
+	 get_valid_input(options, init=FALSE))
+}
+
 #' Import text file 
 #'
 #' @param filepath a string indicating the relative or absolute
@@ -7,7 +49,7 @@
 #'     file, with the column named "text"
 import_txt <- function(filepath){
     read_lines(filepath) %>%
-        tibble(text=.)
+	tibble(text=.)
 }
 
 #' Import csv file
@@ -15,26 +57,50 @@ import_txt <- function(filepath){
 #' @param filepath a string indicating the relative or absolute
 #'     filepath of the file to import
 #'
-#' @param textcol a string name of the column containing the text of interest; to be renamed "text"
-#'
 #' @return tibble of each row corrresponding to a line of the text
 #'     file, with the column named "text"
-import_csv <- function(filepath, textcol){
-    read_csv(filepath) %>%
-        rename(text = textcol)}
+import_csv <- function(filepath){
+  read_csv(filepath) %>%
+  table_textcol()
+}
 
 #' Import excel file
 #'
 #' @param filepath a string indicating the relative or absolute
 #'     filepath of the file to import
 #'
-#' @param textcol a string name of the column containing the text of interest; to be renamed "text"
-#'
 #' @return tibble of each row corrresponding to a line of the text
 #'     file, with the column named "text"
-import_excel <- function(filepath, textcol){
+import_excel <- function(filepath){
     read_excel(filepath) %>%
-        rename(text = textcol)}
+	table_textcol()
+}
+
+#' Base case for file import
+#'
+#' @param filepath string filepath of file for import
+#'
+#' return imported file with document id
+import_base_file <- function(filepath){
+  filetype <- get_filetype(filepath)
+  filename <- basename(filepath)
+  if (filetype == "csv"){
+    imported <- import_csv(filepath)
+  } else if (filetype == "xlsx" | filetype == "xls") {
+    imported <- import_excel(filepath)
+  } else {
+    imported <- import_txt(filepath)
+  }
+  imported %>%
+    mutate(doc_id = filename)
+}
+
+import_files <- function(){
+  filepaths <- tk_choose.files()
+  filepaths %>%
+    map(import_base_file) %>%
+    bind_rows
+}
 
 #' formats imported data into an analysis-ready format
 #'
@@ -104,8 +170,8 @@ get_search <- function(search, name){
     #'     file, with the column named "text"
     #' @return the original data with the addition of a sectioned column
     function(data){
-        data %>%
-            mutate(!! name := str_detect(text, search) %>% cumsum())
+	data %>%
+	    mutate(!! name := str_detect(text, search) %>% cumsum())
     }
 }
 
