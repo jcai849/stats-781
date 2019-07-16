@@ -3,25 +3,33 @@ source("../src/prep-for-insight.R")
 source("../src/word-insight.R")
 source("../src/vis-insight.R")
 
-filename <- "../data/raw/11-0.txt"
+imported <- import_files()
+lemmatize <- TRUE
+stopwords <- TRUE
+sw_lexicon <- "snowball"
+addl_stopwords <- NA
+data <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
 
-stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
-			     "EbOoK", "said", "project", "gutenberg"))
 
-std_tib <- import_txt(filename) %>%
-    format_data() %>%
-    determine_stopwords(stopwords)
+## filename <- "../data/raw/11-0.txt"
 
-wf <- std_tib %>%
+## stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
+## 			     "EbOoK", "said", "project", "gutenberg"))
+
+## std_tib <- import_txt(filename) %>%
+##     format_data() %>%
+##     determine_stopwords(stopwords)
+
+wf <- data %>%
     get_insight(word_freq)
 
-bf <- std_tib %>%
+bf <- data %>%
     get_insight(bigram_freq)
 
-kw <- std_tib %>%
+kw <- data %>%
     get_insight(keywords_tr)
 
-ws <- std_tib %>%
+ws <- data %>%
     get_insight(word_sentiment_AFINN)
 
 wf %>%
@@ -74,51 +82,15 @@ imported %>%
     ggpage_plot(aes(fill=score)) +
     scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0)
 
-filename <- "../data/raw/11-0.txt"
-
-stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
-                             "EbOoK", "said", "project", "gutenberg"))
-
-std_tib <- import_txt(filename) %>%
-    format_data() %>%
-    determine_stopwords(stopwords) %>%
-    get_chapters() %>%
-    group_by(chapter, add=TRUE)
-
-wf <- std_tib %>%
-    get_insight(word_freq)
-
-bf <- std_tib %>%
-    get_insight(bigram_freq)
-
-kw <- std_tib %>%
-    get_insight(keywords_tr)
-
-ws <- std_tib %>%
-    get_insight(word_sentiment_AFINN)
-
-wf %>%
-    get_vis(word_dist, "word_freq")
-
-wf %>%
-    get_vis(word_bar, "word", "word_freq")
-
-kw %>%
-    get_vis(word_bar, "word", "rank", desc=FALSE)
-
-ws %>%
-    get_vis(word_dist, "score")
-
-filepath <- "../data/raw/Schonlau1.xls"
-textcol<- "expert clinical summary"
-
-stopwords <- get_sw()
-
-std_tib <- import_excel(filepath, textcol) %>%
-    format_data() %>%
-    group_by(!! sym("record ID"), add=TRUE) %>%
-    group_by(!! sym("expert AE causation score"), add=TRUE) %>%
-    determine_stopwords()
+imported <- import_files()
+lemmatize <- TRUE
+stopwords <- TRUE
+sw_lexicon <- "snowball"
+addl_stopwords <- NA
+prepped <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
+sectioned <- get_chapters(prepped)
+data <- sectioned %>%
+  group_by(doc_id,chapter)
 
 wf <- std_tib %>%
     get_insight(word_freq)

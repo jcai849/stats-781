@@ -1,45 +1,3 @@
-#' Get filetype
-#'
-#' @param filepath string filepath of document
-#'
-#' @return filetype (string) - NA if no extension
-get_filetype <- function(filepath){
-  filepath %>%
-    basename %>%
-    str_extract('[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$') %>% #ensure filename.extension form
-    str_extract('[a-zA-Z0-9]+$')                  #extract extension
-}
-
-#' Interactively determine and automatically mark the text column of a table
-#'
-#' @param data dataframe with column requiring marking
-#'
-#' @return same dataframe with text column renamed to "text"
-table_textcol <- function(data){
-cols <- colnames(data)
-print("Please enter the number of the column you want selected for text analytics")
-print(cols)
-textcol_index <- get_valid_input(as.character(1:ncol(data))) %>%
-  as.integer 
-textcol <- cols[textcol_index]  
-data %>%
-    rename(text = !! sym(textcol))
-}
-
-#' helper function to get valid input (recursively)
-#'
-#' @param options vector of options that valid input should be drawn from
-#'
-#' @return readline output that exists in the vector of options
-get_valid_input <- function(options, init=TRUE){
-  input <- ifelse(init,
-		  readline(),
-		  readline(prompt = "Invalid option. Please try again: "))
-  ifelse(input %in% options,
-	 input,
-	 get_valid_input(options, init=FALSE))
-}
-
 #' Import text file 
 #'
 #' @param filepath a string indicating the relative or absolute
@@ -135,25 +93,49 @@ format_data <- function(data){
 #'     each element being a stopword
 #'
 #' @return a tibble with one column named "word"
-get_sw <- function(sw_list = "snowball", addl = NA){
-    get_stopwords(source=sw_list) %>%
-        select(word) %>%
-        bind_rows(tibble(word = addl)) %>%
-        na.omit() %>%
-        mutate(word = tolower(word))
+get_sw <- function(lexicon = "snowball", addl = NA){
+  addl_char <- as.character(addl)
+  get_stopwords(source = lexicon) %>%
+    select(word) %>%
+    bind_rows(., tibble(word = addl_char)) %>%
+    na.omit() %>%
+    as_vector %>%
+    tolower() %>%
+    as.character()
 }
 
-#' Adds stopwords column
+#' determine stopword status
 #'
-#' @param data a tibble formatted such that columns correspond to
-#'     identifiers of line, sentence, and word
+#' @param .data vector of words
 #'
-#' @param sw_list tibble with single column of stopwords
+#' @param ... arguments of get_sw
 #'
 #' @return a dataframe equivalent to the input dataframe, with an additional stopword column
-determine_stopwords <- function(data, sw_list){
-    data %>%
-        mutate(stopword = word %in% sw_list$word)
+determine_stopwords <- function(.data, ...){
+  sw_list <- get_sw(...)
+  .data %in% sw_list
+}
+
+text_prep <- function(.data, lemmatize=TRUE, stopwords=TRUE, sw_lexicon="snowball", addl_stopwords=NA){
+formatted <- .data %>%
+  format_data()
+
+for_insight <- ifexp(lemmatize,
+		     ifexp(stopwords,
+			   mutate(formatted, lemma = tolower(lemmatize_words(word)),
+				  stopword = determine_stopwords(lemma, sw_lexicon, addl_stopwords),
+				  for_insight = if_else(stopword,
+							as.character(NA),
+							lemma)),
+			   mutate(formatted, lemma = tolower(lemmatize_words(word)),
+				  for_insight = lemma)),
+		     ifexp(stopwords,
+			   mutate(formatted, stopword = determine_stopwords(word, sw_lexicon, addl_stopwords),
+				  for_insight = if_else(stopword,
+							as.character(NA),
+							word)),
+			   mutate(formatted,for_insight = word)))
+return(for_insight)
 }
 
 #' creates a search closure to section text
@@ -185,5 +167,3 @@ get_verse <- get_search("^[\\s]*[Vv][Ee][Rr][Ss][Ee]", "verse")
 ungroup_by <- function(x,...){
     group_by_at(x, group_vars(x)[!group_vars(x) %in% ...])
 }
-
-

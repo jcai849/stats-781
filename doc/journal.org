@@ -33,6 +33,7 @@
   - [[#2019-07-10-wed-notes][[2019-07-10 Wed] Notes]]
   - [[#note-on-non-destructive-editing][Note on Non-Destructive Editing]]
 - [[#program-dependencies][Program Dependencies]]
+  - [[#helper-functions][Helper Functions]]
 - [[#program-layer-preparation][Program Layer: Preparation]]
   - [[#importing][Importing]]
   - [[#formatting][Formatting]]
@@ -40,25 +41,25 @@
   - [[#lemmatisation][Lemmatisation]]
   - [[#stemming][Stemming]]
   - [[#stopwords-1][Stopwords]]
+  - [[#object-preparation][Object Preparation]]
   - [[#sectioning][Sectioning]]
   - [[#grouping][Grouping]]
-  - [[#wrapper][Wrapper]]
 - [[#program-layer-insight][Program Layer: Insight]]
   - [[#word-insight][Word Insight]]
   - [[#aggregate-insight][Aggregate Insight]]
-  - [[#wrapper-1][Wrapper]]
+  - [[#wrapper][Wrapper]]
 - [[#program-layer-visualisation][Program Layer: Visualisation]]
   - [[#distribution-14][Distribution]]
   - [[#rank][Rank]]
   - [[#score][Score]]
   - [[#structure][Structure]]
   - [[#relation][Relation]]
-  - [[#wrapper-2][Wrapper]]
+  - [[#wrapper-1][Wrapper]]
+- [[#shiny-frontend][Shiny Frontend]]
 - [[#testing--demonstration][Testing / Demonstration]]
   - [[#source][Source]]
-  - [[#novel---ungrouped][Novel - Ungrouped]]
-  - [[#novel---grouped][Novel - Grouped]]
-  - [[#free-response][Free Response]]
+  - [[#ungrouped][Ungrouped]]
+  - [[#grouped][Grouped]]
 
 * COLOPHON
 Work was all done in emacs, with the code in R, tangled through org mode
@@ -831,6 +832,81 @@ then processing. In detail:
   library(glue)
   library(tcltk)
 #+end_src
+** Helper Functions
+*** Unrestricted if-expression
+Having conditionals as expressions rather than statements grants the
+ability for direct assignment of the evaluation. Base =ifelse= and
+tidyverse =if_else= impose the restriction that the output is the same
+shape as the test predicate. This helper removes that restriction
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
+  #' scheme-like if expression, without restriction of returning same-size table of .test, as ifelse() does
+  #'
+  #' @param .test predicate to test
+  #'
+  #' @param true expression to return if .test evals to TRUE
+  #'
+  #' @param false expression to return if .test evals to TRUE
+  #'
+  #' @return either true or false
+  ifexp <- function(.test, true, false){
+    if (.test) {
+      return(true)
+    } else {
+      return(false)
+    }
+  }
+#+end_src
+*** Filetype from extension
+A helper function to attain the document filetype from the file name.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
+  #' Get filetype
+  #'
+  #' @param filepath string filepath of document
+  #'
+  #' @return filetype (string) - NA if no extension
+  get_filetype <- function(filepath){
+    filepath %>%
+      basename %>%
+      str_extract('[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$') %>% #ensure filename.extension form
+      str_extract('[a-zA-Z0-9]+$')                  #extract extension
+  }
+#+end_src
+*** Mark the text column of a table
+A helper function to determine and mark the text column of a table
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
+  #' Interactively determine and automatically mark the text column of a table
+  #'
+  #' @param data dataframe with column requiring marking
+  #'
+  #' @return same dataframe with text column renamed to "text"
+  table_textcol <- function(data){
+  cols <- colnames(data)
+  print("Please enter the number of the column you want selected for text analytics")
+  print(cols)
+  textcol_index <- get_valid_input(as.character(1:ncol(data))) %>%
+    as.integer 
+  textcol <- cols[textcol_index]  
+  data %>%
+      rename(text = !! sym(textcol))
+  }
+#+end_src
+*** Validate User Input
+A helper function to get valid user input
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
+  #' helper function to get valid input (recursively)
+  #'
+  #' @param options vector of options that valid input should be drawn from
+  #'
+  #' @return readline output that exists in the vector of options
+  get_valid_input <- function(options, init=TRUE){
+    input <- ifelse(init,
+		    readline(),
+		    readline(prompt = "Invalid option. Please try again: "))
+    ifelse(input %in% options,
+	   input,
+	   get_valid_input(options, init=FALSE))
+  }
+#+end_src
 * Program Layer: Preparation
 Here I lay out the preparation layer in detail. The culmination of all
 preparation functions is one wrapper, requesting the possible
@@ -850,55 +926,6 @@ paradigm, everything is imported as a tibble, with plaintext being one
 line per row, and tabular data maintaining the original form. Tabular
 data requires the specification of which column is the text column for
 analytics. All imports have a document ID, which is an identifier column.
-*** Helpers
-A helper function to attain the document filetype from the file name.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-  #' Get filetype
-  #'
-  #' @param filepath string filepath of document
-  #'
-  #' @return filetype (string) - NA if no extension
-  get_filetype <- function(filepath){
-    filepath %>%
-      basename %>%
-      str_extract('[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$') %>% #ensure filename.extension form
-      str_extract('[a-zA-Z0-9]+$')                  #extract extension
-  }
-#+end_src
-A helper function to determine and mark the text column of a table
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-  #' Interactively determine and automatically mark the text column of a table
-  #'
-  #' @param data dataframe with column requiring marking
-  #'
-  #' @return same dataframe with text column renamed to "text"
-  table_textcol <- function(data){
-  cols <- colnames(data)
-  print("Please enter the number of the column you want selected for text analytics")
-  print(cols)
-  textcol_index <- get_valid_input(as.character(1:ncol(data))) %>%
-    as.integer 
-  textcol <- cols[textcol_index]  
-  data %>%
-      rename(text = !! sym(textcol))
-  }
-#+end_src
-A helper function to get valid user input
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-  #' helper function to get valid input (recursively)
-  #'
-  #' @param options vector of options that valid input should be drawn from
-  #'
-  #' @return readline output that exists in the vector of options
-  get_valid_input <- function(options, init=TRUE){
-    input <- ifelse(init,
-		    readline(),
-		    readline(prompt = "Invalid option. Please try again: "))
-    ifelse(input %in% options,
-	   input,
-	   get_valid_input(options, init=FALSE))
-  }
-#+end_src
 *** Import .txt
 Plaintext is the most important and simplest to work with of all text
 representations; entire operating systems are built around the
@@ -1083,37 +1110,74 @@ a list of stopwords, from both a default source, as well as allowing
 the user to add their own stopwords. =get_sw= performs that, detailed
 below.
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-#' Gets stopwords from a default list and user-provided list
-#'
-#' @param sw_list a string name of a stopword list, one of "smart",
-#'     "snowball", or "onix"
-#'
-#' @param addl user defined character vector of additional stopwords,
-#'     each element being a stopword
-#'
-#' @return a tibble with one column named "word"
-get_sw <- function(sw_list = "snowball", addl = NA){
-    get_stopwords(source=sw_list) %>%
-        select(word) %>%
-        bind_rows(tibble(word = addl)) %>%
-        na.omit() %>%
-        mutate(word = tolower(word))
-}
+  #' Gets stopwords from a default list and user-provided list
+  #'
+  #' @param sw_list a string name of a stopword list, one of "smart",
+  #'     "snowball", or "onix"
+  #'
+  #' @param addl user defined character vector of additional stopwords,
+  #'     each element being a stopword
+  #'
+  #' @return a tibble with one column named "word"
+  get_sw <- function(lexicon = "snowball", addl = NA){
+    addl_char <- as.character(addl)
+    get_stopwords(source = lexicon) %>%
+      select(word) %>%
+      bind_rows(., tibble(word = addl_char)) %>%
+      na.omit() %>%
+      as_vector %>%
+      tolower() %>%
+      as.character()
+  }
 #+end_src
 The status of the stopwords are then added to the data with =determine_stopwords=
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-#' Adds stopwords column
-#'
-#' @param data a tibble formatted such that columns correspond to
-#'     identifiers of line, sentence, and word
-#'
-#' @param sw_list tibble with single column of stopwords
-#'
-#' @return a dataframe equivalent to the input dataframe, with an additional stopword column
-determine_stopwords <- function(data, sw_list){
-    data %>%
-        mutate(stopword = word %in% sw_list$word)
-}
+  #' determine stopword status
+  #'
+  #' @param .data vector of words
+  #'
+  #' @param ... arguments of get_sw
+  #'
+  #' @return a dataframe equivalent to the input dataframe, with an additional stopword column
+  determine_stopwords <- function(.data, ...){
+    sw_list <- get_sw(...)
+    .data %in% sw_list
+  }
+#+end_src
+** Object Preparation
+The =preparation= wrapper takes all combinations of stopwords and
+lemmatisation options and intelligently connects them for the "insight
+column", which the insight is performed upon.
+
+The gnarly =ifexp= taking up the heart of the function encodes the
+logic involving the interaction of stopwords and lemmatisation:
+
+|                 | Stopwords True                                                                                    | Stopwords False                      |
+| Lemmatise True  | Lemmatise, determine stopwords on lemmatisation, perform insight on lemmas sans stopwords         | Lemmatise, perform insight on lemmas |
+| Lemmatise False | Determine stopwords on original words (no lemmatisation), perform insight on words sans stopwords | Perform insight on original words    |
+
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+  text_prep <- function(.data, lemmatize=TRUE, stopwords=TRUE, sw_lexicon="snowball", addl_stopwords=NA){
+  formatted <- .data %>%
+    format_data()
+
+  for_insight <- ifexp(lemmatize,
+		       ifexp(stopwords,
+			     mutate(formatted, lemma = tolower(lemmatize_words(word)),
+				    stopword = determine_stopwords(lemma, sw_lexicon, addl_stopwords),
+				    for_insight = if_else(stopword,
+							  as.character(NA),
+							  lemma)),
+			     mutate(formatted, lemma = tolower(lemmatize_words(word)),
+				    for_insight = lemma)),
+		       ifexp(stopwords,
+			     mutate(formatted, stopword = determine_stopwords(word, sw_lexicon, addl_stopwords),
+				    for_insight = if_else(stopword,
+							  as.character(NA),
+							  word)),
+			     mutate(formatted,for_insight = word)))
+  return(for_insight)
+  }
 #+end_src
 ** Sectioning
 Plaintext, as might exist as a Gutenberg Download, differs from more
@@ -1148,6 +1212,11 @@ option to compose their own regular expressions for sectioning.
   get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])", "section")
   get_verse <- get_search("^[\\s]*[Vv][Ee][Rr][Ss][Ee]", "verse")
 #+end_src
+
+How to implement sectioning in a way that fits in a shiny UI is still
+very much TBC. Presumably, after object preparation, the option to
+section would appear, followed by a group selection option. I will
+implement these only after implementing the shiny app.
 ** TODO [#C] Grouping 
 Grouping is a killer feature of our app. The intention is to run a
 =group_by= dplyr command in the wrapper over user-specified groups,
@@ -1170,18 +1239,6 @@ TODO:
 ungroup_by <- function(x,...){
     group_by_at(x, group_vars(x)[!group_vars(x) %in% ...])
 }
-#+end_src
-** TODO [#A] Wrapper
-The =preparation= wrapper takes all combinations of features and
-intelligently connects them for the "insight column", which the
-insight is performed upon. Right now, the only user options are which
-file is to be imported, stopword options, and what groups are to be
-selected. Lemmatisation is automatic, but in the future this will be a
-user option, including whether to perform stopword selection on
-lemmatised forms or not, and whether or not to use stemming. This is
-because the control structure is complex and program correctness is
-far more important at this point.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
 #+end_src
 * Program Layer: Insight
 Insight is the meat of this package. After some initial resistance, I
@@ -1209,18 +1266,24 @@ terms are common in a text. This is one insight in particular that
 requires stopwords to have been previously removed, otherwise the top
 words will always be syntactical glue, such as articles
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
-#' Determine word frequency
-#'
-#' @param std_tib the standard dataframe given as per the import functions
-#'
-#' @return std_tib with an additional column of counts.
-word_freq <- function(std_tib){
-    std_tib %>%
-        add_count(word) %>%
-        rename(word_freq = n)
-}
+  #' Determine word frequency
+  #'
+  #' @param .data character vector of words
+  #'
+  #' @return numeric vector of word frequencies
+  word_freq <- function(.data){
+    ## .data %>%
+    ##   map_dbl(function(x){sum(x == .data, na.rm = TRUE)})
+    .data %>%
+    as_tibble %>%
+    add_count(value) %>%
+    mutate(n = if_else(is.na(value),
+		       as.integer(NA),
+		       n))  %>%
+    .$n
+  }
 #+end_src
-*** TODO [#C] Bigram Frequency [0/1]
+*** [#C] Bigram Frequency [0/1]
 Bigrams are two words that occur in sequence. For example, in the
 phrase, "The quick brown dog.", the following bigrams exist: "The
 quick", "quick brown", "brown dog". This can be generalised to any
@@ -1233,39 +1296,98 @@ TODO:
 - [ ] generalise to n-grams (make closure, have bigrams as special
   case)
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
-#' Determine bigram frequency
-#'
-#' @param std_tib the standard dataframe given as per the import functions
-#'
-#' @return std_tib with an additional column of associated bigrams for each word and their counts
-bigram_freq <- function(std_tib){
-    std_tib %>%
-        mutate(bigram = paste(word, lead(word)))%>%
-        add_count(bigram) %>%
-        rename(bigram_freq = n)
-}
+  #' Determine bigrams
+  #'
+  #' @param .data character vector of words
+  #'
+  #' @return character vector of bigrams
+  get_bigram <- function(.data){
+    1:length(.data) %>%
+      map_chr(index_bigram, .data, .data[-1])
+	  ## mutate(bigram = paste(word, lead(word)))%>%
+	  ## add_count(bigram) %>%
+	  ## rename(bigram_freq = n)
+  }
 #+end_src
-*** Key Words (TextRank)
+
+#+RESULTS:
+
+=get_bigram= requires a means of attaining a bigram for each element
+in a vector, skipping NA values. The following function achieves that:
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+  #' get bigram at index i of list1 & 2
+  #'
+  #' @param i numeric index to attain bigram at
+  #'
+  #' @param list1 list or vector for first bigram token
+  #'
+  #' @param list2 list or vector for second bigram token
+  #'
+  #' @return bigram of list1 and list2 at index i, skipping NA's
+  index_bigram <- function(i, list1, list2){
+    ifelse(length(list2) < i | is.na(list1[i]),
+	    as.character(NA),
+    ifelse(!(is.na(list1[i]) | is.na(list2[i])),
+	   paste(list1[i], list2[i]),
+	   index_bigram(i,list1, list2[-1])))
+  }
+#+end_src
+
+#+RESULTS:
+
+Working as follows; if our list appears as (1 2 X 4 5 X 7 X), we
+expect the following bigrams: ((1 2) (2 4) X (4 5) (5 7) X X X), due
+to bigrams taking the lead of list1 as list2, as per the following
+table:
+
+| list1 | list2 | bigram |
+|-------+-------+--------|
+|       |     1 |        |
+|     1 |     2 | 1 2    |
+|     2 |     X | 2 4    |
+|     X |     4 | X      |
+|     4 |     5 | 4 5    |
+|     5 |     X | 5 7    |
+|     X |     7 | X      |
+|     7 |     X | X      |
+|     X |       | X      |
+
+#+begin_src R :session rsession1 :tangle no
+x <- c(1, 2, NA, 4, 5, NA, 7, NA)
+get_bigram(x)
+#+end_src
+
+#+RESULTS:
+| 1 2 |
+| 2 4 |
+| nil |
+| 4 5 |
+| 5 7 |
+| nil |
+| nil |
+| nil |
+
+*** TODO [#A] Key Words (TextRank)
 Key words are another killer feature of this app. The algorithm is
 explained previously. The =textrank= package is used to perform textrank.
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
-#' Determine keyword ranking
-#'
-#' @param std_tib the standard dataframe given as per the import functions
-#'
-#' @return std_tib with additional columns of the textrank keyword
-#'     ranking (rank) and pagerank score (pagerank)
-keywords_tr <- function(std_tib){
-    tr <- std_tib$word  %>%
-        textrank_keywords()
-    kw <- tibble(word = names(tr$pagerank$vector),
-           pagerank = tr$pagerank$vector) %>%
-        arrange(desc(pagerank)) %>%
-        mutate(rank = row_number())
-    return(full_join(std_tib, kw, by="word"))
-}
+  #' Determine keyword ranking
+  #'
+  #' @param std_tib the standard dataframe given as per the import functions
+  #'
+  #' @return std_tib with additional columns of the textrank keyword
+  #'     ranking (rank) and pagerank score (pagerank)
+  keywords_tr <- function(std_tib){
+      tr <- std_tib$word  %>%
+	  textrank_keywords()
+      kw <- tibble(word = names(tr$pagerank$vector),
+	     pagerank = tr$pagerank$vector) %>%
+	  arrange(desc(pagerank)) %>%
+	  mutate(rank = row_number())
+      return(full_join(std_tib, kw, by="word"))
+  }
 #+end_src
-*** TODO [#C] Word Sentiment [0/1]
+*** TODO [#A] Word Sentiment [0/1]
 Sentiment has been discussed earlier. Effectively, for any text
 analytics it is essential. There are numerous sentiment dictionaries,
 but we will use AFINN for the nice numeric properties it has, allowing
@@ -1446,6 +1568,7 @@ get_vis <- function(std_tib, operation, ...){
     }
 }
 #+end_src
+* Shiny Frontend
 * Testing / Demonstration
 ** Source
  #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
@@ -1454,30 +1577,38 @@ get_vis <- function(std_tib, operation, ...){
    source("../src/word-insight.R")
    source("../src/vis-insight.R")
  #+end_src
-** Novel - Ungrouped
+** Ungrouped
 *** Preparation
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-  filename <- "../data/raw/11-0.txt"
+  imported <- import_files()
+  lemmatize <- TRUE
+  stopwords <- TRUE
+  sw_lexicon <- "snowball"
+  addl_stopwords <- NA
+  data <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
 
-  stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
-			       "EbOoK", "said", "project", "gutenberg"))
 
-  std_tib <- import_txt(filename) %>%
-      format_data() %>%
-      determine_stopwords(stopwords)
+  ## filename <- "../data/raw/11-0.txt"
+
+  ## stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
+  ## 			     "EbOoK", "said", "project", "gutenberg"))
+
+  ## std_tib <- import_txt(filename) %>%
+  ##     format_data() %>%
+  ##     determine_stopwords(stopwords)
 #+end_src
 *** Insights
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-wf <- std_tib %>%
+wf <- data %>%
     get_insight(word_freq)
 
-bf <- std_tib %>%
+bf <- data %>%
     get_insight(bigram_freq)
 
-kw <- std_tib %>%
+kw <- data %>%
     get_insight(keywords_tr)
 
-ws <- std_tib %>%
+ws <- data %>%
     get_insight(word_sentiment_AFINN)
 #+end_src
 *** Visualisation
@@ -1535,21 +1666,20 @@ imported %>%
     ggpage_plot(aes(fill=score)) +
     scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0)
 #+end_src
-** Novel - Grouped
+** Grouped
 *** Preparation
 We import a file downloaded from Project Gutenberg, and run through
 some basic preparation, with additional stopwords to be removed
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-filename <- "../data/raw/11-0.txt"
-
-stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
-                             "EbOoK", "said", "project", "gutenberg"))
-
-std_tib <- import_txt(filename) %>%
-    format_data() %>%
-    determine_stopwords(stopwords) %>%
-    get_chapters() %>%
-    group_by(chapter, add=TRUE)
+  imported <- import_files()
+  lemmatize <- TRUE
+  stopwords <- TRUE
+  sw_lexicon <- "snowball"
+  addl_stopwords <- NA
+  prepped <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
+  sectioned <- get_chapters(prepped)
+  data <- sectioned %>%
+    group_by(doc_id,chapter)
 #+end_src
 *** Insights
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
@@ -1579,45 +1709,4 @@ kw %>%
 ws %>%
     get_vis(word_dist, "score")
 #+end_src
-** Free Response
-*** Preparation
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-filepath <- "../data/raw/Schonlau1.xls"
-textcol<- "expert clinical summary"
 
-stopwords <- get_sw()
-
-std_tib <- import_excel(filepath, textcol) %>%
-    format_data() %>%
-    group_by(!! sym("record ID"), add=TRUE) %>%
-    group_by(!! sym("expert AE causation score"), add=TRUE) %>%
-    determine_stopwords()
-#+end_src
-*** Insights
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-wf <- std_tib %>%
-    get_insight(word_freq)
-
-bf <- std_tib %>%
-    get_insight(bigram_freq)
-
-kw <- std_tib %>%
-    get_insight(keywords_tr)
-
-ws <- std_tib %>%
-    get_insight(word_sentiment_AFINN)
-#+end_src
-*** Visualisation
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-wf %>%
-    get_vis(word_dist, "word_freq")
-
-wf %>%
-    get_vis(word_bar, "word", "word_freq")
-
-kw %>%
-    get_vis(word_bar, "word", "rank", desc=FALSE)
-
-ws %>%
-    get_vis(word_dist, "score")
-#+end_src
