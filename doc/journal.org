@@ -55,11 +55,12 @@
   - [[#structure][Structure]]
   - [[#relation][Relation]]
   - [[#wrapper-1][Wrapper]]
-- [[#shiny-frontend][Shiny Frontend]]
 - [[#testing--demonstration][Testing / Demonstration]]
   - [[#source][Source]]
   - [[#ungrouped][Ungrouped]]
   - [[#grouped][Grouped]]
+  - [[#ggpage-1][ggpage]]
+- [[#shiny-frontend][Shiny Frontend]]
 
 * COLOPHON
 Work was all done in emacs, with the code in R, tangled through org mode
@@ -832,6 +833,9 @@ then processing. In detail:
   library(glue)
   library(tcltk)
 #+end_src
+I am considering using [[https://davisvaughan.github.io/furrr/][furrr]] for parallel or distributed processing
+performance enhancements, though I want to get all functionality
+implemented first before performing that kind of optimisation.
 ** Helper Functions
 *** Unrestricted if-expression
 Having conditionals as expressions rather than statements grants the
@@ -1042,30 +1046,30 @@ present, so much of grouping is (not ideally) taking place internally
 in the first =group_modify=. When I have the luxury of time, I will
 try to optimise this.
 
+[2019-07-17 Wed]: removed first group modify; unnecessary now that
+grouping has been shifted to take place afterwards
+
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-#' formats imported data into an analysis-ready format
-#'
-#' @param data a tibble formatted with a text and (optional) group
-#'     column
-#'
-#' @return a tibble formatted such that columns correspond to
-#'     identifiers of group, line, sentence, word (groups ignored)
-format_data <- function(data){
-    data %>%
-        mutate(line_id = row_number()) %>% 
-        group_modify(~ {
-            .x %>%
-                unnest_tokens(output = sentence, input = text, token = "sentences", to_lower = FALSE) %>%
-                mutate(sentence_id = row_number())
-        }) %>%
-        group_by(sentence_id, add=TRUE) %>%
-        group_modify(~ {
-            .x %>%
-                unnest_tokens(output = word, input = sentence, token = "words", to_lower=FALSE) %>%
-                mutate(word_id = row_number())
-        }) %>%
-        ungroup_by("sentence_id")
-}
+  #' formats imported data into an analysis-ready format
+  #'
+  #' @param data a tibble formatted with a text and (optional) group
+  #'     column
+  #'
+  #' @return a tibble formatted such that columns correspond to
+  #'     identifiers of group, line, sentence, word (groups ignored)
+  format_data <- function(data){
+      data %>%
+	  mutate(line_id = row_number()) %>% 
+		  unnest_tokens(output = sentence, input = text, token = "sentences", to_lower = FALSE) %>%
+		  mutate(sentence_id = row_number()) %>%
+	  group_by(sentence_id, add=TRUE) %>%
+	  group_modify(~ {
+	      .x %>%
+		  unnest_tokens(output = word, input = sentence, token = "words", to_lower=FALSE) %>%
+		  mutate(word_id = row_number())
+	  }) %>%
+	  ungroup_by("sentence_id")
+  }
 #+end_src
 ** TODO [#B] Filtering
 Filtering has to be done with code at present, but the intention is
@@ -1147,7 +1151,9 @@ The status of the stopwords are then added to the data with =determine_stopwords
 ** Object Preparation
 The =preparation= wrapper takes all combinations of stopwords and
 lemmatisation options and intelligently connects them for the "insight
-column", which the insight is performed upon.
+column", which the insight is performed upon. For the purpose of
+standard interoperability with, e.g., ggpage, we name this column
+"text"
 
 The gnarly =ifexp= taking up the heart of the function encodes the
 logic involving the interaction of stopwords and lemmatisation:
@@ -1158,25 +1164,25 @@ logic involving the interaction of stopwords and lemmatisation:
 
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
   text_prep <- function(.data, lemmatize=TRUE, stopwords=TRUE, sw_lexicon="snowball", addl_stopwords=NA){
-  formatted <- .data %>%
-    format_data()
+    formatted <- .data %>%
+      format_data()
 
-  for_insight <- ifexp(lemmatize,
-		       ifexp(stopwords,
-			     mutate(formatted, lemma = tolower(lemmatize_words(word)),
-				    stopword = determine_stopwords(lemma, sw_lexicon, addl_stopwords),
-				    for_insight = if_else(stopword,
-							  as.character(NA),
-							  lemma)),
-			     mutate(formatted, lemma = tolower(lemmatize_words(word)),
-				    for_insight = lemma)),
-		       ifexp(stopwords,
-			     mutate(formatted, stopword = determine_stopwords(word, sw_lexicon, addl_stopwords),
-				    for_insight = if_else(stopword,
-							  as.character(NA),
-							  word)),
-			     mutate(formatted,for_insight = word)))
-  return(for_insight)
+    text <- ifexp(lemmatize,
+			 ifexp(stopwords,
+			       mutate(formatted, lemma = tolower(lemmatize_words(word)),
+				      stopword = determine_stopwords(lemma, sw_lexicon, addl_stopwords),
+				      text = if_else(stopword,
+							    as.character(NA),
+							    lemma)),
+			       mutate(formatted, lemma = tolower(lemmatize_words(word)),
+				      text = lemma)),
+			 ifexp(stopwords,
+			       mutate(formatted, stopword = determine_stopwords(word, sw_lexicon, addl_stopwords),
+				      text = if_else(stopword,
+							    as.character(NA),
+							    word)),
+			       mutate(formatted, text = word)))
+    return(text)
   }
 #+end_src
 ** Sectioning
@@ -1192,25 +1198,23 @@ option to compose their own regular expressions for sectioning.
   #'
   #' @param search a string regexp for the term to seperate on, e.g. "Chapter"
   #'
-  #' @param name string name for the sectioning column
-  #'
-  #' @return closure over search expression and named column
-  get_search <- function(search, name){
-      #' add section column by occurance of words
-      #' 
-      #' @param data tibble of each row corrresponding to a line of the text
-      #'     file, with the column named "text"
-      #' @return the original data with the addition of a sectioned column
-      function(data){
-	  data %>%
-	      mutate(!! name := str_detect(text, search) %>% cumsum())
+  #' @return closure over search expression 
+  get_search <- function(search){
+    #' section based on search result 
+    #' 
+    #' @param .data vector to section
+    #'
+    #' @return vector of same length as .data with section numbers
+    function(.data){
+      .data %>%
+	str_detect(search) %>%
+	accumulate(sum, na.rm=TRUE)
       }
   }
 
-  get_chapters <- get_search("^[\\s]*[Cc][Hh][Aa]?[Pp][Tt]([Ee][Rr])?", "chapter")
-  get_parts <- get_search("^[\\s]*[Pp]([Aa][Rr])?[Tt]", "part")
-  get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])", "section")
-  get_verse <- get_search("^[\\s]*[Vv][Ee][Rr][Ss][Ee]", "verse")
+  get_chapters <- get_search("^[\\s]*[Cc][Hh][Aa]?[Pp][Tt]([Ee][Rr])?")
+  get_parts <- get_search("^[\\s]*[Pp]([Aa][Rr])?[Tt]")
+  get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])")
 #+end_src
 
 How to implement sectioning in a way that fits in a shiny UI is still
@@ -1256,7 +1260,7 @@ output of the Preparation layer. I want to make the following changes
 to all of them for this to be effective:
 
 TODO:
-- [ ] Have all insight functions work on vector input and output, so
+- [X] Have all insight functions work on vector input and output, so
   as to work with =mutate=
 - [ ] Ensure correctness of output under grouping
 ** Word Insight
@@ -1275,15 +1279,15 @@ words will always be syntactical glue, such as articles
     ## .data %>%
     ##   map_dbl(function(x){sum(x == .data, na.rm = TRUE)})
     .data %>%
-    as_tibble %>%
+    enframe %>%
     add_count(value) %>%
     mutate(n = if_else(is.na(value),
 		       as.integer(NA),
 		       n))  %>%
-    .$n
+    pull(n)
   }
 #+end_src
-*** [#C] Bigram Frequency [0/1]
+*** [#C] Bigrams [0/1]
 Bigrams are two words that occur in sequence. For example, in the
 phrase, "The quick brown dog.", the following bigrams exist: "The
 quick", "quick brown", "brown dog". This can be generalised to any
@@ -1292,9 +1296,15 @@ analytics to determine word sequences, as well as common adverb-verb
 and adjective-noun pairs. This exists partly between word and
 aggregate insight, but by measure is closer to the word-level.
 
+When we attain the bigrams, we can use the word frequency function
+defined previously to attain a bigram frequency.
+
 TODO:
 - [ ] generalise to n-grams (make closure, have bigrams as special
   case)
+
+I determine bigrams by matching the vector of words with itself, sans
+the first element in the second list.
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
   #' Determine bigrams
   #'
@@ -1310,10 +1320,10 @@ TODO:
   }
 #+end_src
 
-#+RESULTS:
+However, it is more complex than that; we need a way to deal with NA
+values. This beautiful recursive function (designed by myself) does
+just that:
 
-=get_bigram= requires a means of attaining a bigram for each element
-in a vector, skipping NA values. The following function achieves that:
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
   #' get bigram at index i of list1 & 2
   #'
@@ -1333,9 +1343,7 @@ in a vector, skipping NA values. The following function achieves that:
   }
 #+end_src
 
-#+RESULTS:
-
-Working as follows; if our list appears as (1 2 X 4 5 X 7 X), we
+It works as follows; if our list appears as (1 2 X 4 5 X 7 X), we
 expect the following bigrams: ((1 2) (2 4) X (4 5) (5 7) X X X), due
 to bigrams taking the lead of list1 as list2, as per the following
 table:
@@ -1367,27 +1375,30 @@ get_bigram(x)
 | nil |
 | nil |
 
-*** TODO [#A] Key Words (TextRank)
+*** Key Words (TextRank)
 Key words are another killer feature of this app. The algorithm is
-explained previously. The =textrank= package is used to perform textrank.
+explained previously. The =textrank= package is used to perform
+textrank. Of note is that all words other than stopwords (indicated by
+NA) are relevent, but the standard algorithm works on data that has
+had POS tagging, typically assessing only nouns and adjectives. We
+don't do that here as the processing burden for POS tagging is
+enormous, though it may be implemented in the future.
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
-  #' Determine keyword ranking
+  #' Determine textrank score for vector of words
   #'
-  #' @param std_tib the standard dataframe given as per the import functions
+  #' @param .data character vector of words
   #'
-  #' @return std_tib with additional columns of the textrank keyword
-  #'     ranking (rank) and pagerank score (pagerank)
-  keywords_tr <- function(std_tib){
-      tr <- std_tib$word  %>%
-	  textrank_keywords()
-      kw <- tibble(word = names(tr$pagerank$vector),
-	     pagerank = tr$pagerank$vector) %>%
-	  arrange(desc(pagerank)) %>%
-	  mutate(rank = row_number())
-      return(full_join(std_tib, kw, by="word"))
+  #' @return vector of scores for each word
+  keywords_tr <- function(.data){
+    relevent <- !is.na(.data)
+    tr <- textrank_keywords(.data, relevent, p=+Inf)
+    score <- tr$pagerank$vector %>% enframe
+    data <- .data %>% enframe("number", "name")
+    full_join(data, score, by="name") %>%
+      pull(value)
   }
 #+end_src
-*** TODO [#A] Word Sentiment [0/1]
+*** Word Sentiment [1/1]
 Sentiment has been discussed earlier. Effectively, for any text
 analytics it is essential. There are numerous sentiment dictionaries,
 but we will use AFINN for the nice numeric properties it has, allowing
@@ -1395,19 +1406,24 @@ for statistics on them. Categorical dictionaries will be implemented
 later.
 
 TODO:
-- [ ] Include option for additional dictionaries
+- [X] Include option for additional dictionaries
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
-#' Determine AFINN sentiment of words
-#'
-#' @param std_tib
-#' 
-#' @return std_tib with additonal column of the sentiments of words
-word_sentiment_AFINN <- function(std_tib){
-    sentiments %>%
-        filter(lexicon == "AFINN") %>%
-        select(word, score) %>%
-        right_join(std_tib, by="word")
-}
+  #' Determine AFINN sentiment of words
+  #'
+  #' @param .data vector of words
+  #'
+  #' @param lexicon sentiment lexicon to use, based on the corpus
+  #'   provided by tidytext
+  #' 
+  #' @return vector with sentiment score of each word in the vector
+  word_sentiment <- function(.data, lexicon="AFINN"){
+    data <- enframe(.data, "number", "word")
+      sentiments %>%
+	filter(lexicon == !! lexicon) %>%
+	select(word, score) %>%
+	right_join(data, by="word") %>%
+	pull(score)
+  }
 #+end_src
 *** TODO [#B] Word Correlation
 This is the word-level insight that will be the most difficult to
@@ -1419,12 +1435,105 @@ correlation matrix for some words, or a table and search like the one
 Cassidy created.
 ** TODO [#A] Aggregate Insight
 This should work effectively the same as the word-level insight,
-however the wrapper may have to be different. This is TBC
+however the wrapper may have to be different. This is TBC. I think an
+"aggregate on ..." user option would be useful
 *** Word Count
+Word count on some aggregate group is following the pattern I have
+been noticing where the simpler a function is, the more analytical
+power it seems to give. This may be generalised in the future to give
+a nested aggregate count (e.g. sentences/paragraph, lines/document
+etc.)
+
+Note in the following function the near canonical example of
+split-apply-combine, or MapReduce style. This allows for performance
+gains in parallel processing, ideal for the large datasets we
+typically work with in text analytics.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/sentence-insight.R
+  #' Determine the number of words at each aggregate level
+  #'
+  #' @param .data character vector of words
+  #'
+  #' @param aggregate_on vector to split .data on for insight
+  #'
+  #' @return vector of number of words for each aggregate level, same
+  #'   length as .data
+  word_count <- function(.data, aggregate_on){
+    split(.data, aggregate_on) %>%
+      map(function(x){rep(length(x), length(x))}) %>%
+      combine()
+  }
+#+end_src
 *** Key Sentence (LexRank)
+Often keywords aren't very explanatory on their own; patterns only
+really develop in aggregate. We use lexrank as the algorithm for
+key-sentences, as textrank takes too long, though lexrank seems to
+take just as long at high /n/ - it may be worth exploring the option
+of textrank again.
+
+Testing shows a performance of around 3-4 mins for ~30,000 words of
+text aggregated of ~3000 sentences. Not bad for something graph based,
+but a warning will be required at the user end.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/sentence-insight.R
+  #' get score for key sentences as per Lexrank
+  #'
+  #' @param .data character vector of words
+  #'
+  #' @param aggregate_on vector to aggregate .data over; ideally, sentence_id
+  key_sentences <- function(.data, aggregate_on){
+    ## prepare .data for lexrank
+    base <-  tibble(word = !! .data, aggregate = aggregate_on)
+    aggregated <- base %>%
+      group_by(aggregate) %>%
+      na.omit() %>%
+      summarise(sentence = paste(word, collapse = " ")) %>%
+      mutate(sentence = paste0(sentence, "."))
+    ## lexrank
+    lr <- aggregated %>%
+      pull(sentence) %>%
+      lexRank(., n=length(.),removePunc = FALSE, returnTies = FALSE,
+	      removeNum = FALSE, toLower = FALSE, stemWords = FALSE,
+	      rmStopWords = FALSE, Verbose = TRUE)
+    ## match lexrank output to .data
+    lr %>%
+      distinct(sentence, .keep_all = TRUE) %>% 
+      full_join(aggregated, by="sentence") %>%
+      full_join(base, by="aggregate") %>%
+      arrange(aggregate) %>%
+      pull(value)
+  }
+
+#+end_src
 *** Aggregate Sentiment
-*** Term Frequency - Inverse Document Frequency (tf-idf)
-*** Topic Modelling
+Like the added context that key sentences bring over key words, a
+similar situation is true of sentiment. I'll make it so that it can
+deliver any statistic of a sentence; mean, median, variance etc.
+Importantly, it will only work with numeric sentiment lexicons, in our
+case, AFINN.
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/sentence-insight.R
+  #' Get statistics for sentiment over some group, such as sentence.
+  #'
+  #' @param .data character vector of words
+  #'
+  #' @param aggregate_on vector to aggregate .data over; ideally,
+  #'   sentence_id, but could be chapter, document, etc.
+  #'
+  #' @param statistic function that accepts na.rm argument; e.g. mean,
+  #'   median, sd.
+  aggregate_sentiment <- function(.data, aggregate_on, statistic){
+    enframe(.data, "nil1", "word") %>%
+      bind_cols(enframe(aggregate_on, "nil2", "aggregate")) %>%
+      select(word, aggregate) %>%
+      mutate(sentiment = word_sentiment(word)) %>%
+      group_by(aggregate) %>%
+      mutate(aggregate_sentiment =
+	       (function(.x){
+		 rep(statistic(.x, na.rm = TRUE), length(.x))
+	       })(sentiment)) %>%
+      pull(aggregate_sentiment)
+  }
+#+end_src
+*** TODO [#A] Term Frequency - Inverse Document Frequency (tf-idf)
+*** TODO [#A] Topic Modelling
 ** TODO [#B] Wrapper
 The insights of choice can all be combined into a wrapper function,
 taking the forms and arguments of the insights and applying those
@@ -1568,13 +1677,13 @@ get_vis <- function(std_tib, operation, ...){
     }
 }
 #+end_src
-* Shiny Frontend
 * Testing / Demonstration
 ** Source
  #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
    source("../src/depends.R")
    source("../src/prep-for-insight.R")
    source("../src/word-insight.R")
+   source("../src/sentence-insight.R")
    source("../src/vis-insight.R")
  #+end_src
 ** Ungrouped
@@ -1586,29 +1695,74 @@ get_vis <- function(std_tib, operation, ...){
   sw_lexicon <- "snowball"
   addl_stopwords <- NA
   data <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
-
-
-  ## filename <- "../data/raw/11-0.txt"
-
-  ## stopwords <- get_sw(addl = c("lewis", "alice's", "alice’s",
-  ## 			     "EbOoK", "said", "project", "gutenberg"))
-
-  ## std_tib <- import_txt(filename) %>%
-  ##     format_data() %>%
-  ##     determine_stopwords(stopwords)
 #+end_src
 *** Insights
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-wf <- data %>%
+  insighted <- data %>%
+    mutate(
+    word_freq = word_freq(text),
+    bigram = get_bigram(text),
+    bigram_freq = word_freq(bigram),
+    word_sentiment = word_sentiment(text),
+    word_count_sentence = word_count(text, sentence_id),
+    mean_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, mean),
+    sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
+    )
+#+end_src
+*** Visualisation
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+  # … with 29,944 more rows, and 13 more variables: line_id <int>, word1 <chr>,
+  #   word_id <int>, lemma <chr>, stopword <lgl>, text <chr>, word_freq <int>,
+  #   bigram <chr>, bigram_freq <int>, word_sentiment <int>,
+  #   word_count_sentence <int>, mean_aggregate_sentiment_sentence <dbl>,
+  #   sd_aggregate_sentiment_sentence <dbl>
+
+  insighted %>%
+    pull(word) %>%
+    ggpage_build() %>%
+    bind_cols(insighted) %>%
+    ggpage_plot(aes(colour=mean_aggregate_sentiment_sentence)) +
+    scale_color_gradient2()
+
+  insighted %>%
+    pull(word) %>%
+    ggpage_build() %>%
+    bind_cols(insighted) %>%
+    ggpage_plot(aes(colour=word_count_sentence))
+
+
+
+#+end_src
+** Grouped
+*** Preparation
+We import a file downloaded from Project Gutenberg, and run through
+some basic preparation, with additional stopwords to be removed
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+  imported <- import_files()
+  lemmatize <- TRUE
+  stopwords <- TRUE
+  sw_lexicon <- "snowball"
+  addl_stopwords <- NA
+  prepped <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
+  sectioned <- prepped %>% mutate(chapter = get_chapters(text))
+  data <- sectioned ## %>%
+    ## group_by(doc_id,chapter)
+
+  ## .data <- data$text
+  ## aggregate_by <- data$chapter
+#+end_src
+*** Insights
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+wf <- std_tib %>%
     get_insight(word_freq)
 
-bf <- data %>%
+bf <- std_tib %>%
     get_insight(bigram_freq)
 
-kw <- data %>%
+kw <- std_tib %>%
     get_insight(keywords_tr)
 
-ws <- data %>%
+ws <- std_tib %>%
     get_insight(word_sentiment_AFINN)
 #+end_src
 *** Visualisation
@@ -1625,7 +1779,8 @@ kw %>%
 ws %>%
     get_vis(word_dist, "score")
 #+end_src
-*** ggpage
+
+** ggpage
 ggpage is a very interesting piece of visualisation, tested here. Once I build up the correct preparation format, I will perform more intensive testing here
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
 filename <- "../data/raw/11-0.txt"
@@ -1666,47 +1821,4 @@ imported %>%
     ggpage_plot(aes(fill=score)) +
     scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0)
 #+end_src
-** Grouped
-*** Preparation
-We import a file downloaded from Project Gutenberg, and run through
-some basic preparation, with additional stopwords to be removed
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-  imported <- import_files()
-  lemmatize <- TRUE
-  stopwords <- TRUE
-  sw_lexicon <- "snowball"
-  addl_stopwords <- NA
-  prepped <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
-  sectioned <- get_chapters(prepped)
-  data <- sectioned %>%
-    group_by(doc_id,chapter)
-#+end_src
-*** Insights
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-wf <- std_tib %>%
-    get_insight(word_freq)
-
-bf <- std_tib %>%
-    get_insight(bigram_freq)
-
-kw <- std_tib %>%
-    get_insight(keywords_tr)
-
-ws <- std_tib %>%
-    get_insight(word_sentiment_AFINN)
-#+end_src
-*** Visualisation
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-wf %>%
-    get_vis(word_dist, "word_freq")
-
-wf %>%
-    get_vis(word_bar, "word", "word_freq")
-
-kw %>%
-    get_vis(word_bar, "word", "rank", desc=FALSE)
-
-ws %>%
-    get_vis(word_dist, "score")
-#+end_src
-
+* Shiny Frontend

@@ -1,20 +1,63 @@
-source("depends.R")
-
-word_wrap <- function(sent_df,
-                      word_df,
-                      algorithm="freq",
-                      n=5
-                      ...){
-    if(algorithm == "lexRank-keywords"){
-        print("lexRank")
-        lexrank(x, ...)
-    }
-    else if(algorithm == "textrank"){
-        print("textrank")
-    }
-    else{
-        stop("Incorrect text summarisation algorithm selected; must either be \"lexRank\" or \"textrank\"")
-    }
+#' Determine the number of words at each aggregate level
+#'
+#' @param .data character vector of words
+#'
+#' @param aggregate_on vector to split .data on for insight
+#'
+#' @return vector of number of words for each aggregate level, same
+#'   length as .data
+word_count <- function(.data, aggregate_on){
+  split(.data, aggregate_on) %>%
+    map(function(x){rep(length(x), length(x))}) %>%
+    combine()
 }
 
+#' get score for key sentences as per Lexrank
+#'
+#' @param .data character vector of words
+#'
+#' @param aggregate_on vector to aggregate .data over; ideally, sentence_id
+key_sentences <- function(.data, aggregate_on){
+  ## prepare .data for lexrank
+  base <-  tibble(word = !! .data, aggregate = aggregate_on)
+  aggregated <- base %>%
+    group_by(aggregate) %>%
+    na.omit() %>%
+    summarise(sentence = paste(word, collapse = " ")) %>%
+    mutate(sentence = paste0(sentence, "."))
+  ## lexrank
+  lr <- aggregated %>%
+    pull(sentence) %>%
+    lexRank(., n=length(.),removePunc = FALSE, returnTies = FALSE,
+	    removeNum = FALSE, toLower = FALSE, stemWords = FALSE,
+	    rmStopWords = FALSE, Verbose = TRUE)
+  ## match lexrank output to .data
+  lr %>%
+    distinct(sentence, .keep_all = TRUE) %>% 
+    full_join(aggregated, by="sentence") %>%
+    full_join(base, by="aggregate") %>%
+    arrange(aggregate) %>%
+    pull(value)
+}
 
+#' Get statistics for sentiment over some group, such as sentence.
+#'
+#' @param .data character vector of words
+#'
+#' @param aggregate_on vector to aggregate .data over; ideally,
+#'   sentence_id, but could be chapter, document, etc.
+#'
+#' @param statistic function that accepts na.rm argument; e.g. mean,
+#'   median, sd.
+aggregate_sentiment <- function(.data, aggregate_on, statistic){
+  enframe(.data, "nil1", "word") %>%
+    bind_cols(enframe(aggregate_on, "nil2", "aggregate")) %>%
+    select(word, aggregate) %>%
+    mutate(sentiment = word_sentiment(word)) %>%
+    group_by(aggregate) %>%
+    mutate(aggregate_sentiment =
+	     (function(.x){
+	       rep(statistic(.x, na.rm = TRUE), length(.x))
+	     })(sentiment)) %>%
+    pull(aggregate_sentiment)
+}

@@ -7,12 +7,12 @@ word_freq <- function(.data){
   ## .data %>%
   ##   map_dbl(function(x){sum(x == .data, na.rm = TRUE)})
   .data %>%
-  as_tibble %>%
+  enframe %>%
   add_count(value) %>%
   mutate(n = if_else(is.na(value),
 		     as.integer(NA),
 		     n))  %>%
-  .$n
+  pull(n)
 }
 
 #' Determine bigrams
@@ -45,32 +45,35 @@ index_bigram <- function(i, list1, list2){
 	 index_bigram(i,list1, list2[-1])))
 }
 
-#' Determine keyword ranking
+#' Determine textrank score for vector of words
 #'
-#' @param std_tib the standard dataframe given as per the import functions
+#' @param .data character vector of words
 #'
-#' @return std_tib with additional columns of the textrank keyword
-#'     ranking (rank) and pagerank score (pagerank)
-keywords_tr <- function(std_tib){
-    tr <- std_tib$word  %>%
-	textrank_keywords()
-    kw <- tibble(word = names(tr$pagerank$vector),
-	   pagerank = tr$pagerank$vector) %>%
-	arrange(desc(pagerank)) %>%
-	mutate(rank = row_number())
-    return(full_join(std_tib, kw, by="word"))
+#' @return vector of scores for each word
+keywords_tr <- function(.data){
+  relevent <- !is.na(.data)
+  tr <- textrank_keywords(.data, relevent, p=+Inf)
+  score <- tr$pagerank$vector %>% enframe
+  data <- .data %>% enframe("number", "name")
+  full_join(data, score, by="name") %>%
+    pull(value)
 }
 
 #' Determine AFINN sentiment of words
 #'
-#' @param std_tib
+#' @param .data vector of words
+#'
+#' @param lexicon sentiment lexicon to use, based on the corpus
+#'   provided by tidytext
 #' 
-#' @return std_tib with additonal column of the sentiments of words
-word_sentiment_AFINN <- function(std_tib){
+#' @return vector with sentiment score of each word in the vector
+word_sentiment <- function(.data, lexicon="AFINN"){
+  data <- enframe(.data, "number", "word")
     sentiments %>%
-        filter(lexicon == "AFINN") %>%
-        select(word, score) %>%
-        right_join(std_tib, by="word")
+      filter(lexicon == !! lexicon) %>%
+      select(word, score) %>%
+      right_join(data, by="word") %>%
+      pull(score)
 }
 
 #' perform group-aware operation on the standard dataframe
