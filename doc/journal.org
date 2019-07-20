@@ -1405,10 +1405,83 @@ but we will use AFINN for the nice numeric properties it has, allowing
 for statistics on them. Categorical dictionaries will be implemented
 later.
 
-TODO:
+I *really* want to move away from dependence on tidytext; the
+maintainers are clearly incompetent. As an example, the =sentiments=
+data provided by the package previously contained several different
+lexicons, and had a column indicating the lexicon. After an update,
+this column was removed, leaving only the bing lexicon, breaking my
+functions, with no indication of where the other lexicons were in the
+documentation. The inconsistincies don't stop there; =sentiments= has
+two columns, word, and sentiment, whereas =get_sentiments= is
+#+begin_quote
+     A tbl_df with a word column, and either a ‘sentiment’ column (if
+     ‘lexicon’ is not "afinn") or a numeric ‘score’ column (if
+     ‘lexicon’ is "afinn").
+#+end_quote
+So bing has sentiment if =sentiment= is invoked, but score if
+=get_sentiment= is invoked. All the while I have to completely
+unnecessarily program different selection names based on the different
+lexicons, instead of being able to rely on a simple static name. If I
+want different names, that should be my decision, not the packages'.
+The greatest irony is that in practice, as at [2019-07-20 Sat] on
+CRAN, the documentation isn't even correct; =get_sentiment= returns
+columns "word" and "value"
+
+#+begin_src R :colnames yes :hline yes :session rsession1 :tangle no :comments link :exports both :eval never-export
+get_sentiments("afinn")
+#+end_src
+
+#+RESULTS:
+#+begin_example
+[90m# A tibble: 2,477 x 2[39m
+   word       value
+   [3m[90m<chr>[39m[23m      [3m[90m<dbl>[39m[23m
+[90m 1[39m abandon       -[31m2[39m
+[90m 2[39m abandoned     -[31m2[39m
+[90m 3[39m abandons      -[31m2[39m
+[90m 4[39m abducted      -[31m2[39m
+[90m 5[39m abduction     -[31m2[39m
+[90m 6[39m abductions    -[31m2[39m
+[90m 7[39m abhor         -[31m3[39m
+[90m 8[39m abhorred      -[31m3[39m
+[90m 9[39m abhorrent     -[31m3[39m
+[90m10[39m abhors        -[31m3[39m
+[90m# … with 2,467 more rows[39m
+#+end_example
+
+#+begin_export ascii
+get_sentiments("afinn")
+# A tibble: 2,477 x 2
+   word       value
+   <chr>      <dbl>
+#+end_export
+
+ Additionally, the =reorder_within= function is very
+poorly coupled with the rest of the package. It should have been a
+pull request to forcats, or an alternative, but it is far more general
+than the scope of the =tidytext= package. Moreover, the style of the
+package is very inconsistent and generally awful. Literally the only
+purpose it has served has been getting me up to speed through it's
+associated ebook, but even then if that book didn't exist, someone
+else (maybe me) would have written a better one with a better package.
+The ebook itself encourages very poor data practices, mandating lossy
+forms of working, and it has taken me half a year to work through the
+issues encouraged by them. I can see the lack of seriousness in the
+development where recent commit messages include "Do not check these
+in either see_no_evil" with a monkey face emoji. 
+
+Without any options, they also forced the requirement to
+(interactively) download sentiment files (through the textdata
+package) instead of including them in the package. *These changes
+break backwards compatibility*. I have no idea how they will affect my
+shiny application. Likely, I'll just get the data myself and
+distribute that with my package, if I don't want specific licenses, I
+just won't include them.
+
+ TODO:
 - [X] Include option for additional dictionaries
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
-  #' Determine AFINN sentiment of words
+  #' Determine sentiment of words
   #'
   #' @param .data vector of words
   #'
@@ -1416,13 +1489,12 @@ TODO:
   #'   provided by tidytext
   #' 
   #' @return vector with sentiment score of each word in the vector
-  word_sentiment <- function(.data, lexicon="AFINN"){
+  word_sentiment <- function(.data, lexicon="afinn"){
     data <- enframe(.data, "number", "word")
-      sentiments %>%
-	filter(lexicon == !! lexicon) %>%
-	select(word, score) %>%
+      get_sentiments(lexicon) %>%
+	select(word, value) %>%
 	right_join(data, by="word") %>%
-	pull(score)
+	pull(value)
   }
 #+end_src
 *** TODO [#B] Word Correlation
