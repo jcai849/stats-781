@@ -59,7 +59,7 @@ keywords_tr <- function(.data){
     pull(value)
 }
 
-#' Determine AFINN sentiment of words
+#' Determine sentiment of words
 #'
 #' @param .data vector of words
 #'
@@ -67,13 +67,12 @@ keywords_tr <- function(.data){
 #'   provided by tidytext
 #' 
 #' @return vector with sentiment score of each word in the vector
-word_sentiment <- function(.data, lexicon="AFINN"){
+word_sentiment <- function(.data, lexicon="afinn"){
   data <- enframe(.data, "number", "word")
-    sentiments %>%
-      filter(lexicon == !! lexicon) %>%
-      select(word, score) %>%
+    get_sentiments(lexicon) %>%
+      select(word, value) %>%
       right_join(data, by="word") %>%
-      pull(score)
+      pull(value)
 }
 
 #' perform group-aware operation on the standard dataframe

@@ -49,11 +49,11 @@
   - [[#aggregate-insight][Aggregate Insight]]
   - [[#wrapper][Wrapper]]
 - [[#program-layer-visualisation][Program Layer: Visualisation]]
-  - [[#distribution-14][Distribution]]
   - [[#rank][Rank]]
   - [[#score][Score]]
-  - [[#structure][Structure]]
   - [[#relation][Relation]]
+  - [[#distribution-14][Distribution]]
+  - [[#structure][Structure]]
   - [[#wrapper-1][Wrapper]]
 - [[#testing--demonstration][Testing / Demonstration]]
   - [[#source][Source]]
@@ -1638,27 +1638,6 @@ want to have a set of charts separated by group, performing by group
 creates as many separate charts as there are groups, as separate
 graphics. I want to make use of =facet_wrap= from ggplot, which
 requires some maneuvering with a wrapper function
-** Distribution [1/4]
-*** CLOSED Density
-    CLOSED: [2019-07-13 Sat 23:20]
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R
-#' output a histogram of the distribution of some function of words
-#'
-#' @param std_tib the standard dataframe, modified so the last column
-#'     is the output of some insight function (eg. output from
-#'     word_freq)
-#'
-#' @param insight_col string name of the column insight was
-#'     performed on
-word_dist <- function(std_tib, insight_col){
-std_tib %>%
-    ggplot(aes(x = !! sym(insight_col))) +
-    geom_density()
-}
-#+end_src
-*** TODO Histogram
-*** TODO Boxplot
-*** TODO Ungrouped Boxplot
 ** TODO Rank
 ** TODO Score
 *** TODO [#B] Barplot [0/2]
@@ -1717,13 +1696,35 @@ word_bar <- function(std_tib, insight_name, insight_col,
         geom_col(aes(y = !! sym(insight_col)))
 }
 #+end_src
+** TODO [#C] Relation
+*** Correlation Matrix
+** TODO Distribution [1/4]
+*** CLOSED Density
+    CLOSED: [2019-07-13 Sat 23:20]
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R
+#' output a histogram of the distribution of some function of words
+#'
+#' @param std_tib the standard dataframe, modified so the last column
+#'     is the output of some insight function (eg. output from
+#'     word_freq)
+#'
+#' @param insight_col string name of the column insight was
+#'     performed on
+word_dist <- function(std_tib, insight_col){
+std_tib %>%
+    ggplot(aes(x = !! sym(insight_col))) +
+    geom_density()
+}
+#+end_src
+*** TODO Histogram
+*** TODO Boxplot
+*** TODO Ungrouped Boxplot
 ** TODO Structure
+*** TODO Time Series
 *** TODO [#A] ggpage
  ggpage allows us to show off the importance of our non-destructive
  editing - the original document can be displayed, with the insights
  highlighted. There was more discussion on ggpage under an earlier section.
-** TODO [#C] Relation
-*** Correlation Matrix
 ** TODO [#B] Wrapper
 This is an attempt to create a group-aware visualisation,
 automatically facetting by group. I feel like it is not ideal, though
@@ -1758,6 +1759,9 @@ get_vis <- function(std_tib, operation, ...){
    source("../src/sentence-insight.R")
    source("../src/vis-insight.R")
  #+end_src
+
+ #+RESULTS:
+
 ** Ungrouped
 *** Preparation
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
@@ -1768,6 +1772,9 @@ get_vis <- function(std_tib, operation, ...){
   addl_stopwords <- NA
   data <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
 #+end_src
+
+#+RESULTS:
+
 *** Insights
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
   insighted <- data %>%
@@ -1781,6 +1788,9 @@ get_vis <- function(std_tib, operation, ...){
     sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
     )
 #+end_src
+
+#+RESULTS:
+
 *** Visualisation
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
   # … with 29,944 more rows, and 13 more variables: line_id <int>, word1 <chr>,
@@ -1788,6 +1798,9 @@ get_vis <- function(std_tib, operation, ...){
   #   bigram <chr>, bigram_freq <int>, word_sentiment <int>,
   #   word_count_sentence <int>, mean_aggregate_sentiment_sentence <dbl>,
   #   sd_aggregate_sentiment_sentence <dbl>
+
+
+  ## Structure: ggpage --------------------------------
 
   insighted %>%
     pull(word) %>%
@@ -1800,10 +1813,27 @@ get_vis <- function(std_tib, operation, ...){
     pull(word) %>%
     ggpage_build() %>%
     bind_cols(insighted) %>%
-    ggpage_plot(aes(colour=word_count_sentence))
+    ggpage_plot(aes(colour=word_count_sentence)) +
+    labs(title = "Word Count of Sentences")
 
+  ## Distribution: Histogram --------------------------------
 
+  insighted %>%
+    ggplot(aes(word_freq)) +
+    geom_histogram() +
+    labs(title = "Histogram of Word Frequency")
 
+  ## Score: barplot --------------------------------
+
+  n <- 10
+
+  insighted %>%
+    distinct(bigram, .keep_all = TRUE) %>%
+    top_n(n, bigram_freq) %>%
+    mutate(bigram = reorder(bigram, desc(bigram_freq))) %>%
+    ggplot(aes(bigram, bigram_freq)) +
+    geom_col() +
+    labs(title = "Bigrams by Bigram Frequency")
 #+end_src
 ** Grouped
 *** Preparation
@@ -1817,39 +1847,112 @@ some basic preparation, with additional stopwords to be removed
   addl_stopwords <- NA
   prepped <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
   sectioned <- prepped %>% mutate(chapter = get_chapters(text))
-  data <- sectioned ## %>%
-    ## group_by(doc_id,chapter)
+  data <- sectioned %>%
+    group_by(doc_id, chapter)
 
   ## .data <- data$text
   ## aggregate_by <- data$chapter
 #+end_src
+
+#+RESULTS:
+
 *** Insights
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-wf <- std_tib %>%
-    get_insight(word_freq)
+  insighted <- data %>%
+    mutate(
+    word_freq = word_freq(text),
+    bigram = get_bigram(text),
+    bigram_freq = word_freq(bigram),
+    word_sentiment = word_sentiment(text),
+    word_count_sentence = word_count(text, sentence_id),
+    mean_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, mean),
+    sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
+    )
 
-bf <- std_tib %>%
-    get_insight(bigram_freq)
+  ## alt_insighted <- data %>%
+  ##   group_modify(~ {
+  ##     .x %>%
+  ##   mutate(
+  ##   word_freq = word_freq(text),
+  ##   bigram = get_bigram(text),
+  ##   bigram_freq = word_freq(bigram),
+  ##   word_sentiment = word_sentiment(text),
+  ##   word_count_sentence = word_count(text, sentence_id),
+  ##   mean_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, mean),
+  ##   sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
+  ##   )      
+  ##   })
 
-kw <- std_tib %>%
-    get_insight(keywords_tr)
-
-ws <- std_tib %>%
-    get_insight(word_sentiment_AFINN)
+  ## testthat::test_that("groups work with mutate as with group_modify",
+  ## {
+  ##   expect_equal(insighted, alt_insighted)
+  ## })
 #+end_src
+
+#+RESULTS:
+
 *** Visualisation
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-wf %>%
-    get_vis(word_dist, "word_freq")
+  ## Structure: ggpage --------------------------------
+  groups <- group_vars(insighted)
 
-wf %>%
-    get_vis(word_bar, "word", "word_freq")
+  insighted %>% #base data
+    group_modify(~ { #build ggpage
+      .x %>%
+	pull(word) %>%
+	ggpage_build() %>%
+	bind_cols(.x)  
+    }) %>%
+    ggpage_plot(aes(colour=mean_aggregate_sentiment_sentence)) + #plot ggpage
+    scale_color_gradient2() +
+    facet_wrap(groups) +
+    labs(title = glue("Mean Sentiment of Sentences by {paste(groups, collapse = \", \")}"))
 
-kw %>%
-    get_vis(word_bar, "word", "rank", desc=FALSE)
+  insighted %>% #base data
+    group_modify(~ { #build ggpage
+      .x %>%
+	pull(word) %>%
+	ggpage_build() %>%
+	bind_cols(.x)  
+    }) %>%
+    ggpage_plot(aes(colour=word_count_sentence)) + #plot ggpage
+    ## scale_color_gradient2() +
+    facet_wrap(groups) +
+    labs(title = glue("Word Count of Sentences by {paste(groups, collapse = \", \")}"))
 
-ws %>%
-    get_vis(word_dist, "score")
+  insighted %>%
+    pull(word) %>%
+    ggpage_build() %>%
+    bind_cols(insighted) %>%
+    ggpage_plot(aes(colour=word_count_sentence)) +
+    labs(title = "Word Count of Sentences")
+
+  ## Distribution: Histogram --------------------------------
+
+  insighted %>%
+    ggplot(aes(word_freq)) +
+    geom_histogram() +
+    labs(title = "Histogram of Word Frequency") +
+    facet_wrap(groups)
+
+  ## Score: barplot --------------------------------
+
+  n <- 10
+
+  insighted %>%
+    group_modify(~ {.x %>%
+		      distinct(bigram, .keep_all = TRUE) %>%
+		      arrange(desc(bigram_freq)) %>%
+		      head(n)
+    }) %>%
+    ungroup() %>%
+    mutate(bigram = reorder_within(bigram, desc(bigram_freq), !! syms(groups))) %>% #test first with chapter, then change to groups
+    ## mutate(bigram = reorder(bigram, desc(bigram_freq))) %>%
+    ggplot(aes(bigram, bigram_freq)) +
+    geom_col() +
+    facet_wrap(groups, scales = "free_x") +
+    scale_x_reordered() +
+    labs(title = "Bigrams by Bigram Frequency")
 #+end_src
 
 ** ggpage

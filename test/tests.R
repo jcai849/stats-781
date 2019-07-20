@@ -22,8 +22,47 @@ insighted <- data %>%
   sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
   )
 
+# … with 29,944 more rows, and 13 more variables: line_id <int>, word1 <chr>,
+#   word_id <int>, lemma <chr>, stopword <lgl>, text <chr>, word_freq <int>,
+#   bigram <chr>, bigram_freq <int>, word_sentiment <int>,
+#   word_count_sentence <int>, mean_aggregate_sentiment_sentence <dbl>,
+#   sd_aggregate_sentiment_sentence <dbl>
+
+
+## Structure: ggpage --------------------------------
+
 insighted %>%
-  ggpage_build()
+  pull(word) %>%
+  ggpage_build() %>%
+  bind_cols(insighted) %>%
+  ggpage_plot(aes(colour=mean_aggregate_sentiment_sentence)) +
+  scale_color_gradient2()
+
+insighted %>%
+  pull(word) %>%
+  ggpage_build() %>%
+  bind_cols(insighted) %>%
+  ggpage_plot(aes(colour=word_count_sentence)) +
+  labs(title = "Word Count of Sentences")
+
+## Distribution: Histogram --------------------------------
+
+insighted %>%
+  ggplot(aes(word_freq)) +
+  geom_histogram() +
+  labs(title = "Histogram of Word Frequency")
+
+## Score: barplot --------------------------------
+
+n <- 10
+
+insighted %>%
+  distinct(bigram, .keep_all = TRUE) %>%
+  top_n(n, bigram_freq) %>%
+  mutate(bigram = reorder(bigram, desc(bigram_freq))) %>%
+  ggplot(aes(bigram, bigram_freq)) +
+  geom_col() +
+  labs(title = "Bigrams by Bigram Frequency")
 
 imported <- import_files()
 lemmatize <- TRUE
@@ -32,35 +71,102 @@ sw_lexicon <- "snowball"
 addl_stopwords <- NA
 prepped <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
 sectioned <- prepped %>% mutate(chapter = get_chapters(text))
-data <- sectioned ## %>%
-  ## group_by(doc_id,chapter)
+data <- sectioned %>%
+  group_by(doc_id, chapter)
 
 ## .data <- data$text
 ## aggregate_by <- data$chapter
 
-wf <- std_tib %>%
-    get_insight(word_freq)
+insighted <- data %>%
+  mutate(
+  word_freq = word_freq(text),
+  bigram = get_bigram(text),
+  bigram_freq = word_freq(bigram),
+  word_sentiment = word_sentiment(text),
+  word_count_sentence = word_count(text, sentence_id),
+  mean_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, mean),
+  sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
+  )
 
-bf <- std_tib %>%
-    get_insight(bigram_freq)
+## alt_insighted <- data %>%
+##   group_modify(~ {
+##     .x %>%
+##   mutate(
+##   word_freq = word_freq(text),
+##   bigram = get_bigram(text),
+##   bigram_freq = word_freq(bigram),
+##   word_sentiment = word_sentiment(text),
+##   word_count_sentence = word_count(text, sentence_id),
+##   mean_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, mean),
+##   sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
+##   )      
+##   })
 
-kw <- std_tib %>%
-    get_insight(keywords_tr)
+## testthat::test_that("groups work with mutate as with group_modify",
+## {
+##   expect_equal(insighted, alt_insighted)
+## })
 
-ws <- std_tib %>%
-    get_insight(word_sentiment_AFINN)
+## Structure: ggpage --------------------------------
+groups <- group_vars(insighted)
 
-wf %>%
-    get_vis(word_dist, "word_freq")
+insighted %>% #base data
+  group_modify(~ { #build ggpage
+    .x %>%
+      pull(word) %>%
+      ggpage_build() %>%
+      bind_cols(.x)  
+  }) %>%
+  ggpage_plot(aes(colour=mean_aggregate_sentiment_sentence)) + #plot ggpage
+  scale_color_gradient2() +
+  facet_wrap(groups) +
+  labs(title = glue("Mean Sentiment of Sentences by {paste(groups, collapse = \", \")}"))
 
-wf %>%
-    get_vis(word_bar, "word", "word_freq")
+insighted %>% #base data
+  group_modify(~ { #build ggpage
+    .x %>%
+      pull(word) %>%
+      ggpage_build() %>%
+      bind_cols(.x)  
+  }) %>%
+  ggpage_plot(aes(colour=word_count_sentence)) + #plot ggpage
+  ## scale_color_gradient2() +
+  facet_wrap(groups) +
+  labs(title = glue("Word Count of Sentences by {paste(groups, collapse = \", \")}"))
 
-kw %>%
-    get_vis(word_bar, "word", "rank", desc=FALSE)
+insighted %>%
+  pull(word) %>%
+  ggpage_build() %>%
+  bind_cols(insighted) %>%
+  ggpage_plot(aes(colour=word_count_sentence)) +
+  labs(title = "Word Count of Sentences")
 
-ws %>%
-    get_vis(word_dist, "score")
+## Distribution: Histogram --------------------------------
+
+insighted %>%
+  ggplot(aes(word_freq)) +
+  geom_histogram() +
+  labs(title = "Histogram of Word Frequency") +
+  facet_wrap(groups)
+
+## Score: barplot --------------------------------
+
+n <- 10
+
+insighted %>%
+  group_modify(~ {.x %>%
+		    distinct(bigram, .keep_all = TRUE) %>%
+		    arrange(desc(bigram_freq)) %>%
+		    head(n)
+  }) %>%
+  ungroup() %>%
+  mutate(bigram = reorder_within(bigram, desc(bigram_freq), !! syms(groups))) %>% #test first with chapter, then change to groups
+  ## mutate(bigram = reorder(bigram, desc(bigram_freq))) %>%
+  ggplot(aes(bigram, bigram_freq)) +
+  geom_col() +
+  facet_wrap(groups, scales = "free_x") +
+  scale_x_reordered() +
+  labs(title = "Bigrams by Bigram Frequency")
 
 filename <- "../data/raw/11-0.txt"
 

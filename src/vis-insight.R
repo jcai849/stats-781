@@ -1,17 +1,3 @@
-#' output a histogram of the distribution of some function of words
-#'
-#' @param std_tib the standard dataframe, modified so the last column
-#'     is the output of some insight function (eg. output from
-#'     word_freq)
-#'
-#' @param insight_col string name of the column insight was
-#'     performed on
-word_dist <- function(std_tib, insight_col){
-std_tib %>%
-    ggplot(aes(x = !! sym(insight_col))) +
-    geom_density()
-}
-
 #' output a bar graph of the top words from some insight function
 #'
 #' @param std_tib the standard dataframe, modified so the last column
@@ -45,6 +31,20 @@ word_bar <- function(std_tib, insight_name, insight_col,
                                                    .desc = desc)) %>%
         ggplot(aes(x = !! sym(insight_name))) +
         geom_col(aes(y = !! sym(insight_col)))
+}
+
+#' output a histogram of the distribution of some function of words
+#'
+#' @param std_tib the standard dataframe, modified so the last column
+#'     is the output of some insight function (eg. output from
+#'     word_freq)
+#'
+#' @param insight_col string name of the column insight was
+#'     performed on
+word_dist <- function(std_tib, insight_col){
+std_tib %>%
+    ggplot(aes(x = !! sym(insight_col))) +
+    geom_density()
 }
 
 #' create a group-aware visualisation
