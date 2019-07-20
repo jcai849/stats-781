@@ -160,12 +160,14 @@ insighted %>%
 		    head(n)
   }) %>%
   ungroup() %>%
-  mutate(bigram = reorder_within(bigram, desc(bigram_freq), !! syms(groups))) %>% #test first with chapter, then change to groups
-  ## mutate(bigram = reorder(bigram, desc(bigram_freq))) %>%
+  mutate(bigram = reorder_within(bigram, bigram_freq, !! ifexp(length(groups) > 1,
+								syms(groups),
+								sym(groups)))) %>% 
   ggplot(aes(bigram, bigram_freq)) +
-  geom_col() +
-  facet_wrap(groups, scales = "free_x") +
+  geom_bar(stat="identity") +
+  facet_wrap(groups, scales = "free_y") +
   scale_x_reordered() +
+  coord_flip() +
   labs(title = "Bigrams by Bigram Frequency")
 
 filename <- "../data/raw/11-0.txt"
