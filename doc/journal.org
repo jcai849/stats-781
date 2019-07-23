@@ -1,4 +1,4 @@
-[2019-07-14 Sun]: GOTO [[#program-dependencies][Program Dependencies]] section, continue through Preparation, Insight, and Visualisation
+[2019-07-21 Sun]: GOTO [[#program-dependencies][Program Dependencies]] section, continue through Preparation, Insight, and Visualisation
 * Table of Contents                                                     :TOC:
 - [[#colophon][COLOPHON]]
 - [[#initial-survey][Initial Survey]]
@@ -1071,7 +1071,7 @@ grouping has been shifted to take place afterwards
 	  ungroup_by("sentence_id")
   }
 #+end_src
-** TODO [#B] Filtering
+** Filtering
 Filtering has to be done with code at present, but the intention is
 that once I have a frontend up, it's design will inform an interactive
 filter. After some initial analytics have been done in the insight
@@ -1907,6 +1907,21 @@ some basic preparation, with additional stopwords to be removed
     scale_color_gradient2() +
     facet_wrap(groups) +
     labs(title = glue("Mean Sentiment of Sentences by {paste(groups, collapse = \", \")}"))
+  ggsave(filename = "mean-sent-ggpage.png", device = "png", path="~/stats-781/out/")
+
+  insighted %>% #base data
+    group_modify(~ { #build ggpage
+      .x %>%
+	pull(word) %>%
+	ggpage_build() %>%
+	bind_cols(.x)  
+    }) %>%
+    ggpage_plot(aes(colour=sd_aggregate_sentiment_sentence)) + #plot ggpage
+    scale_color_gradient2() +
+    facet_wrap(groups) +
+    labs(title = glue("Sentiment Standard Deviation of Sentences by {paste(groups, collapse = \", \")}"))
+  ggsave(filename = "sd-sent-ggpage.png", device = "png", path="~/stats-781/out/")
+
 
   insighted %>% #base data
     group_modify(~ { #build ggpage
@@ -1934,6 +1949,7 @@ some basic preparation, with additional stopwords to be removed
     geom_histogram() +
     labs(title = "Histogram of Word Frequency") +
     facet_wrap(groups)
+  ggsave(filename = "word-freq-hist.png", device = "png", path="~/stats-781/out/")
 
   ## Score: barplot --------------------------------
 
@@ -1955,6 +1971,7 @@ some basic preparation, with additional stopwords to be removed
     scale_x_reordered() +
     coord_flip() +
     labs(title = "Bigrams by Bigram Frequency")
+  ggsave(filename = "bigram-freq-bar.png", device = "png", path="~/stats-781/out/")
 #+end_src
 
 ** ggpage

@@ -266,17 +266,73 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
 * Meeting Chris
 <2019-07-09 Tue 11:00-12:00>
 ** Topics
-** Dissertation Work
-   SCHEDULED: <2019-07-13 Sat 17:30>
+** CLOSED Dissertation Work
+   CLOSED: [2019-07-21 Sun 15:25] SCHEDULED: <2019-07-13 Sat 17:30>
    SCHEDULED: <2019-07-16 Tue>
-- [ ] get_insight functions work on named column rather than "word" as
+- [X] get_insight functions work on named column rather than "word" as
   default - word may still be the keyword argument
-- [ ] additional processing functions to add/alter columns around
+- [X] additional processing functions to add/alter columns around
   insight (e.g. stopwords scans named word column, removes
   corresponding insight entry, lemmatise adds additional lemma column
   to words, in order to have text insight performed on lemma column)
-- [ ] sentence/group level summary insights
+- [X] sentence/group level summary insights
 - [ ] Start on latex dissertation formatting
+** Further Dissertation Work [2/4]
+   SCHEDULED: <2019-07-24 Wed 13:00-16:00>
+- [X] Create demonstration
+- [X] Send demonstration to Chris
+- [ ] Finish last few functions
+- [ ] Begin shiny study
+** Demonstration
+Hi Chris,
+
+To summarise the progress since you've been away, I have completed the
+import wrapper function, as well as nearly all insight functions,
+including some new ones I'm excited to show you in person. In fact,
+most of the work has been done on the architecture and the data
+structres; The primary data object is now (aside from punctuation,
+which I can accept losing) completely lossless, so at any stage (not
+that we have to anymore), we can recreate the original text.
+Visualisation now includes ggpage, and all of these have been tested
+and found to work with grouping and filtering. There are a few more
+insight functions to add, but there's no difficulty in them, just a
+case of spending time.
+
+Implemented:
+- Term Frequency
+- Bigram functions
+- TextRank Key Words
+- Term Sentiment
+- Term Count
+- LexRank Key Sentences
+- Aggregate Sentiment (working on mean, median, sd, etc.)
+
+To be Completed:
+- Term Correlation
+- Term Frequency - Inverse Document Frequency
+- Topic Modelling
+
+There has been a setback however, due to using the =tidytext= package.
+After a recent update to the package, there were major breakages in
+backwards compatibility, completely changing the output from functions
+I was dependent on. I managed to get things working again, but some of
+the changes may possibly lead to issues for our package later on - not
+sure it's a good idea to keep it as a dependency with those kind of
+development practices, but I don't think it's necessarily a good idea
+to switch either, given that time is so precious.
+
+I would like to make a wrapper function for insight and visualisation,
+however I should get a fair idea of what input and output to expect,
+so I was thinking I ought to create a shiny prototype to get me
+familiar first. Not sure, what are your thoughts?
+
+I've attached some of the current visualisations for your interest,
+all now taken from import to visualisation in only a few lines of code.
+
+I hope you're enjoying your trip.
+
+Kind Regards,
+Jason
 * Contact Chris
 <2019-07-17 Wed 11:00-12:00>
 ** Topics
