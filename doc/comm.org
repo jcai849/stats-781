@@ -277,12 +277,12 @@ Especially in formatting n-grams, what is "freq" referring to. Figure out what's
   to words, in order to have text insight performed on lemma column)
 - [X] sentence/group level summary insights
 - [ ] Start on latex dissertation formatting
-** Further Dissertation Work [2/4]
-   SCHEDULED: <2019-07-24 Wed 13:00-16:00>
+** CLOSED Further Dissertation Work [3/4]
+   CLOSED: [2019-07-25 Thu 18:52] SCHEDULED: <2019-07-24 Wed 13:00-16:00>
 - [X] Create demonstration
 - [X] Send demonstration to Chris
 - [ ] Finish last few functions
-- [ ] Begin shiny study
+- [X] Begin shiny study
 ** Demonstration
 Hi Chris,
 
@@ -336,7 +336,12 @@ Jason
 * Contact Chris
 <2019-07-17 Wed 11:00-12:00>
 ** Topics
-** Actions
+** Dissertation Work [1/4]
+   SCHEDULED: <2019-07-26 Fri>
+- [X] Take import out of import function, get it to work on char vec instead
+- [ ] Arrange into package
+- [ ] Prepare shiny directory
+- [ ] ? bring in as submodules
 * Contact Chris
 <2019-07-24 Wed 11:00-12:00>
 ** Topics

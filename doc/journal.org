@@ -32,6 +32,7 @@
   -  [[#2019-06-13-thu-notes][[2019-06-13 Thu] Notes]]
   - [[#2019-07-10-wed-notes][[2019-07-10 Wed] Notes]]
   - [[#note-on-non-destructive-editing][Note on Non-Destructive Editing]]
+  - [[#2019-07-25-thu-notes][[2019-07-25 Thu] Notes]]
 - [[#program-dependencies][Program Dependencies]]
   - [[#helper-functions][Helper Functions]]
 - [[#program-layer-preparation][Program Layer: Preparation]]
@@ -45,7 +46,7 @@
   - [[#sectioning][Sectioning]]
   - [[#grouping][Grouping]]
 - [[#program-layer-insight][Program Layer: Insight]]
-  - [[#word-insight][Word Insight]]
+  - [[#term-insight][Term Insight]]
   - [[#aggregate-insight][Aggregate Insight]]
   - [[#wrapper][Wrapper]]
 - [[#program-layer-visualisation][Program Layer: Visualisation]]
@@ -820,6 +821,11 @@ then processing. In detail:
  retain as much information, as many degrees of freedom as possible.
  The concept of nondestructive edits is not new; graphic design relies
  upon it, with an example given for photoshop at the [[https://helpx.adobe.com/photoshop/using/nondestructive-editing.html][Adobe Website]]
+** [2019-07-25 Thu] Notes
+Present thoughts on visualisation: It should be a manual process, with
+intentionality behind it, rather than scrolling through pre-made
+visualisations. This would require (i.e. make clear) a function that
+takes specifications of x, y, facets etc.
 * Program Dependencies
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
   library(tidyverse)
@@ -840,9 +846,9 @@ implemented first before performing that kind of optimisation.
 *** Unrestricted if-expression
 Having conditionals as expressions rather than statements grants the
 ability for direct assignment of the evaluation. Base =ifelse= and
-tidyverse =if_else= impose the restriction that the output is the same
+tidyverse =dplyr::if_else= impose the restriction that the output is the same
 shape as the test predicate. This helper removes that restriction
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R
   #' scheme-like if expression, without restriction of returning same-size table of .test, as ifelse() does
   #'
   #' @param .test predicate to test
@@ -862,7 +868,7 @@ shape as the test predicate. This helper removes that restriction
 #+end_src
 *** Filetype from extension
 A helper function to attain the document filetype from the file name.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R
   #' Get filetype
   #'
   #' @param filepath string filepath of document
@@ -871,13 +877,13 @@ A helper function to attain the document filetype from the file name.
   get_filetype <- function(filepath){
     filepath %>%
       basename %>%
-      str_extract('[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$') %>% #ensure filename.extension form
-      str_extract('[a-zA-Z0-9]+$')                  #extract extension
+      stringr::str_extract('[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$') %>% #ensure filename.extension form
+      stringr::str_extract('[a-zA-Z0-9]+$')                  #extract extension
   }
 #+end_src
 *** Mark the text column of a table
 A helper function to determine and mark the text column of a table
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R
   #' Interactively determine and automatically mark the text column of a table
   #'
   #' @param data dataframe with column requiring marking
@@ -891,15 +897,18 @@ A helper function to determine and mark the text column of a table
     as.integer 
   textcol <- cols[textcol_index]  
   data %>%
-      rename(text = !! sym(textcol))
+      dplyr::rename(text = !! dplyr::sym(textcol))
   }
 #+end_src
 *** Validate User Input
 A helper function to get valid user input
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R
   #' helper function to get valid input (recursively)
   #'
   #' @param options vector of options that valid input should be drawn from
+  #'
+  #' @param init whether this is the initial attempt, used only as
+  #'   recursive information
   #'
   #' @return readline output that exists in the vector of options
   get_valid_input <- function(options, init=TRUE){
@@ -909,6 +918,26 @@ A helper function to get valid user input
     ifelse(input %in% options,
 	   input,
 	   get_valid_input(options, init=FALSE))
+  }
+#+end_src
+*** TODO [#C] Ungroup by
+Also needed, but surprisingly missing from dplyr, is an "ungroup_by"
+function, that allows specifice groups to be removed. Currently
+standard evaluation only, will switch to NSE when time allows
+
+TODO:
+- [ ] Make =ungroup_by= NSE
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R
+  #' helper function to ungroup for dplyr. functions equivalently to
+  #' group_by() but with standard (string) evaluation
+  #'
+  #' @param x tibble to perform function on
+  #'
+  #' @param ... string of groups to ungroup on
+  #'
+  #' @return x with ... no longer grouped upon
+  ungroup_by <- function(x,...){
+  dplyr::group_by_at(x, dplyr::group_vars(x)[!dplyr::group_vars(x) %in% ...])
   }
 #+end_src
 * Program Layer: Preparation
@@ -934,7 +963,7 @@ analytics. All imports have a document ID, which is an identifier column.
 Plaintext is the most important and simplest to work with of all text
 representations; entire operating systems are built around the
 concept. 
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R
   #' Import text file 
   #'
   #' @param filepath a string indicating the relative or absolute
@@ -943,8 +972,8 @@ concept.
   #' @return tibble of each row corrresponding to a line of the text
   #'     file, with the column named "text"
   import_txt <- function(filepath){
-      read_lines(filepath) %>%
-	  tibble(text=.)
+    readr::read_lines(filepath) %>%
+      tibble::tibble(text=.)
   }
 #+end_src
 *** Import .csv
@@ -955,7 +984,7 @@ interest for the analysis should be (as per tidy principles) in one
 column, with the rest being additional information that can be used
 for grouping or filtering. Thus, additional user input is required, in
 the specification of which column is the text column of interest.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R
   #' Import csv file
   #'
   #' @param filepath a string indicating the relative or absolute
@@ -964,15 +993,15 @@ the specification of which column is the text column of interest.
   #' @return tibble of each row corrresponding to a line of the text
   #'     file, with the column named "text"
   import_csv <- function(filepath){
-    read_csv(filepath) %>%
-    table_textcol()
+    readr::read_csv(filepath) %>%
+      table_textcol()
   }
 #+end_src
 *** Import Excel
 Unfortunately, much data exists in the Microsoft Excel format, but
 this must be catered for. As tabular data, it is treated equivalently
 to csv.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R
   #' Import excel file
   #'
   #' @param filepath a string indicating the relative or absolute
@@ -981,8 +1010,8 @@ to csv.
   #' @return tibble of each row corrresponding to a line of the text
   #'     file, with the column named "text"
   import_excel <- function(filepath){
-      read_excel(filepath) %>%
-	  table_textcol()
+    readxl::read_excel(filepath) %>%
+      table_textcol()
   }
 #+end_src
 *** TODO Import Gutenberg
@@ -995,7 +1024,7 @@ Gutenberg texts
 The base wrapper function takes in the filename, and other relevent
 information, handling the importation process. It also stamps in the
 name of the document as a column
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R
   #' Base case for file import
   #'
   #' @param filepath string filepath of file for import
@@ -1012,18 +1041,26 @@ name of the document as a column
       imported <- import_txt(filepath)
     }
     imported %>%
-      mutate(doc_id = filename)
+      dplyr::mutate(doc_id = filename)
   }
 #+end_src
 The base file import is generalised to multiple files with a multiple
 import function: this will be our sole import function (until we get
 direct Gutenburg import)
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-  import_files <- function(){
-    filepaths <- tk_choose.files()
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R
+  #' Import any number of files
+  #'
+  #' @param filepaths char vector of filepaths
+  #'
+  #' @return imported files with document id, bound into tibble
+  #' 
+  #' @importFrom magrittr %>%
+  #' 
+  #' @export
+  import_files <- function(filepaths){
     filepaths %>%
-      map(import_base_file) %>%
-      bind_rows
+      purrr::map(import_base_file) %>%
+      dplyr::bind_rows()
   }
 #+end_src
 ** Formatting
@@ -1049,7 +1086,7 @@ try to optimise this.
 [2019-07-17 Wed]: removed first group modify; unnecessary now that
 grouping has been shifted to take place afterwards
 
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R
   #' formats imported data into an analysis-ready format
   #'
   #' @param data a tibble formatted with a text and (optional) group
@@ -1057,27 +1094,29 @@ grouping has been shifted to take place afterwards
   #'
   #' @return a tibble formatted such that columns correspond to
   #'     identifiers of group, line, sentence, word (groups ignored)
+  #'
+  #' @export
   format_data <- function(data){
-      data %>%
-	  mutate(line_id = row_number()) %>% 
-		  unnest_tokens(output = sentence, input = text, token = "sentences", to_lower = FALSE) %>%
-		  mutate(sentence_id = row_number()) %>%
-	  group_by(sentence_id, add=TRUE) %>%
-	  group_modify(~ {
-	      .x %>%
-		  unnest_tokens(output = word, input = sentence, token = "words", to_lower=FALSE) %>%
-		  mutate(word_id = row_number())
-	  }) %>%
-	  ungroup_by("sentence_id")
+    data %>%
+      dplyr::mutate(line_id = dplyr::row_number()) %>% 
+      tidytext::unnest_tokens(output = sentence, input = text, token = "sentences", to_lower = FALSE) %>%
+      dplyr::mutate(sentence_id = dplyr::row_number()) %>%
+      dplyr::group_by(sentence_id, add=TRUE) %>%
+      dplyr::group_modify(~ {
+	.x %>%
+	  tidytext::unnest_tokens(output = word, input = sentence, token = "words", to_lower=FALSE) %>%
+	  dplyr::mutate(word_id = dplyr::row_number())
+      }) %>%
+      ungroup_by("sentence_id")
   }
 #+end_src
-** Filtering
+** TODO Filtering
 Filtering has to be done with code at present, but the intention is
 that once I have a frontend up, it's design will inform an interactive
 filter. After some initial analytics have been done in the insight
 layer, then preparation can be returned to and the text can be
 filtered on based on the analytics.
-** Lemmatisation
+** TODO Lemmatisation
 Lemmatisation is effectively the process of getting words into
 dictionary form. It is actually a very complex, stochastic procedure,
 as natural languages don't follow consistent and clear rules all the
@@ -1097,7 +1136,7 @@ this point. Worth noting is that, like stopwords, there are different
 dictionaries available for the lemmatisation process, but we will use
 the default, as testing has shown it to be the simplest to set up and
 just as reliable as the rest.
-** Stemming
+** TODO Stemming
 Stemming is far simpler than lemmatisation, being the removal of word
 endings. This doesn't require as complex a model, as it is
 deterministic. It is not quite as effective, as the base word ending
@@ -1113,10 +1152,10 @@ output of insights such as word frequency. We need a way of generating
 a list of stopwords, from both a default source, as well as allowing
 the user to add their own stopwords. =get_sw= performs that, detailed
 below.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R
   #' Gets stopwords from a default list and user-provided list
   #'
-  #' @param sw_list a string name of a stopword list, one of "smart",
+  #' @param lexicon a string name of a stopword list, one of "smart",
   #'     "snowball", or "onix"
   #'
   #' @param addl user defined character vector of additional stopwords,
@@ -1125,17 +1164,17 @@ below.
   #' @return a tibble with one column named "word"
   get_sw <- function(lexicon = "snowball", addl = NA){
     addl_char <- as.character(addl)
-    get_stopwords(source = lexicon) %>%
-      select(word) %>%
-      bind_rows(., tibble(word = addl_char)) %>%
-      na.omit() %>%
-      as_vector %>%
+    tidytext::get_stopwords(source = lexicon) %>%
+      dplyr::select(word) %>%
+      dplyr::bind_rows(., tibble::tibble(word = addl_char)) %>%
+      stats::na.omit() %>%
+      purrr::as_vector() %>%
       tolower() %>%
       as.character()
   }
 #+end_src
 The status of the stopwords are then added to the data with =determine_stopwords=
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R
   #' determine stopword status
   #'
   #' @param .data vector of words
@@ -1143,6 +1182,8 @@ The status of the stopwords are then added to the data with =determine_stopwords
   #' @param ... arguments of get_sw
   #'
   #' @return a dataframe equivalent to the input dataframe, with an additional stopword column
+  #'
+  #' @export
   determine_stopwords <- function(.data, ...){
     sw_list <- get_sw(...)
     .data %in% sw_list
@@ -1162,26 +1203,42 @@ logic involving the interaction of stopwords and lemmatisation:
 | Lemmatise True  | Lemmatise, determine stopwords on lemmatisation, perform insight on lemmas sans stopwords         | Lemmatise, perform insight on lemmas |
 | Lemmatise False | Determine stopwords on original words (no lemmatisation), perform insight on words sans stopwords | Perform insight on original words    |
 
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R
+  #' takes imported one-line-per-row data and prepares it for later analysis
+  #'
+  #' @param .data tibble with one line of text per row
+  #'
+  #' @param lemmatize boolean, whether to lemmatize or not
+  #'
+  #' @param stopwords boolean, whether to remove stopwords or not
+  #'
+  #' @param sw_lexicon string, lexicon with which to remove stopwords
+  #'
+  #' @param addl_stopwords char vector of user-supplied stopwords
+  #'
+  #' @return tibble with one token per line, stopwords removed leaving
+  #'   NA values, column for analysis named "text"
+  #'
+  #' @export
   text_prep <- function(.data, lemmatize=TRUE, stopwords=TRUE, sw_lexicon="snowball", addl_stopwords=NA){
     formatted <- .data %>%
       format_data()
 
     text <- ifexp(lemmatize,
-			 ifexp(stopwords,
-			       mutate(formatted, lemma = tolower(lemmatize_words(word)),
+		  ifexp(stopwords,
+			dplyr::mutate(formatted, lemma = tolower(textstem::lemmatize_words(word)),
 				      stopword = determine_stopwords(lemma, sw_lexicon, addl_stopwords),
-				      text = if_else(stopword,
-							    as.character(NA),
-							    lemma)),
-			       mutate(formatted, lemma = tolower(lemmatize_words(word)),
+				      text = dplyr::if_else(stopword,
+						     as.character(NA),
+						     lemma)),
+			dplyr::mutate(formatted, lemma = tolower(textstem::lemmatize_words(word)),
 				      text = lemma)),
-			 ifexp(stopwords,
-			       mutate(formatted, stopword = determine_stopwords(word, sw_lexicon, addl_stopwords),
-				      text = if_else(stopword,
-							    as.character(NA),
-							    word)),
-			       mutate(formatted, text = word)))
+		  ifexp(stopwords,
+			dplyr::mutate(formatted, stopword = determine_stopwords(word, sw_lexicon, addl_stopwords),
+				      text = dplyr::if_else(stopword,
+						     as.character(NA),
+						     word)),
+			dplyr::mutate(formatted, text = word)))
     return(text)
   }
 #+end_src
@@ -1193,27 +1250,45 @@ compose a closure that searches and sections text based on a Regular
 Expression intended to capture a particular section. Several functions
 are created from that. In time, advanced users could be given the
 option to compose their own regular expressions for sectioning.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R
   #' creates a search closure to section text
   #'
   #' @param search a string regexp for the term to seperate on, e.g. "Chapter"
   #'
   #' @return closure over search expression 
   get_search <- function(search){
-    #' section based on search result 
-    #' 
-    #' @param .data vector to section
-    #'
-    #' @return vector of same length as .data with section numbers
     function(.data){
       .data %>%
-	str_detect(search) %>%
-	accumulate(sum, na.rm=TRUE)
+	stringr::str_detect(search) %>%
+	purrr::accumulate(sum, na.rm=TRUE)
       }
   }
 
+  #' sections text based on chapters
+  #'
+  #' @param .data vector to section
+  #'
+  #' @return vector of same length as .data with chapter numbers
+  #'
+  #' @export
   get_chapters <- get_search("^[\\s]*[Cc][Hh][Aa]?[Pp][Tt]([Ee][Rr])?")
+
+  #' sections text based on parts
+  #'
+  #' @param .data vector to section
+  #'
+  #' @return vector of same length as .data with part numbers
+  #'
+  #' @export
   get_parts <- get_search("^[\\s]*[Pp]([Aa][Rr])?[Tt]")
+
+  #' sections text based on sections
+  #'
+  #' @param .data vector to section
+  #'
+  #' @return vector of same length as .data with section numbers
+  #'
+  #' @export
   get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])")
 #+end_src
 
@@ -1221,7 +1296,7 @@ How to implement sectioning in a way that fits in a shiny UI is still
 very much TBC. Presumably, after object preparation, the option to
 section would appear, followed by a group selection option. I will
 implement these only after implementing the shiny app.
-** TODO [#C] Grouping 
+** TODO Grouping 
 Grouping is a killer feature of our app. The intention is to run a
 =group_by= dplyr command in the wrapper over user-specified groups,
 and all further insights and visualisations are performed groupwise.
@@ -1229,21 +1304,7 @@ This allows for immediate and clear comparisons.
 
 Like filtering, after some initial analytics have been done in the
 insight layer, then preparation can be returned to and the text can be
-groupedon based on the analytics.
-
-Also needed, but surprisingly missing from dplyr, is an "ungroup_by"
-function, that allows specifice groups to be removed. Currently
-standard evaluation only, will switch to NSE when time allows
-
-TODO:
-- [ ] Make =ungroup_by= NSE
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/prep-for-insight.R
-#' helper function to ungroup for dplyr. functions equivalently to
-#' group_by() but with standard (string) evaluation
-ungroup_by <- function(x,...){
-    group_by_at(x, group_vars(x)[!group_vars(x) %in% ...])
-}
-#+end_src
+grouped on based on the analytics.
 * Program Layer: Insight
 Insight is the meat of this package. After some initial resistance, I
 have decided to jump all-in with tidyverse-style transformations,
@@ -1262,29 +1323,29 @@ to all of them for this to be effective:
 TODO:
 - [X] Have all insight functions work on vector input and output, so
   as to work with =mutate=
-- [ ] Ensure correctness of output under grouping
-** Word Insight
-*** Word Frequency
+- [X] Ensure correctness of output under grouping
+** Term Insight
+*** Term Frequency
 Frequencies of words are useful in getting an understanding of what
 terms are common in a text. This is one insight in particular that
 requires stopwords to have been previously removed, otherwise the top
 words will always be syntactical glue, such as articles
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
-  #' Determine word frequency
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R
+  #' Determine term frequency
   #'
-  #' @param .data character vector of words
+  #' @param .data character vector of terms
   #'
-  #' @return numeric vector of word frequencies
-  word_freq <- function(.data){
-    ## .data %>%
-    ##   map_dbl(function(x){sum(x == .data, na.rm = TRUE)})
+  #' @return numeric vector of term frequencies
+  #'
+  #' @export
+  term_freq <- function(.data){
     .data %>%
-    enframe %>%
-    add_count(value) %>%
-    mutate(n = if_else(is.na(value),
+      tibble::enframe %>%
+    dplyr::add_count(value) %>%
+    dplyr::mutate(n = dplyr::if_else(is.na(value),
 		       as.integer(NA),
 		       n))  %>%
-    pull(n)
+    dplyr::pull(n)
   }
 #+end_src
 *** [#C] Bigrams [0/1]
@@ -1305,18 +1366,17 @@ TODO:
 
 I determine bigrams by matching the vector of words with itself, sans
 the first element in the second list.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R
   #' Determine bigrams
   #'
   #' @param .data character vector of words
   #'
   #' @return character vector of bigrams
+  #'
+  #' @export
   get_bigram <- function(.data){
     1:length(.data) %>%
-      map_chr(index_bigram, .data, .data[-1])
-	  ## mutate(bigram = paste(word, lead(word)))%>%
-	  ## add_count(bigram) %>%
-	  ## rename(bigram_freq = n)
+      purrr::map_chr(index_bigram, .data, .data[-1])
   }
 #+end_src
 
@@ -1324,7 +1384,7 @@ However, it is more complex than that; we need a way to deal with NA
 values. This beautiful recursive function (designed by myself) does
 just that:
 
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R
   #' get bigram at index i of list1 & 2
   #'
   #' @param i numeric index to attain bigram at
@@ -1383,19 +1443,21 @@ NA) are relevent, but the standard algorithm works on data that has
 had POS tagging, typically assessing only nouns and adjectives. We
 don't do that here as the processing burden for POS tagging is
 enormous, though it may be implemented in the future.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R
   #' Determine textrank score for vector of words
   #'
   #' @param .data character vector of words
   #'
   #' @return vector of scores for each word
+  #'
+  #' @export
   keywords_tr <- function(.data){
     relevent <- !is.na(.data)
-    tr <- textrank_keywords(.data, relevent, p=+Inf)
-    score <- tr$pagerank$vector %>% enframe
-    data <- .data %>% enframe("number", "name")
-    full_join(data, score, by="name") %>%
-      pull(value)
+    tr <- textrank::textrank_keywords(.data, relevent, p=+Inf)
+    score <- tr$pagerank$vector %>% tibble::enframe
+    data <- .data %>% tibble::enframe("number", "name")
+    dplyr::full_join(data, score, by="name") %>%
+      dplyr::pull(value)
   }
 #+end_src
 *** Word Sentiment [1/1]
@@ -1480,7 +1542,7 @@ just won't include them.
 
  TODO:
 - [X] Include option for additional dictionaries
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R
   #' Determine sentiment of words
   #'
   #' @param .data vector of words
@@ -1489,12 +1551,14 @@ just won't include them.
   #'   provided by tidytext
   #' 
   #' @return vector with sentiment score of each word in the vector
+  #'
+  #' @export
   word_sentiment <- function(.data, lexicon="afinn"){
-    data <- enframe(.data, "number", "word")
-      get_sentiments(lexicon) %>%
-	select(word, value) %>%
-	right_join(data, by="word") %>%
-	pull(value)
+    data <- tibble::enframe(.data, "number", "word")
+    tidytext::get_sentiments(lexicon) %>%
+      dplyr::select(word, value) %>%
+      dplyr::right_join(data, by="word") %>%
+      dplyr::pull(value)
   }
 #+end_src
 *** TODO [#B] Word Correlation
@@ -1509,7 +1573,7 @@ Cassidy created.
 This should work effectively the same as the word-level insight,
 however the wrapper may have to be different. This is TBC. I think an
 "aggregate on ..." user option would be useful
-*** Word Count
+*** Term Count
 Word count on some aggregate group is following the pattern I have
 been noticing where the simpler a function is, the more analytical
 power it seems to give. This may be generalised in the future to give
@@ -1520,19 +1584,21 @@ Note in the following function the near canonical example of
 split-apply-combine, or MapReduce style. This allows for performance
 gains in parallel processing, ideal for the large datasets we
 typically work with in text analytics.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/sentence-insight.R
-  #' Determine the number of words at each aggregate level
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R
+  #' Determine the number of terms at each aggregate level
   #'
-  #' @param .data character vector of words
+  #' @param .data character vector of terms
   #'
   #' @param aggregate_on vector to split .data on for insight
   #'
-  #' @return vector of number of words for each aggregate level, same
+  #' @return vector of number of terms for each aggregate level, same
   #'   length as .data
-  word_count <- function(.data, aggregate_on){
+  #'
+  #' @export
+  term_count <- function(.data, aggregate_on){
     split(.data, aggregate_on) %>%
-      map(function(x){rep(length(x), length(x))}) %>%
-      combine()
+      purrr::map(function(x){rep(length(x), length(x))}) %>%
+      dplyr::combine()
   }
 #+end_src
 *** Key Sentence (LexRank)
@@ -1545,33 +1611,35 @@ of textrank again.
 Testing shows a performance of around 3-4 mins for ~30,000 words of
 text aggregated of ~3000 sentences. Not bad for something graph based,
 but a warning will be required at the user end.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/sentence-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R
   #' get score for key sentences as per Lexrank
   #'
   #' @param .data character vector of words
   #'
   #' @param aggregate_on vector to aggregate .data over; ideally, sentence_id
+  #'
+  #' @export
   key_sentences <- function(.data, aggregate_on){
     ## prepare .data for lexrank
-    base <-  tibble(word = !! .data, aggregate = aggregate_on)
+    base <-  tibble::tibble(word = !! .data, aggregate = aggregate_on)
     aggregated <- base %>%
-      group_by(aggregate) %>%
-      na.omit() %>%
-      summarise(sentence = paste(word, collapse = " ")) %>%
-      mutate(sentence = paste0(sentence, "."))
+      dplyr::group_by(aggregate) %>%
+      stats::na.omit() %>%
+      dplyr::summarise(sentence = paste(word, collapse = " ")) %>%
+      dplyr::mutate(sentence = paste0(sentence, "."))
     ## lexrank
     lr <- aggregated %>%
-      pull(sentence) %>%
-      lexRank(., n=length(.),removePunc = FALSE, returnTies = FALSE,
+      dplyr::pull(sentence) %>%
+      lexRankr::lexRank(., n=length(.),removePunc = FALSE, returnTies = FALSE,
 	      removeNum = FALSE, toLower = FALSE, stemWords = FALSE,
 	      rmStopWords = FALSE, Verbose = TRUE)
     ## match lexrank output to .data
     lr %>%
-      distinct(sentence, .keep_all = TRUE) %>% 
-      full_join(aggregated, by="sentence") %>%
-      full_join(base, by="aggregate") %>%
-      arrange(aggregate) %>%
-      pull(value)
+      dplyr::distinct(sentence, .keep_all = TRUE) %>% 
+      dplyr::full_join(aggregated, by="sentence") %>%
+      dplyr::full_join(base, by="aggregate") %>%
+      dplyr::arrange(aggregate) %>%
+      dplyr::pull(value)
   }
 
 #+end_src
@@ -1581,7 +1649,7 @@ similar situation is true of sentiment. I'll make it so that it can
 deliver any statistic of a sentence; mean, median, variance etc.
 Importantly, it will only work with numeric sentiment lexicons, in our
 case, AFINN.
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/sentence-insight.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R
   #' Get statistics for sentiment over some group, such as sentence.
   #'
   #' @param .data character vector of words
@@ -1591,17 +1659,19 @@ case, AFINN.
   #'
   #' @param statistic function that accepts na.rm argument; e.g. mean,
   #'   median, sd.
+  #'
+  #' @export
   aggregate_sentiment <- function(.data, aggregate_on, statistic){
-    enframe(.data, "nil1", "word") %>%
-      bind_cols(enframe(aggregate_on, "nil2", "aggregate")) %>%
-      select(word, aggregate) %>%
-      mutate(sentiment = word_sentiment(word)) %>%
-      group_by(aggregate) %>%
-      mutate(aggregate_sentiment =
-	       (function(.x){
-		 rep(statistic(.x, na.rm = TRUE), length(.x))
-	       })(sentiment)) %>%
-      pull(aggregate_sentiment)
+    tibble::enframe(.data, "nil1", "word") %>%
+      dplyr::bind_cols(tibble::enframe(aggregate_on, "nil2", "aggregate")) %>%
+      dplyr::select(word, aggregate) %>%
+      dplyr::mutate(sentiment = word_sentiment(word)) %>%
+      dplyr::group_by(aggregate) %>%
+      dplyr::mutate(aggregate_sentiment =
+		      (function(.x){
+			rep(statistic(.x, na.rm = TRUE), length(.x))
+		      })(sentiment)) %>%
+      dplyr::pull(aggregate_sentiment)
   }
 #+end_src
 *** TODO [#A] Term Frequency - Inverse Document Frequency (tf-idf)
@@ -1644,7 +1714,7 @@ requires some maneuvering with a wrapper function
 There are issues with the barplot, as documented by:
 #+begin_quote
 [2019-07-01 Mon] After implementing grouping, the issue with arranging
-bars in a barplot by rank within each group is that ggplot arranges
+bars in a barplot by rank within each group is that ggplot dplyr::arranges
 bars through the ordering of factor levels. The problem is that each
 instance of a word in every group shares the same level ordering, so
 while a word may rank highly overall, but less than others in a
@@ -1665,7 +1735,7 @@ TODO:
 #'
 #' @param std_tib the standard dataframe, modified so the last column
 #'     is the output of some insight function (eg. output from
-#'     word_freq)
+#'     term_freq)
 #'
 #' @param insight_name string name of the column insight
 #'     was performed on
@@ -1680,16 +1750,16 @@ TODO:
 word_bar <- function(std_tib, insight_name, insight_col,
                      n = 15, desc = TRUE){
     dist <- std_tib %>%
-        distinct(word, .keep_all=TRUE)
+        dplyr::distinct(word, .keep_all=TRUE)
     if (desc) {
-        arr <-  arrange(dist, desc(!! sym(insight_col)))
+        arr <-  dplyr::arrange(dist, desc(!! sym(insight_col)))
     }else{
-        arr <- arrange(dist, !! sym(insight_col))
+        arr <- dplyr::arrange(dist, !! sym(insight_col))
     }
     arr %>%
         group_modify(~{.x %>% head(n)}) %>%
         ungroup() %>%
-        mutate(!! sym(insight_name) := fct_reorder(!! sym(insight_name),
+        dplyr::mutate(!! sym(insight_name) := fct_reorder(!! sym(insight_name),
                                                    !! sym(insight_col),
                                                    .desc = desc)) %>%
         ggplot(aes(x = !! sym(insight_name))) +
@@ -1706,7 +1776,7 @@ word_bar <- function(std_tib, insight_name, insight_col,
 #'
 #' @param std_tib the standard dataframe, modified so the last column
 #'     is the output of some insight function (eg. output from
-#'     word_freq)
+#'     term_freq)
 #'
 #' @param insight_col string name of the column insight was
 #'     performed on
@@ -1734,7 +1804,7 @@ haven't had any major bugs with it yet
 #'
 #' @param std_tib the standard dataframe, modified so the last column
 #'     is the output of some insight function (eg. output from
-#'     word_freq)
+#'     term_freq)
 #'
 #' @param vis visualisation function
 #'
@@ -1765,7 +1835,7 @@ get_vis <- function(std_tib, operation, ...){
 ** Ungrouped
 *** Preparation
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-  imported <- import_files()
+  imported <- import_files(tk_choose.files())
   lemmatize <- TRUE
   stopwords <- TRUE
   sw_lexicon <- "snowball"
@@ -1778,12 +1848,12 @@ get_vis <- function(std_tib, operation, ...){
 *** Insights
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
   insighted <- data %>%
-    mutate(
-    word_freq = word_freq(text),
+    dplyr::mutate(
+    term_freq = term_freq(text),
     bigram = get_bigram(text),
-    bigram_freq = word_freq(bigram),
+    bigram_freq = term_freq(bigram),
     word_sentiment = word_sentiment(text),
-    word_count_sentence = word_count(text, sentence_id),
+    term_count_sentence = term_count(text, sentence_id),
     mean_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, mean),
     sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
     )
@@ -1794,32 +1864,32 @@ get_vis <- function(std_tib, operation, ...){
 *** Visualisation
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
   # … with 29,944 more rows, and 13 more variables: line_id <int>, word1 <chr>,
-  #   word_id <int>, lemma <chr>, stopword <lgl>, text <chr>, word_freq <int>,
+  #   word_id <int>, lemma <chr>, stopword <lgl>, text <chr>, term_freq <int>,
   #   bigram <chr>, bigram_freq <int>, word_sentiment <int>,
-  #   word_count_sentence <int>, mean_aggregate_sentiment_sentence <dbl>,
+  #   term_count_sentence <int>, mean_aggregate_sentiment_sentence <dbl>,
   #   sd_aggregate_sentiment_sentence <dbl>
 
 
   ## Structure: ggpage --------------------------------
 
   insighted %>%
-    pull(word) %>%
+    dplyr::pull(word) %>%
     ggpage_build() %>%
     bind_cols(insighted) %>%
     ggpage_plot(aes(colour=mean_aggregate_sentiment_sentence)) +
     scale_color_gradient2()
 
   insighted %>%
-    pull(word) %>%
+    dplyr::pull(word) %>%
     ggpage_build() %>%
     bind_cols(insighted) %>%
-    ggpage_plot(aes(colour=word_count_sentence)) +
+    ggpage_plot(aes(colour=term_count_sentence)) +
     labs(title = "Word Count of Sentences")
 
   ## Distribution: Histogram --------------------------------
 
   insighted %>%
-    ggplot(aes(word_freq)) +
+    ggplot(aes(term_freq)) +
     geom_histogram() +
     labs(title = "Histogram of Word Frequency")
 
@@ -1828,9 +1898,9 @@ get_vis <- function(std_tib, operation, ...){
   n <- 10
 
   insighted %>%
-    distinct(bigram, .keep_all = TRUE) %>%
+    dplyr::distinct(bigram, .keep_all = TRUE) %>%
     top_n(n, bigram_freq) %>%
-    mutate(bigram = reorder(bigram, desc(bigram_freq))) %>%
+    dplyr::mutate(bigram = reorder(bigram, desc(bigram_freq))) %>%
     ggplot(aes(bigram, bigram_freq)) +
     geom_col() +
     labs(title = "Bigrams by Bigram Frequency")
@@ -1840,15 +1910,15 @@ get_vis <- function(std_tib, operation, ...){
 We import a file downloaded from Project Gutenberg, and run through
 some basic preparation, with additional stopwords to be removed
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-  imported <- import_files()
+  imported <- import_files(tk_choose.files())
   lemmatize <- TRUE
   stopwords <- TRUE
   sw_lexicon <- "snowball"
   addl_stopwords <- NA
   prepped <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
-  sectioned <- prepped %>% mutate(chapter = get_chapters(text))
+  sectioned <- prepped %>% dplyr::mutate(chapter = get_chapters(text))
   data <- sectioned %>%
-    group_by(doc_id, chapter)
+    dplyr::group_by(doc_id, chapter)
 
   ## .data <- data$text
   ## aggregate_by <- data$chapter
@@ -1859,12 +1929,12 @@ some basic preparation, with additional stopwords to be removed
 *** Insights
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
   insighted <- data %>%
-    mutate(
-    word_freq = word_freq(text),
+    dplyr::mutate(
+    term_freq = term_freq(text),
     bigram = get_bigram(text),
-    bigram_freq = word_freq(bigram),
+    bigram_freq = term_freq(bigram),
     word_sentiment = word_sentiment(text),
-    word_count_sentence = word_count(text, sentence_id),
+    term_count_sentence = term_count(text, sentence_id),
     mean_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, mean),
     sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
     )
@@ -1872,18 +1942,18 @@ some basic preparation, with additional stopwords to be removed
   ## alt_insighted <- data %>%
   ##   group_modify(~ {
   ##     .x %>%
-  ##   mutate(
-  ##   word_freq = word_freq(text),
+  ##   dplyr::mutate(
+  ##   term_freq = term_freq(text),
   ##   bigram = get_bigram(text),
-  ##   bigram_freq = word_freq(bigram),
+  ##   bigram_freq = term_freq(bigram),
   ##   word_sentiment = word_sentiment(text),
-  ##   word_count_sentence = word_count(text, sentence_id),
+  ##   term_count_sentence = term_count(text, sentence_id),
   ##   mean_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, mean),
   ##   sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
   ##   )      
   ##   })
 
-  ## testthat::test_that("groups work with mutate as with group_modify",
+  ## testthat::test_that("groups work with dplyr::mutate as with group_modify",
   ## {
   ##   expect_equal(insighted, alt_insighted)
   ## })
@@ -1899,7 +1969,7 @@ some basic preparation, with additional stopwords to be removed
   insighted %>% #base data
     group_modify(~ { #build ggpage
       .x %>%
-	pull(word) %>%
+	dplyr::pull(word) %>%
 	ggpage_build() %>%
 	bind_cols(.x)  
     }) %>%
@@ -1912,7 +1982,7 @@ some basic preparation, with additional stopwords to be removed
   insighted %>% #base data
     group_modify(~ { #build ggpage
       .x %>%
-	pull(word) %>%
+	dplyr::pull(word) %>%
 	ggpage_build() %>%
 	bind_cols(.x)  
     }) %>%
@@ -1926,26 +1996,26 @@ some basic preparation, with additional stopwords to be removed
   insighted %>% #base data
     group_modify(~ { #build ggpage
       .x %>%
-	pull(word) %>%
+	dplyr::pull(word) %>%
 	ggpage_build() %>%
 	bind_cols(.x)  
     }) %>%
-    ggpage_plot(aes(colour=word_count_sentence)) + #plot ggpage
+    ggpage_plot(aes(colour=term_count_sentence)) + #plot ggpage
     ## scale_color_gradient2() +
     facet_wrap(groups) +
     labs(title = glue("Word Count of Sentences by {paste(groups, collapse = \", \")}"))
 
   insighted %>%
-    pull(word) %>%
+    dplyr::pull(word) %>%
     ggpage_build() %>%
     bind_cols(insighted) %>%
-    ggpage_plot(aes(colour=word_count_sentence)) +
+    ggpage_plot(aes(colour=term_count_sentence)) +
     labs(title = "Word Count of Sentences")
 
   ## Distribution: Histogram --------------------------------
 
   insighted %>%
-    ggplot(aes(word_freq)) +
+    ggplot(aes(term_freq)) +
     geom_histogram() +
     labs(title = "Histogram of Word Frequency") +
     facet_wrap(groups)
@@ -1957,12 +2027,12 @@ some basic preparation, with additional stopwords to be removed
 
   insighted %>%
     group_modify(~ {.x %>%
-		      distinct(bigram, .keep_all = TRUE) %>%
-		      arrange(desc(bigram_freq)) %>%
+		      dplyr::distinct(bigram, .keep_all = TRUE) %>%
+		      dplyr::arrange(desc(bigram_freq)) %>%
 		      head(n)
     }) %>%
     ungroup() %>%
-    mutate(bigram = reorder_within(bigram, bigram_freq, !! ifexp(length(groups) > 1,
+    dplyr::mutate(bigram = reorder_within(bigram, bigram_freq, !! ifexp(length(groups) > 1,
 								  syms(groups),
 								  sym(groups)))) %>% 
     ggplot(aes(bigram, bigram_freq)) +
@@ -1989,8 +2059,8 @@ imported %>%
 imported %>%
     ggpage_build() %>%
     filter(page == 1) %>%
-    get_insight(word_freq) %>%
-    ggpage_plot(aes(fill=word_freq))
+    get_insight(term_freq) %>%
+    ggpage_plot(aes(fill=term_freq))
 
 stopwords <- get_sw()
 
@@ -2001,8 +2071,8 @@ imported <- import_txt(filename) %>%
 
 imported %>%
     ggpage_build() %>%
-    get_insight(word_freq) %>%
-    ggpage_plot(aes(fill=word_freq))
+    get_insight(term_freq) %>%
+    ggpage_plot(aes(fill=term_freq))
 
 imported %>%
     ggpage_build() %>%

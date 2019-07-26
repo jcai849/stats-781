@@ -2,7 +2,7 @@
 #'
 #' @param std_tib the standard dataframe, modified so the last column
 #'     is the output of some insight function (eg. output from
-#'     word_freq)
+#'     term_freq)
 #'
 #' @param insight_name string name of the column insight
 #'     was performed on
@@ -17,16 +17,16 @@
 word_bar <- function(std_tib, insight_name, insight_col,
                      n = 15, desc = TRUE){
     dist <- std_tib %>%
-        distinct(word, .keep_all=TRUE)
+        dplyr::distinct(word, .keep_all=TRUE)
     if (desc) {
-        arr <-  arrange(dist, desc(!! sym(insight_col)))
+        arr <-  dplyr::arrange(dist, desc(!! sym(insight_col)))
     }else{
-        arr <- arrange(dist, !! sym(insight_col))
+        arr <- dplyr::arrange(dist, !! sym(insight_col))
     }
     arr %>%
         group_modify(~{.x %>% head(n)}) %>%
         ungroup() %>%
-        mutate(!! sym(insight_name) := fct_reorder(!! sym(insight_name),
+        dplyr::mutate(!! sym(insight_name) := fct_reorder(!! sym(insight_name),
                                                    !! sym(insight_col),
                                                    .desc = desc)) %>%
         ggplot(aes(x = !! sym(insight_name))) +
@@ -37,7 +37,7 @@ word_bar <- function(std_tib, insight_name, insight_col,
 #'
 #' @param std_tib the standard dataframe, modified so the last column
 #'     is the output of some insight function (eg. output from
-#'     word_freq)
+#'     term_freq)
 #'
 #' @param insight_col string name of the column insight was
 #'     performed on
@@ -51,7 +51,7 @@ std_tib %>%
 #'
 #' @param std_tib the standard dataframe, modified so the last column
 #'     is the output of some insight function (eg. output from
-#'     word_freq)
+#'     term_freq)
 #'
 #' @param vis visualisation function
 #'

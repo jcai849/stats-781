@@ -24,10 +24,10 @@ key_sentences <- function(.data, aggregate_on){
     group_by(aggregate) %>%
     na.omit() %>%
     summarise(sentence = paste(word, collapse = " ")) %>%
-    mutate(sentence = paste0(sentence, "."))
+    dplyr::mutate(sentence = paste0(sentence, "."))
   ## lexrank
   lr <- aggregated %>%
-    pull(sentence) %>%
+    dplyr::pull(sentence) %>%
     lexRank(., n=length(.),removePunc = FALSE, returnTies = FALSE,
 	    removeNum = FALSE, toLower = FALSE, stemWords = FALSE,
 	    rmStopWords = FALSE, Verbose = TRUE)
@@ -37,7 +37,7 @@ key_sentences <- function(.data, aggregate_on){
     full_join(aggregated, by="sentence") %>%
     full_join(base, by="aggregate") %>%
     arrange(aggregate) %>%
-    pull(value)
+    dplyr::pull(value)
 }
 
 #' Get statistics for sentiment over some group, such as sentence.
@@ -50,14 +50,14 @@ key_sentences <- function(.data, aggregate_on){
 #' @param statistic function that accepts na.rm argument; e.g. mean,
 #'   median, sd.
 aggregate_sentiment <- function(.data, aggregate_on, statistic){
-  enframe(.data, "nil1", "word") %>%
-    bind_cols(enframe(aggregate_on, "nil2", "aggregate")) %>%
-    select(word, aggregate) %>%
-    mutate(sentiment = word_sentiment(word)) %>%
+  tibble::enframe(.data, "nil1", "word") %>%
+    bind_cols(tibble::enframe(aggregate_on, "nil2", "aggregate")) %>%
+    dplyr::select(word, aggregate) %>%
+    dplyr::mutate(sentiment = word_sentiment(word)) %>%
     group_by(aggregate) %>%
-    mutate(aggregate_sentiment =
+    dplyr::mutate(aggregate_sentiment =
 	     (function(.x){
 	       rep(statistic(.x, na.rm = TRUE), length(.x))
 	     })(sentiment)) %>%
-    pull(aggregate_sentiment)
+    dplyr::pull(aggregate_sentiment)
 }
