@@ -827,17 +827,12 @@ intentionality behind it, rather than scrolling through pre-made
 visualisations. This would require (i.e. make clear) a function that
 takes specifications of x, y, facets etc.
 * Program Dependencies
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/depends.R
-  library(tidyverse)
-  library(readr)
-  library(readxl)
-  library(tidytext)
-  library(textrank)
-  library(lexRankr)
-  library(ggpage)
-  library(textstem)
-  library(glue)
-  library(tcltk)
+The following code is to enable tibbles internally in the package
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/inzightta-package.R
+## usethis namespace: start
+#' @importFrom tibble tibble
+## usethis namespace: end
+NULL
 #+end_src
 I am considering using [[https://davisvaughan.github.io/furrr/][furrr]] for parallel or distributed processing
 performance enhancements, though I want to get all functionality
@@ -968,9 +963,10 @@ concept.
   #'
   #' @param filepath a string indicating the relative or absolute
   #'     filepath of the file to import
-  #'
-  #' @return tibble of each row corrresponding to a line of the text
-  #'     file, with the column named "text"
+  #' 
+  #' @return a [tibble][tibble::tibble-package] of each row
+  #'   corrresponding to a line of the text file, with the column named
+  #'   "text"
   import_txt <- function(filepath){
     readr::read_lines(filepath) %>%
       tibble::tibble(text=.)
@@ -990,8 +986,9 @@ the specification of which column is the text column of interest.
   #' @param filepath a string indicating the relative or absolute
   #'     filepath of the file to import
   #'
-  #' @return tibble of each row corrresponding to a line of the text
-  #'     file, with the column named "text"
+  #' @return a [tibble][tibble::tibble-package] of each row
+  #'   corrresponding to a line of the text file, with the column named
+  #'   "text"
   import_csv <- function(filepath){
     readr::read_csv(filepath) %>%
       table_textcol()
@@ -1007,7 +1004,7 @@ to csv.
   #' @param filepath a string indicating the relative or absolute
   #'     filepath of the file to import
   #'
-  #' @return tibble of each row corrresponding to a line of the text
+  #' @return a [tibble][tibble::tibble-package] of each row corrresponding to a line of the text
   #'     file, with the column named "text"
   import_excel <- function(filepath){
     readxl::read_excel(filepath) %>%
@@ -1029,7 +1026,7 @@ name of the document as a column
   #'
   #' @param filepath string filepath of file for import
   #'
-  #' return imported file with document id
+  #' @return imported file with document id
   import_base_file <- function(filepath){
     filetype <- get_filetype(filepath)
     filename <- basename(filepath)
@@ -1052,9 +1049,8 @@ direct Gutenburg import)
   #'
   #' @param filepaths char vector of filepaths
   #'
-  #' @return imported files with document id, bound into tibble
-  #' 
-  #' @importFrom magrittr %>%
+  #' @return a [tibble][tibble::tibble-package] imported files with
+  #'   document id
   #' 
   #' @export
   import_files <- function(filepaths){
@@ -1092,7 +1088,7 @@ grouping has been shifted to take place afterwards
   #' @param data a tibble formatted with a text and (optional) group
   #'     column
   #'
-  #' @return a tibble formatted such that columns correspond to
+  #' @return a [tibble][tibble::tibble-package] formatted such that columns correspond to
   #'     identifiers of group, line, sentence, word (groups ignored)
   #'
   #' @export
@@ -1161,7 +1157,7 @@ below.
   #' @param addl user defined character vector of additional stopwords,
   #'     each element being a stopword
   #'
-  #' @return a tibble with one column named "word"
+  #' @return a [tibble][tibble::tibble-package] with one column named "word"
   get_sw <- function(lexicon = "snowball", addl = NA){
     addl_char <- as.character(addl)
     tidytext::get_stopwords(source = lexicon) %>%
@@ -1181,7 +1177,8 @@ The status of the stopwords are then added to the data with =determine_stopwords
   #'
   #' @param ... arguments of get_sw
   #'
-  #' @return a dataframe equivalent to the input dataframe, with an additional stopword column
+  #' @return a [tibble][tibble::tibble-package] equivalent to the input
+  #'   dataframe, with an additional stopword column
   #'
   #' @export
   determine_stopwords <- function(.data, ...){
@@ -1216,8 +1213,9 @@ logic involving the interaction of stopwords and lemmatisation:
   #'
   #' @param addl_stopwords char vector of user-supplied stopwords
   #'
-  #' @return tibble with one token per line, stopwords removed leaving
-  #'   NA values, column for analysis named "text"
+  #' @return a [tibble][tibble::tibble-package] with one token per line,
+  #'   stopwords removed leaving NA values, column for analysis named
+  #'   "text"
   #'
   #' @export
   text_prep <- function(.data, lemmatize=TRUE, stopwords=TRUE, sw_lexicon="snowball", addl_stopwords=NA){
@@ -1340,7 +1338,7 @@ words will always be syntactical glue, such as articles
   #' @export
   term_freq <- function(.data){
     .data %>%
-      tibble::enframe %>%
+      tibble::enframe() %>%
     dplyr::add_count(value) %>%
     dplyr::mutate(n = dplyr::if_else(is.na(value),
 		       as.integer(NA),
@@ -1679,25 +1677,26 @@ case, AFINN.
 ** TODO [#B] Wrapper
 The insights of choice can all be combined into a wrapper function,
 taking the forms and arguments of the insights and applying those
-chosen.
+chosen. Deprecated now that insight functions work vector-wise.
 
 TODO:
 - [ ] Take multiple insights
 #+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
-#' perform group-aware operation on the standard dataframe
-#'
-#' @param std_tib the standard dataframe given as the output of the format_data function
-#'
-#' @param operation insight function to be performed on the dataframe
-#'
-#' @return grouped output from the operation
-get_insight <- function(std_tib, operation){
-    std_tib %>%
-        group_modify(~ {
-            .x %>%
-                operation
-        })
-}
+  ## ------------------------------ DEPRECATED ------------------------------
+  ## #' perform group-aware operation on the standard dataframe
+  ## #'
+  ## #' @param std_tib the standard dataframe given as the output of the format_data function
+  ## #'
+  ## #' @param operation insight function to be performed on the dataframe
+  ## #'
+  ## #' @return grouped output from the operation
+  ## get_insight <- function(std_tib, operation){
+  ##     std_tib %>%
+  ##         group_modify(~ {
+  ##             .x %>%
+  ##                 operation
+  ##         })
+  ## }
 #+end_src
 * Program Layer: Visualisation
 I have grouped visualisations by their output intention, rather than
@@ -1822,20 +1821,27 @@ get_vis <- function(std_tib, operation, ...){
 #+end_src
 * Testing / Demonstration
 ** Source
- #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-   source("../src/depends.R")
-   source("../src/prep-for-insight.R")
-   source("../src/word-insight.R")
-   source("../src/sentence-insight.R")
-   source("../src/vis-insight.R")
+ #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :output nil
+   library(inzightta)
  #+end_src
 
  #+RESULTS:
+ | magrittr  |
+ | tcltk2    |
+ | tcltk     |
+ | inzightta |
+ | stats     |
+ | graphics  |
+ | grDevices |
+ | utils     |
+ | datasets  |
+ | methods   |
+ | base      |
 
 ** Ungrouped
 *** Preparation
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-  imported <- import_files(tk_choose.files())
+  imported <- import_files(tcltk2::tk_choose.files())
   lemmatize <- TRUE
   stopwords <- TRUE
   sw_lexicon <- "snowball"

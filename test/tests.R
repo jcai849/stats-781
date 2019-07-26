@@ -1,10 +1,6 @@
-source("../src/depends.R")
-source("../src/prep-for-insight.R")
-source("../src/word-insight.R")
-source("../src/sentence-insight.R")
-source("../src/vis-insight.R")
+library(inzightta)
 
-imported <- import_files(tk_choose.files())
+imported <- import_files(tcltk2::tk_choose.files())
 lemmatize <- TRUE
 stopwords <- TRUE
 sw_lexicon <- "snowball"
