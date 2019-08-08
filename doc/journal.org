@@ -1,5 +1,6 @@
 [2019-07-21 Sun]: GOTO [[#program-dependencies][Program Dependencies]] section, continue through Preparation, Insight, and Visualisation
 * Table of Contents                                                     :TOC:
+- [[#dissertation-due][Dissertation Due]]
 - [[#colophon][COLOPHON]]
 - [[#initial-survey][Initial Survey]]
   - [[#prescribed-reading][Prescribed Reading]]
@@ -63,6 +64,8 @@
   - [[#ggpage-1][ggpage]]
 - [[#shiny-frontend][Shiny Frontend]]
 
+* Dissertation Due
+  DEADLINE: <2019-10-29 Tue>
 * COLOPHON
 Work was all done in emacs, with the code in R, tangled through org mode
 * Initial Survey
@@ -990,8 +993,8 @@ the specification of which column is the text column of interest.
   #'   corrresponding to a line of the text file, with the column named
   #'   "text"
   import_csv <- function(filepath){
-    readr::read_csv(filepath) %>%
-      table_textcol()
+    readr::read_csv(filepath) ## %>%
+      ## table_textcol()
   }
 #+end_src
 *** Import Excel
@@ -1007,8 +1010,8 @@ to csv.
   #' @return a [tibble][tibble::tibble-package] of each row corrresponding to a line of the text
   #'     file, with the column named "text"
   import_excel <- function(filepath){
-    readxl::read_excel(filepath) %>%
-      table_textcol()
+    readxl::read_excel(filepath) ## %>%
+      ## table_textcol()
   }
 #+end_src
 *** TODO Import Gutenberg
@@ -1841,7 +1844,7 @@ get_vis <- function(std_tib, operation, ...){
 ** Ungrouped
 *** Preparation
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-  imported <- import_files(tcltk2::tk_choose.files())
+  imported <- import_files(tcltk::tk_choose.files())
   lemmatize <- TRUE
   stopwords <- TRUE
   sw_lexicon <- "snowball"
@@ -1875,29 +1878,28 @@ get_vis <- function(std_tib, operation, ...){
   #   term_count_sentence <int>, mean_aggregate_sentiment_sentence <dbl>,
   #   sd_aggregate_sentiment_sentence <dbl>
 
-
   ## Structure: ggpage --------------------------------
 
   insighted %>%
     dplyr::pull(word) %>%
-    ggpage_build() %>%
-    bind_cols(insighted) %>%
-    ggpage_plot(aes(colour=mean_aggregate_sentiment_sentence)) +
-    scale_color_gradient2()
+    ggpage::ggpage_build() %>%
+    dplyr::bind_cols(insighted) %>%
+    ggpage::ggpage_plot(ggplot2::aes(colour=mean_aggregate_sentiment_sentence)) +
+    ggplot2::scale_color_gradient2()
 
   insighted %>%
     dplyr::pull(word) %>%
-    ggpage_build() %>%
-    bind_cols(insighted) %>%
-    ggpage_plot(aes(colour=term_count_sentence)) +
-    labs(title = "Word Count of Sentences")
+    ggpage::ggpage_build() %>%
+    dplyr::bind_cols(insighted) %>%
+    ggpage::ggpage_plot(ggplot2::aes(colour=term_count_sentence)) +
+    ggplot2::labs(title = "Word Count of Sentences")
 
   ## Distribution: Histogram --------------------------------
 
   insighted %>%
-    ggplot(aes(term_freq)) +
-    geom_histogram() +
-    labs(title = "Histogram of Word Frequency")
+    ggplot2::ggplot(ggplot2::aes(term_freq)) +
+    ggplot2::geom_histogram() +
+    ggplot2::labs(title = "Histogram of Word Frequency")
 
   ## Score: barplot --------------------------------
 
@@ -1905,18 +1907,18 @@ get_vis <- function(std_tib, operation, ...){
 
   insighted %>%
     dplyr::distinct(bigram, .keep_all = TRUE) %>%
-    top_n(n, bigram_freq) %>%
-    dplyr::mutate(bigram = reorder(bigram, desc(bigram_freq))) %>%
-    ggplot(aes(bigram, bigram_freq)) +
-    geom_col() +
-    labs(title = "Bigrams by Bigram Frequency")
+    dplyr::top_n(n, bigram_freq) %>%
+    dplyr::mutate(bigram = forcats::fct_reorder(bigram, dplyr::desc(bigram_freq))) %>%
+    ggplot2::ggplot(ggplot2::aes(bigram, bigram_freq)) +
+    ggplot2::geom_col() +
+    ggplot2::labs(title = "Bigrams by Bigram Frequency")
 #+end_src
 ** Grouped
 *** Preparation
 We import a file downloaded from Project Gutenberg, and run through
 some basic preparation, with additional stopwords to be removed
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
-  imported <- import_files(tk_choose.files())
+  imported <- import_files(tcltk::tk_choose.files())
   lemmatize <- TRUE
   stopwords <- TRUE
   sw_lexicon <- "snowball"
@@ -1970,83 +1972,90 @@ some basic preparation, with additional stopwords to be removed
 *** Visualisation
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
   ## Structure: ggpage --------------------------------
-  groups <- group_vars(insighted)
+  groups <- dplyr::group_vars(insighted)
 
   insighted %>% #base data
-    group_modify(~ { #build ggpage
+    dplyr::group_modify(~ { #build ggpage
       .x %>%
 	dplyr::pull(word) %>%
-	ggpage_build() %>%
-	bind_cols(.x)  
+	ggpage::ggpage_build() %>%
+	dplyr::bind_cols(.x)  
     }) %>%
-    ggpage_plot(aes(colour=mean_aggregate_sentiment_sentence)) + #plot ggpage
-    scale_color_gradient2() +
-    facet_wrap(groups) +
-    labs(title = glue("Mean Sentiment of Sentences by {paste(groups, collapse = \", \")}"))
-  ggsave(filename = "mean-sent-ggpage.png", device = "png", path="~/stats-781/out/")
+    ggpage::ggpage_plot(ggplot2::aes(colour=mean_aggregate_sentiment_sentence)) + #plot ggpage
+    ggplot2::scale_color_gradient2() +
+    ggplot2::facet_wrap(groups) +
+    ggplot2::labs(title = glue::glue("Mean Sentiment of Sentences by {paste(groups, collapse = \", \")}"))
+
+  ggplot2::ggsave(filename = "mean-sent-ggpage.png", device = "png", path="~/stats-781/out/")
 
   insighted %>% #base data
-    group_modify(~ { #build ggpage
+    dplyr::group_modify(~ { #build ggpage
       .x %>%
 	dplyr::pull(word) %>%
-	ggpage_build() %>%
-	bind_cols(.x)  
+	ggpage::ggpage_build() %>%
+	dplyr::bind_cols(.x)  
     }) %>%
-    ggpage_plot(aes(colour=sd_aggregate_sentiment_sentence)) + #plot ggpage
-    scale_color_gradient2() +
-    facet_wrap(groups) +
-    labs(title = glue("Sentiment Standard Deviation of Sentences by {paste(groups, collapse = \", \")}"))
+    ggpage::ggpage_plot(ggplot2::aes(colour=sd_aggregate_sentiment_sentence)) + #plot ggpage
+    ggplot2::scale_color_gradient2() +
+    ggplot2::facet_wrap(groups) +
+      ggplot2::labs(title = glue::glue("Sentiment Standard Deviation of Sentences by {paste(groups, collapse = \", \")}"))
+
+  
   ggsave(filename = "sd-sent-ggpage.png", device = "png", path="~/stats-781/out/")
 
 
   insighted %>% #base data
-    group_modify(~ { #build ggpage
+     dplyr::group_modify(~ { #build ggpage
       .x %>%
 	dplyr::pull(word) %>%
-	ggpage_build() %>%
-	bind_cols(.x)  
+	ggpage::ggpage_build() %>%
+	dplyr::bind_cols(.x)  
     }) %>%
-    ggpage_plot(aes(colour=term_count_sentence)) + #plot ggpage
+    ggpage::ggpage_plot(ggplot2::aes(colour=term_count_sentence)) + #plot ggpage
     ## scale_color_gradient2() +
-    facet_wrap(groups) +
-    labs(title = glue("Word Count of Sentences by {paste(groups, collapse = \", \")}"))
+    ggplot2::facet_wrap(groups) +
+    ggplot2::labs(title = glue::glue("Word Count of Sentences by {paste(groups, collapse = \", \")}"))
 
   insighted %>%
     dplyr::pull(word) %>%
-    ggpage_build() %>%
-    bind_cols(insighted) %>%
-    ggpage_plot(aes(colour=term_count_sentence)) +
-    labs(title = "Word Count of Sentences")
+    ggpage::ggpage_build() %>%
+    dplyr::bind_cols(insighted) %>%
+    ggpage::ggpage_plot(ggplot2::aes(colour=term_count_sentence)) +
+    ggplot2::labs(title = "Word Count of Sentences")
 
   ## Distribution: Histogram --------------------------------
 
   insighted %>%
-    ggplot(aes(term_freq)) +
-    geom_histogram() +
-    labs(title = "Histogram of Word Frequency") +
-    facet_wrap(groups)
-  ggsave(filename = "word-freq-hist.png", device = "png", path="~/stats-781/out/")
+    ggplot2::ggplot(ggplot2::aes(term_freq)) +
+    ggplot2::geom_histogram() +
+    ggplot2::labs(title = "Histogram of Word Frequency") +
+    ggplot2::facet_wrap(groups)
+  
+  ggplot2::ggsave(filename = "word-freq-hist.png", device = "png", path="~/stats-781/out/")
 
   ## Score: barplot --------------------------------
 
   n <- 10
 
   insighted %>%
-    group_modify(~ {.x %>%
+      dplyr::group_modify(~ {.x %>%
 		      dplyr::distinct(bigram, .keep_all = TRUE) %>%
 		      dplyr::arrange(desc(bigram_freq)) %>%
 		      head(n)
     }) %>%
-    ungroup() %>%
-    dplyr::mutate(bigram = reorder_within(bigram, bigram_freq, !! ifexp(length(groups) > 1,
-								  syms(groups),
-								  sym(groups)))) %>% 
-    ggplot(aes(bigram, bigram_freq)) +
-    geom_bar(stat="identity") +
-    facet_wrap(groups, scales = "free_y") +
-    scale_x_reordered() +
-    coord_flip() +
-    labs(title = "Bigrams by Bigram Frequency")
+    dplyr::ungroup() %>%
+      dplyr::mutate(bigram = tidytext::reorder_within(bigram,
+                                                      bigram_freq,
+                                                      !! ifexp(length(groups) > 1,
+                                                               dplyr::syms(groups),
+							       dplyr::sym(groups)))) %>% 
+    ggplot2::ggplot(ggplot2::aes(bigram, bigram_freq)) +
+    ggplot2::geom_bar(stat="identity") +
+    ggplot2::facet_wrap(groups, scales = "free_y") +
+    tidytext::scale_x_reordered() +
+    ggplot2::coord_flip() +
+      ggplot2::labs(title = "Bigrams by Bigram Frequency")
+  
   ggsave(filename = "bigram-freq-bar.png", device = "png", path="~/stats-781/out/")
 #+end_src
 
@@ -2092,3 +2101,20 @@ imported %>%
     scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0)
 #+end_src
 * Shiny Frontend
+For the user interface, the obvious choice is shiny. We will use the
+following as our shiny app:
+#+begin_src R :session rsession1 :tangle ~/inzightta-shiny/app.R
+  library(shiny)
+  library(inzightta)
+
+  ui <- pageWithSidebar(
+    headerPanel("iNZight Text Analytics"),
+    sidebarPanel(),
+    mainPanel()
+  )
+
+  server <- function(input, output) {
+  }
+
+  shinyApp(ui, server)
+#+end_src

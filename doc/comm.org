@@ -336,12 +336,17 @@ Jason
 * Contact Chris
 <2019-07-17 Wed 11:00-12:00>
 ** Topics
-** Dissertation Work [1/4]
-   SCHEDULED: <2019-07-26 Fri>
+** CLOSED Dissertation Work [3/3]
+   CLOSED: [2019-07-26 Fri 18:44] SCHEDULED: <2019-07-26 Fri>
 - [X] Take import out of import function, get it to work on char vec instead
-- [ ] Arrange into package
-- [ ] Prepare shiny directory
-- [ ] ? bring in as submodules
+- [X] Arrange into package
+- [X] Prepare shiny directory
+** Further Dissertation Work [0/4]
+   SCHEDULED: <2019-08-07 Wed 13:00-17:00>
+- [ ] Re-read Shiny Documentation
+- [ ] Test an increment-decrement app
+- [ ] Try advanced features (action button, ui hiding etc.)
+- [ ] Begin work on import functions in shiny
 * Contact Chris
 <2019-07-24 Wed 11:00-12:00>
 ** Topics
