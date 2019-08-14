@@ -341,20 +341,18 @@ Jason
 - [X] Take import out of import function, get it to work on char vec instead
 - [X] Arrange into package
 - [X] Prepare shiny directory
-** Further Dissertation Work [0/4]
-   SCHEDULED: <2019-08-07 Wed 13:00-17:00>
-- [ ] Re-read Shiny Documentation
-- [ ] Test an increment-decrement app
+** CLOSED Further Dissertation Work [3/4]
+   CLOSED: [2019-08-08 Thu 17:26] SCHEDULED: <2019-08-07 Wed 13:00-17:00>
+- [X] Re-read Shiny Documentation
+- [X] Test an increment-decrement app
 - [ ] Try advanced features (action button, ui hiding etc.)
-- [ ] Begin work on import functions in shiny
-* Contact Chris
-<2019-07-24 Wed 11:00-12:00>
-** Topics
-** Actions
-* Contact Chris
-<2019-07-31 Wed 11:00-12:00>
-** Topics
-** Actions
-* Chris Back: contact Chris
-<2019-08-07 Wed 11:00-12:00>
-- [ ] Reschedule meetings
+- [X] Begin work on import functions in shiny
+* Meeting Chris
+<2019-08-08 Thu 15:00-16:30>
+** Dissertation Work [1/3]
+   SCHEDULED: <2019-08-14 Wed>
+- [X] Send PDF to Chris of dissertation so far
+- [ ] Re-build Package; script it for automatic rebuild
+- [ ] Continue working on interface
+* Meeting Chris<2019-08-16 Fri 11:00>
+* Meeting Chris<2019-08-21 Wed 15:00>

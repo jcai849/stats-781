@@ -1,6 +1,6 @@
 library(inzightta)
 
-imported <- import_files(tcltk2::tk_choose.files())
+imported <- import_files(tcltk::tk_choose.files())
 lemmatize <- TRUE
 stopwords <- TRUE
 sw_lexicon <- "snowball"
@@ -24,29 +24,28 @@ insighted <- data %>%
 #   term_count_sentence <int>, mean_aggregate_sentiment_sentence <dbl>,
 #   sd_aggregate_sentiment_sentence <dbl>
 
-
 ## Structure: ggpage --------------------------------
 
 insighted %>%
   dplyr::pull(word) %>%
-  ggpage_build() %>%
-  bind_cols(insighted) %>%
-  ggpage_plot(aes(colour=mean_aggregate_sentiment_sentence)) +
-  scale_color_gradient2()
+  ggpage::ggpage_build() %>%
+  dplyr::bind_cols(insighted) %>%
+  ggpage::ggpage_plot(ggplot2::aes(colour=mean_aggregate_sentiment_sentence)) +
+  ggplot2::scale_color_gradient2()
 
 insighted %>%
   dplyr::pull(word) %>%
-  ggpage_build() %>%
-  bind_cols(insighted) %>%
-  ggpage_plot(aes(colour=term_count_sentence)) +
-  labs(title = "Word Count of Sentences")
+  ggpage::ggpage_build() %>%
+  dplyr::bind_cols(insighted) %>%
+  ggpage::ggpage_plot(ggplot2::aes(colour=term_count_sentence)) +
+  ggplot2::labs(title = "Word Count of Sentences")
 
 ## Distribution: Histogram --------------------------------
 
 insighted %>%
-  ggplot(aes(term_freq)) +
-  geom_histogram() +
-  labs(title = "Histogram of Word Frequency")
+  ggplot2::ggplot(ggplot2::aes(term_freq)) +
+  ggplot2::geom_histogram() +
+  ggplot2::labs(title = "Histogram of Word Frequency")
 
 ## Score: barplot --------------------------------
 
@@ -54,13 +53,13 @@ n <- 10
 
 insighted %>%
   dplyr::distinct(bigram, .keep_all = TRUE) %>%
-  top_n(n, bigram_freq) %>%
-  dplyr::mutate(bigram = reorder(bigram, desc(bigram_freq))) %>%
-  ggplot(aes(bigram, bigram_freq)) +
-  geom_col() +
-  labs(title = "Bigrams by Bigram Frequency")
+  dplyr::top_n(n, bigram_freq) %>%
+  dplyr::mutate(bigram = forcats::fct_reorder(bigram, dplyr::desc(bigram_freq))) %>%
+  ggplot2::ggplot(ggplot2::aes(bigram, bigram_freq)) +
+  ggplot2::geom_col() +
+  ggplot2::labs(title = "Bigrams by Bigram Frequency")
 
-imported <- import_files(tk_choose.files())
+imported <- import_files(tcltk::tk_choose.files())
 lemmatize <- TRUE
 stopwords <- TRUE
 sw_lexicon <- "snowball"
@@ -104,83 +103,90 @@ insighted <- data %>%
 ## })
 
 ## Structure: ggpage --------------------------------
-groups <- group_vars(insighted)
+groups <- dplyr::group_vars(insighted)
 
 insighted %>% #base data
-  group_modify(~ { #build ggpage
+  dplyr::group_modify(~ { #build ggpage
     .x %>%
       dplyr::pull(word) %>%
-      ggpage_build() %>%
-      bind_cols(.x)  
+      ggpage::ggpage_build() %>%
+      dplyr::bind_cols(.x)  
   }) %>%
-  ggpage_plot(aes(colour=mean_aggregate_sentiment_sentence)) + #plot ggpage
-  scale_color_gradient2() +
-  facet_wrap(groups) +
-  labs(title = glue("Mean Sentiment of Sentences by {paste(groups, collapse = \", \")}"))
-ggsave(filename = "mean-sent-ggpage.png", device = "png", path="~/stats-781/out/")
+  ggpage::ggpage_plot(ggplot2::aes(colour=mean_aggregate_sentiment_sentence)) + #plot ggpage
+  ggplot2::scale_color_gradient2() +
+  ggplot2::facet_wrap(groups) +
+  ggplot2::labs(title = glue::glue("Mean Sentiment of Sentences by {paste(groups, collapse = \", \")}"))
+
+ggplot2::ggsave(filename = "mean-sent-ggpage.png", device = "png", path="~/stats-781/out/")
 
 insighted %>% #base data
-  group_modify(~ { #build ggpage
+  dplyr::group_modify(~ { #build ggpage
     .x %>%
       dplyr::pull(word) %>%
-      ggpage_build() %>%
-      bind_cols(.x)  
+      ggpage::ggpage_build() %>%
+      dplyr::bind_cols(.x)  
   }) %>%
-  ggpage_plot(aes(colour=sd_aggregate_sentiment_sentence)) + #plot ggpage
-  scale_color_gradient2() +
-  facet_wrap(groups) +
-  labs(title = glue("Sentiment Standard Deviation of Sentences by {paste(groups, collapse = \", \")}"))
+  ggpage::ggpage_plot(ggplot2::aes(colour=sd_aggregate_sentiment_sentence)) + #plot ggpage
+  ggplot2::scale_color_gradient2() +
+  ggplot2::facet_wrap(groups) +
+    ggplot2::labs(title = glue::glue("Sentiment Standard Deviation of Sentences by {paste(groups, collapse = \", \")}"))
+
+
 ggsave(filename = "sd-sent-ggpage.png", device = "png", path="~/stats-781/out/")
 
 
 insighted %>% #base data
-  group_modify(~ { #build ggpage
+   dplyr::group_modify(~ { #build ggpage
     .x %>%
       dplyr::pull(word) %>%
-      ggpage_build() %>%
-      bind_cols(.x)  
+      ggpage::ggpage_build() %>%
+      dplyr::bind_cols(.x)  
   }) %>%
-  ggpage_plot(aes(colour=term_count_sentence)) + #plot ggpage
+  ggpage::ggpage_plot(ggplot2::aes(colour=term_count_sentence)) + #plot ggpage
   ## scale_color_gradient2() +
-  facet_wrap(groups) +
-  labs(title = glue("Word Count of Sentences by {paste(groups, collapse = \", \")}"))
+  ggplot2::facet_wrap(groups) +
+  ggplot2::labs(title = glue::glue("Word Count of Sentences by {paste(groups, collapse = \", \")}"))
 
 insighted %>%
   dplyr::pull(word) %>%
-  ggpage_build() %>%
-  bind_cols(insighted) %>%
-  ggpage_plot(aes(colour=term_count_sentence)) +
-  labs(title = "Word Count of Sentences")
+  ggpage::ggpage_build() %>%
+  dplyr::bind_cols(insighted) %>%
+  ggpage::ggpage_plot(ggplot2::aes(colour=term_count_sentence)) +
+  ggplot2::labs(title = "Word Count of Sentences")
 
 ## Distribution: Histogram --------------------------------
 
 insighted %>%
-  ggplot(aes(term_freq)) +
-  geom_histogram() +
-  labs(title = "Histogram of Word Frequency") +
-  facet_wrap(groups)
-ggsave(filename = "word-freq-hist.png", device = "png", path="~/stats-781/out/")
+  ggplot2::ggplot(ggplot2::aes(term_freq)) +
+  ggplot2::geom_histogram() +
+  ggplot2::labs(title = "Histogram of Word Frequency") +
+  ggplot2::facet_wrap(groups)
+
+ggplot2::ggsave(filename = "word-freq-hist.png", device = "png", path="~/stats-781/out/")
 
 ## Score: barplot --------------------------------
 
 n <- 10
 
 insighted %>%
-  group_modify(~ {.x %>%
+    dplyr::group_modify(~ {.x %>%
 		    dplyr::distinct(bigram, .keep_all = TRUE) %>%
 		    dplyr::arrange(desc(bigram_freq)) %>%
 		    head(n)
   }) %>%
-  ungroup() %>%
-  dplyr::mutate(bigram = reorder_within(bigram, bigram_freq, !! ifexp(length(groups) > 1,
-								syms(groups),
-								sym(groups)))) %>% 
-  ggplot(aes(bigram, bigram_freq)) +
-  geom_bar(stat="identity") +
-  facet_wrap(groups, scales = "free_y") +
-  scale_x_reordered() +
-  coord_flip() +
-  labs(title = "Bigrams by Bigram Frequency")
+  dplyr::ungroup() %>%
+    dplyr::mutate(bigram = tidytext::reorder_within(bigram,
+                                                    bigram_freq,
+                                                    !! ifexp(length(groups) > 1,
+                                                             dplyr::syms(groups),
+							     dplyr::sym(groups)))) %>% 
+  ggplot2::ggplot(ggplot2::aes(bigram, bigram_freq)) +
+  ggplot2::geom_bar(stat="identity") +
+  ggplot2::facet_wrap(groups, scales = "free_y") +
+  tidytext::scale_x_reordered() +
+  ggplot2::coord_flip() +
+    ggplot2::labs(title = "Bigrams by Bigram Frequency")
+
 ggsave(filename = "bigram-freq-bar.png", device = "png", path="~/stats-781/out/")
 
 filename <- "../data/raw/11-0.txt"

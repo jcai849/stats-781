@@ -1,72 +1,33 @@
-[2019-07-21 Sun]: GOTO [[#program-dependencies][Program Dependencies]] section, continue through Preparation, Insight, and Visualisation
-* Table of Contents                                                     :TOC:
-- [[#dissertation-due][Dissertation Due]]
-- [[#colophon][COLOPHON]]
-- [[#initial-survey][Initial Survey]]
-  - [[#prescribed-reading][Prescribed Reading]]
-  - [[#initial-consideration-of-application-features][Initial Consideration of Application Features]]
-  - [[#twitter][Twitter]]
-  - [[#subtitles][Subtitles]]
-  - [[#r-packages][R Packages]]
-  - [[#other-text-analytics-applications][Other Text Analytics Applications]]
-  - [[#scope-determination][Scope Determination]]
-- [[#initial-feature-considerations][Initial Feature Considerations]]
-  - [[#introduction][Introduction]]
-  - [[#processing][Processing]]
-  - [[#within-text-analytics][Within-Text Analytics]]
-  - [[#between-text-analytics][Between-Text Analytics]]
-  - [[#stopwords][Stopwords]]
-  - [[#visualisation][Visualisation]]
-  - [[#text-summarisation][Text Summarisation]]
-  - [[#search-function][Search Function]]
-  - [[#topic-modelling][Topic Modelling]]
-  - [[#sentiment-distribution][Sentiment Distribution]]
-  - [[#conditional-analytics][Conditional Analytics]]
-  - [[#wrapper-functions][Wrapper Functions]]
-  - [[#visualisation-1][Visualisation]]
-  - [[#ggpage][ggpage]]
-- [[#initial-data-types-survey][Initial Data Types Survey]]
-  - [[#test-corpus][Test Corpus]]
-  - [[#free-response-data][Free-Response Data]]
-  - [[#data-types-for-implementation][Data types for implementation]]
-- [[#initial-considerations-of-program-structure][Initial Considerations of Program Structure]]
-  -  [[#2019-06-13-thu-notes][[2019-06-13 Thu] Notes]]
-  - [[#2019-07-10-wed-notes][[2019-07-10 Wed] Notes]]
-  - [[#note-on-non-destructive-editing][Note on Non-Destructive Editing]]
-  - [[#2019-07-25-thu-notes][[2019-07-25 Thu] Notes]]
-- [[#program-dependencies][Program Dependencies]]
-  - [[#helper-functions][Helper Functions]]
-- [[#program-layer-preparation][Program Layer: Preparation]]
-  - [[#importing][Importing]]
-  - [[#formatting][Formatting]]
-  - [[#filtering][Filtering]]
-  - [[#lemmatisation][Lemmatisation]]
-  - [[#stemming][Stemming]]
-  - [[#stopwords-1][Stopwords]]
-  - [[#object-preparation][Object Preparation]]
-  - [[#sectioning][Sectioning]]
-  - [[#grouping][Grouping]]
-- [[#program-layer-insight][Program Layer: Insight]]
-  - [[#term-insight][Term Insight]]
-  - [[#aggregate-insight][Aggregate Insight]]
-  - [[#wrapper][Wrapper]]
-- [[#program-layer-visualisation][Program Layer: Visualisation]]
-  - [[#rank][Rank]]
-  - [[#score][Score]]
-  - [[#relation][Relation]]
-  - [[#distribution-14][Distribution]]
-  - [[#structure][Structure]]
-  - [[#wrapper-1][Wrapper]]
-- [[#testing--demonstration][Testing / Demonstration]]
-  - [[#source][Source]]
-  - [[#ungrouped][Ungrouped]]
-  - [[#grouped][Grouped]]
-  - [[#ggpage-1][ggpage]]
-- [[#shiny-frontend][Shiny Frontend]]
+#+TITLE:Main Dissertation Notes
 
-* Dissertation Due
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: author:t broken-links:nil c:nil creator:nil
+#+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+options: timestamp:t title:t toc:t todo:t |:t
+
+#+author: Jason Cairns
+#+email: jcai849@aucklanduni.ac.nz
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 26.1 (Org mode 9.2.3)
+
+#+latex_class: article
+#+LATEX_CLASS_OPTIONS: [a4paper, 11pt]
+#+LATEX_HEADER: \usepackage{natbib}
+#+LATEX_HEADER: \usepackage{minted}
+#+LATEX_HEADER: \usepackage{mathtools}
+#+LATEX_HEADER: \usepackage{amsfonts}
+#+latex_header_extra:
+#+description:
+#+keywords:
+#+subtitle:
+#+date: \today
+
+* Dissertation Due                                                 :noexport:
   DEADLINE: <2019-10-29 Tue>
-* COLOPHON
+* COLOPHON                                                         :noexport:
 Work was all done in emacs, with the code in R, tangled through org mode
 * Initial Survey
 ** Prescribed Reading
@@ -708,7 +669,6 @@ Another issue that arises is the elimination of sentences and
 structure upon the unnesting of tokens. What may be worthwhile is to
 create a dataframe such as the following:
 
-#+ATTR_LATEX: :booktabs :align l | l | l | l | l  :float t
 | grouping vars | ... | doc_id | paragraph_id | sentence_id | word_id | word |
 |---------------+-----+--------+--------------+-------------+---------+------|
 |               |     |        |              |             |         |      |
@@ -759,7 +719,7 @@ undergraduate students.
     that grouping and filtering are efficient, lossless, and simple
     operations.
 Dataframe form:
-#+ATTR_LATEX: :booktabs :align l | l | l | l | l  :float t
+
 | grouping vars | ... | doc_id | paragraph_id | sentence_id | word_id | word |
 |---------------+-----+--------+--------------+-------------+---------+------|
 |               |     |        |              |             |         |      |
@@ -831,12 +791,13 @@ visualisations. This would require (i.e. make clear) a function that
 takes specifications of x, y, facets etc.
 * Program Dependencies
 The following code is to enable tibbles internally in the package
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/inzightta-package.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/inzightta-package.R :eval never-export :exports both
 ## usethis namespace: start
 #' @importFrom tibble tibble
 ## usethis namespace: end
 NULL
 #+end_src
+
 I am considering using [[https://davisvaughan.github.io/furrr/][furrr]] for parallel or distributed processing
 performance enhancements, though I want to get all functionality
 implemented first before performing that kind of optimisation.
@@ -846,7 +807,7 @@ Having conditionals as expressions rather than statements grants the
 ability for direct assignment of the evaluation. Base =ifelse= and
 tidyverse =dplyr::if_else= impose the restriction that the output is the same
 shape as the test predicate. This helper removes that restriction
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R :eval never-export :exports both
   #' scheme-like if expression, without restriction of returning same-size table of .test, as ifelse() does
   #'
   #' @param .test predicate to test
@@ -866,7 +827,7 @@ shape as the test predicate. This helper removes that restriction
 #+end_src
 *** Filetype from extension
 A helper function to attain the document filetype from the file name.
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R :eval never-export :exports both
   #' Get filetype
   #'
   #' @param filepath string filepath of document
@@ -881,7 +842,7 @@ A helper function to attain the document filetype from the file name.
 #+end_src
 *** Mark the text column of a table
 A helper function to determine and mark the text column of a table
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R :eval never-export :exports both
   #' Interactively determine and automatically mark the text column of a table
   #'
   #' @param data dataframe with column requiring marking
@@ -900,7 +861,7 @@ A helper function to determine and mark the text column of a table
 #+end_src
 *** Validate User Input
 A helper function to get valid user input
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R :eval never-export :exports both
   #' helper function to get valid input (recursively)
   #'
   #' @param options vector of options that valid input should be drawn from
@@ -925,7 +886,7 @@ standard evaluation only, will switch to NSE when time allows
 
 TODO:
 - [ ] Make =ungroup_by= NSE
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/utils.R :eval never-export :exports both
   #' helper function to ungroup for dplyr. functions equivalently to
   #' group_by() but with standard (string) evaluation
   #'
@@ -961,7 +922,7 @@ analytics. All imports have a document ID, which is an identifier column.
 Plaintext is the most important and simplest to work with of all text
 representations; entire operating systems are built around the
 concept. 
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R :eval never-export :exports both
   #' Import text file 
   #'
   #' @param filepath a string indicating the relative or absolute
@@ -983,7 +944,7 @@ interest for the analysis should be (as per tidy principles) in one
 column, with the rest being additional information that can be used
 for grouping or filtering. Thus, additional user input is required, in
 the specification of which column is the text column of interest.
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R :eval never-export :exports both
   #' Import csv file
   #'
   #' @param filepath a string indicating the relative or absolute
@@ -1001,7 +962,7 @@ the specification of which column is the text column of interest.
 Unfortunately, much data exists in the Microsoft Excel format, but
 this must be catered for. As tabular data, it is treated equivalently
 to csv.
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R :eval never-export :exports both
   #' Import excel file
   #'
   #' @param filepath a string indicating the relative or absolute
@@ -1024,7 +985,7 @@ Gutenberg texts
 The base wrapper function takes in the filename, and other relevent
 information, handling the importation process. It also stamps in the
 name of the document as a column
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R :eval never-export :exports both
   #' Base case for file import
   #'
   #' @param filepath string filepath of file for import
@@ -1047,7 +1008,7 @@ name of the document as a column
 The base file import is generalised to multiple files with a multiple
 import function: this will be our sole import function (until we get
 direct Gutenburg import)
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-import.R :eval never-export :exports both
   #' Import any number of files
   #'
   #' @param filepaths char vector of filepaths
@@ -1085,7 +1046,7 @@ try to optimise this.
 [2019-07-17 Wed]: removed first group modify; unnecessary now that
 grouping has been shifted to take place afterwards
 
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R :eval never-export :exports both
   #' formats imported data into an analysis-ready format
   #'
   #' @param data a tibble formatted with a text and (optional) group
@@ -1151,7 +1112,7 @@ output of insights such as word frequency. We need a way of generating
 a list of stopwords, from both a default source, as well as allowing
 the user to add their own stopwords. =get_sw= performs that, detailed
 below.
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R :eval never-export :exports both
   #' Gets stopwords from a default list and user-provided list
   #'
   #' @param lexicon a string name of a stopword list, one of "smart",
@@ -1173,7 +1134,7 @@ below.
   }
 #+end_src
 The status of the stopwords are then added to the data with =determine_stopwords=
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R :eval never-export :exports both
   #' determine stopword status
   #'
   #' @param .data vector of words
@@ -1203,7 +1164,7 @@ logic involving the interaction of stopwords and lemmatisation:
 | Lemmatise True  | Lemmatise, determine stopwords on lemmatisation, perform insight on lemmas sans stopwords         | Lemmatise, perform insight on lemmas |
 | Lemmatise False | Determine stopwords on original words (no lemmatisation), perform insight on words sans stopwords | Perform insight on original words    |
 
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R :eval never-export :exports both
   #' takes imported one-line-per-row data and prepares it for later analysis
   #'
   #' @param .data tibble with one line of text per row
@@ -1251,7 +1212,7 @@ compose a closure that searches and sections text based on a Regular
 Expression intended to capture a particular section. Several functions
 are created from that. In time, advanced users could be given the
 option to compose their own regular expressions for sectioning.
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R :eval never-export :exports both
   #' creates a search closure to section text
   #'
   #' @param search a string regexp for the term to seperate on, e.g. "Chapter"
@@ -1331,7 +1292,7 @@ Frequencies of words are useful in getting an understanding of what
 terms are common in a text. This is one insight in particular that
 requires stopwords to have been previously removed, otherwise the top
 words will always be syntactical glue, such as articles
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
   #' Determine term frequency
   #'
   #' @param .data character vector of terms
@@ -1367,7 +1328,7 @@ TODO:
 
 I determine bigrams by matching the vector of words with itself, sans
 the first element in the second list.
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
   #' Determine bigrams
   #'
   #' @param .data character vector of words
@@ -1385,7 +1346,7 @@ However, it is more complex than that; we need a way to deal with NA
 values. This beautiful recursive function (designed by myself) does
 just that:
 
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
   #' get bigram at index i of list1 & 2
   #'
   #' @param i numeric index to attain bigram at
@@ -1421,7 +1382,7 @@ table:
 |     7 |     X | X      |
 |     X |       | X      |
 
-#+begin_src R :session rsession1 :tangle no
+#+begin_src R :session rsession1 :tangle no :eval never-export :exports both
 x <- c(1, 2, NA, 4, 5, NA, 7, NA)
 get_bigram(x)
 #+end_src
@@ -1444,7 +1405,7 @@ NA) are relevent, but the standard algorithm works on data that has
 had POS tagging, typically assessing only nouns and adjectives. We
 don't do that here as the processing burden for POS tagging is
 enormous, though it may be implemented in the future.
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
   #' Determine textrank score for vector of words
   #'
   #' @param .data character vector of words
@@ -1461,6 +1422,7 @@ enormous, though it may be implemented in the future.
       dplyr::pull(value)
   }
 #+end_src
+
 *** Word Sentiment [1/1]
 Sentiment has been discussed earlier. Effectively, for any text
 analytics it is essential. There are numerous sentiment dictionaries,
@@ -1494,30 +1456,13 @@ columns "word" and "value"
 get_sentiments("afinn")
 #+end_src
 
-#+RESULTS:
 #+begin_example
-[90m# A tibble: 2,477 x 2[39m
-   word       value
-   [3m[90m<chr>[39m[23m      [3m[90m<dbl>[39m[23m
-[90m 1[39m abandon       -[31m2[39m
-[90m 2[39m abandoned     -[31m2[39m
-[90m 3[39m abandons      -[31m2[39m
-[90m 4[39m abducted      -[31m2[39m
-[90m 5[39m abduction     -[31m2[39m
-[90m 6[39m abductions    -[31m2[39m
-[90m 7[39m abhor         -[31m3[39m
-[90m 8[39m abhorred      -[31m3[39m
-[90m 9[39m abhorrent     -[31m3[39m
-[90m10[39m abhors        -[31m3[39m
-[90m# … with 2,467 more rows[39m
-#+end_example
-
-#+begin_export ascii
 get_sentiments("afinn")
 # A tibble: 2,477 x 2
    word       value
    <chr>      <dbl>
-#+end_export
+#+end_example
+
 
  Additionally, the =reorder_within= function is very
 poorly coupled with the rest of the package. It should have been a
@@ -1543,7 +1488,7 @@ just won't include them.
 
  TODO:
 - [X] Include option for additional dictionaries
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
   #' Determine sentiment of words
   #'
   #' @param .data vector of words
@@ -1585,7 +1530,7 @@ Note in the following function the near canonical example of
 split-apply-combine, or MapReduce style. This allows for performance
 gains in parallel processing, ideal for the large datasets we
 typically work with in text analytics.
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R :eval never-export :exports both
   #' Determine the number of terms at each aggregate level
   #'
   #' @param .data character vector of terms
@@ -1612,7 +1557,7 @@ of textrank again.
 Testing shows a performance of around 3-4 mins for ~30,000 words of
 text aggregated of ~3000 sentences. Not bad for something graph based,
 but a warning will be required at the user end.
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R :eval never-export :exports both
   #' get score for key sentences as per Lexrank
   #'
   #' @param .data character vector of words
@@ -1650,7 +1595,7 @@ similar situation is true of sentiment. I'll make it so that it can
 deliver any statistic of a sentence; mean, median, variance etc.
 Importantly, it will only work with numeric sentiment lexicons, in our
 case, AFINN.
-#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R :eval never-export :exports both
   #' Get statistics for sentiment over some group, such as sentence.
   #'
   #' @param .data character vector of words
@@ -1684,7 +1629,7 @@ chosen. Deprecated now that insight functions work vector-wise.
 
 TODO:
 - [ ] Take multiple insights
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R :eval never-export :exports both
   ## ------------------------------ DEPRECATED ------------------------------
   ## #' perform group-aware operation on the standard dataframe
   ## #'
@@ -1732,7 +1677,7 @@ Additionally, this function takes too many arguments.
 TODO:
 - [ ] Find way to better order score
 - [ ] Find way to lower number of arguments
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R :eval never-export :exports both
 #' output a bar graph of the top words from some insight function
 #'
 #' @param std_tib the standard dataframe, modified so the last column
@@ -1773,7 +1718,7 @@ word_bar <- function(std_tib, insight_name, insight_col,
 ** TODO Distribution [1/4]
 *** CLOSED Density
     CLOSED: [2019-07-13 Sat 23:20]
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R :eval never-export :exports both
 #' output a histogram of the distribution of some function of words
 #'
 #' @param std_tib the standard dataframe, modified so the last column
@@ -1801,7 +1746,7 @@ std_tib %>%
 This is an attempt to create a group-aware visualisation,
 automatically facetting by group. I feel like it is not ideal, though
 haven't had any major bugs with it yet
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R :eval never-export :exports both
 #' create a group-aware visualisation
 #'
 #' @param std_tib the standard dataframe, modified so the last column
@@ -1824,7 +1769,7 @@ get_vis <- function(std_tib, operation, ...){
 #+end_src
 * Testing / Demonstration
 ** Source
- #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :output nil
+ #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both :output nil
    library(inzightta)
  #+end_src
 
@@ -1843,7 +1788,7 @@ get_vis <- function(std_tib, operation, ...){
 
 ** Ungrouped
 *** Preparation
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both
   imported <- import_files(tcltk::tk_choose.files())
   lemmatize <- TRUE
   stopwords <- TRUE
@@ -1855,7 +1800,7 @@ get_vis <- function(std_tib, operation, ...){
 #+RESULTS:
 
 *** Insights
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both
   insighted <- data %>%
     dplyr::mutate(
     term_freq = term_freq(text),
@@ -1871,7 +1816,7 @@ get_vis <- function(std_tib, operation, ...){
 #+RESULTS:
 
 *** Visualisation
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both
   # … with 29,944 more rows, and 13 more variables: line_id <int>, word1 <chr>,
   #   word_id <int>, lemma <chr>, stopword <lgl>, text <chr>, term_freq <int>,
   #   bigram <chr>, bigram_freq <int>, word_sentiment <int>,
@@ -1917,7 +1862,7 @@ get_vis <- function(std_tib, operation, ...){
 *** Preparation
 We import a file downloaded from Project Gutenberg, and run through
 some basic preparation, with additional stopwords to be removed
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both
   imported <- import_files(tcltk::tk_choose.files())
   lemmatize <- TRUE
   stopwords <- TRUE
@@ -1935,7 +1880,7 @@ some basic preparation, with additional stopwords to be removed
 #+RESULTS:
 
 *** Insights
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both
   insighted <- data %>%
     dplyr::mutate(
     term_freq = term_freq(text),
@@ -1970,7 +1915,7 @@ some basic preparation, with additional stopwords to be removed
 #+RESULTS:
 
 *** Visualisation
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both
   ## Structure: ggpage --------------------------------
   groups <- dplyr::group_vars(insighted)
 
@@ -2061,7 +2006,7 @@ some basic preparation, with additional stopwords to be removed
 
 ** ggpage
 ggpage is a very interesting piece of visualisation, tested here. Once I build up the correct preparation format, I will perform more intensive testing here
-#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both
 filename <- "../data/raw/11-0.txt"
 
 imported <- import_txt(filename) 
@@ -2103,18 +2048,71 @@ imported %>%
 * Shiny Frontend
 For the user interface, the obvious choice is shiny. We will use the
 following as our shiny app:
-#+begin_src R :session rsession1 :tangle ~/inzightta-shiny/app.R
+#+begin_src R :session rsession1 :tangle ~/inzightta-shiny/app.R :eval never-export :exports both
   library(shiny)
   library(inzightta)
 
-  ui <- pageWithSidebar(
-    headerPanel("iNZight Text Analytics"),
-    sidebarPanel(),
-    mainPanel()
+  ui <- fluidPage(
+                                        # App title ----
+      titlePanel("Uploading Files"),
+                                        # Sidebar layout with input and output definitions ----
+      sidebarLayout(
+                                        # Sidebar panel for inputs ----
+          sidebarPanel(
+                                        # Input: Select a file ----
+              fileInput("file1", "Choose File(s)",
+                        multiple = TRUE,
+                        accept = c("text/csv",
+                                   "text/comma-separated-values,text/plain",
+                                   ".csv", ".xlsx", ".xls")),
+              uiOutput("vars_to_filter"),
+              textInput("filter_pred", "value to match", ""),
+              checkboxInput("lemmatise", "Lemmatise"),
+              checkboxInput("stopwords", "Stopwords"),
+              selectInput("sw_lexicon", "Stopword Lexicon", list("snowball"))
+          ),
+                                        # Main panel for displaying outputs ----
+          mainPanel(
+                                        # Output: Data file ----
+              tableOutput("table")
+          )
+      )
   )
 
+                                        # Define server logic to read selected file ----
   server <- function(input, output) {
+      import_table <- reactive({
+          inzightta::import_files(input$file1$datapath)
+      })
+      filter_table <- reactive({
+          import_table() %>%
+              dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
+      })
+      prepped_table <- reactive({
+          if (isTruthy(input$filter_pred)){
+          filter_table() %>%
+              text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+          } else {
+          import_table() %>%
+              text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+          }
+      })
+      output$table <- renderTable({
+          if (isTruthy(input$lemmatise)){
+              prepped_table()
+          } else if (isTruthy(input$filter_pred)){
+              filter_table()
+          } else if (isTruthy(input$file1$datapath)){
+              import_table()
+          }
+      })
+      output$vars_to_filter <- renderUI(selectInput("filter_var",
+                                                    "select which columns to apply filtering to",
+                                                    names(import_table())))
   }
 
+  
+                                        # Create Shiny app ----
   shinyApp(ui, server)
 #+end_src
+
