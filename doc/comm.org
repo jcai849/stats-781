@@ -348,11 +348,20 @@ Jason
 - [ ] Try advanced features (action button, ui hiding etc.)
 - [X] Begin work on import functions in shiny
 * Meeting Chris
-<2019-08-08 Thu 15:00-16:30>
-** Dissertation Work [1/3]
-   SCHEDULED: <2019-08-14 Wed>
+<2019-08-08 Thu 15:00-16:30>*
+* CLOSED Dissertation Work [3/3]
+   CLOSED: [2019-08-16 Fri 12:28] SCHEDULED: <2019-08-15 Thu>
 - [X] Send PDF to Chris of dissertation so far
-- [ ] Re-build Package; script it for automatic rebuild
-- [ ] Continue working on interface
+- [X] Re-build Package; script it for automatic rebuild
+- [X] Continue working on interface
 * Meeting Chris<2019-08-16 Fri 11:00>
+daniel.barnett@auckland.ac.nz
+** Dissertation Work [0/3]
+- [ ] Rewrite to set table as mutating state
+- [ ] Write for dissertation
+- [ ] Include documentation in Appendix
+** Meeting Daniel
+   SCHEDULED: <2019-08-19 Mon 10:00>
 * Meeting Chris<2019-08-21 Wed 15:00>
+
+

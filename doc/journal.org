@@ -2046,6 +2046,7 @@ imported %>%
     scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0)
 #+end_src
 * Shiny Frontend
+
 For the user interface, the obvious choice is shiny. We will use the
 following as our shiny app:
 #+begin_src R :session rsession1 :tangle ~/inzightta-shiny/app.R :eval never-export :exports both
@@ -2053,13 +2054,9 @@ following as our shiny app:
   library(inzightta)
 
   ui <- fluidPage(
-                                        # App title ----
       titlePanel("Uploading Files"),
-                                        # Sidebar layout with input and output definitions ----
       sidebarLayout(
-                                        # Sidebar panel for inputs ----
           sidebarPanel(
-                                        # Input: Select a file ----
               fileInput("file1", "Choose File(s)",
                         multiple = TRUE,
                         accept = c("text/csv",
@@ -2071,44 +2068,28 @@ following as our shiny app:
               checkboxInput("stopwords", "Stopwords"),
               selectInput("sw_lexicon", "Stopword Lexicon", list("snowball"))
           ),
-                                        # Main panel for displaying outputs ----
           mainPanel(
-                                        # Output: Data file ----
               tableOutput("table")
           )
       )
   )
 
-                                        # Define server logic to read selected file ----
+
   server <- function(input, output) {
-      import_table <- reactive({
-          inzightta::import_files(input$file1$datapath)
-      })
-      filter_table <- reactive({
-          import_table() %>%
-              dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
-      })
-      prepped_table <- reactive({
-          if (isTruthy(input$filter_pred)){
-          filter_table() %>%
-              text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
-          } else {
-          import_table() %>%
-              text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
-          }
-      })
+      data <- reactiveVal()
+      observe({data <-
+                   data() %>%
+                   inzightta::import_files(input$file1$datapath)})
+      observe({data() %>%
+              dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)})
+      observe({data() %>%
+              text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)})
       output$table <- renderTable({
-          if (isTruthy(input$lemmatise)){
-              prepped_table()
-          } else if (isTruthy(input$filter_pred)){
-              filter_table()
-          } else if (isTruthy(input$file1$datapath)){
-              import_table()
-          }
+              data()
       })
       output$vars_to_filter <- renderUI(selectInput("filter_var",
                                                     "select which columns to apply filtering to",
-                                                    names(import_table())))
+                                                    names(data())))
   }
 
   

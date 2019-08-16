@@ -1,7 +1,0 @@
-install.packages("textrank", "lexrank")
-y
-install.packages("lexrank")
-install.packages("lexRankR")
-2
-install.packages("lexRankr")
-setwd(dir="../test/summ-wrapper-test.R")

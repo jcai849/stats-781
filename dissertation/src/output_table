@@ -1,0 +1,19 @@
+% latex table generated in R 3.5.2 by xtable 1.8-3 package
+% Sun Aug 11 00:34:29 2019
+\begin{tabular}{lr}
+  \toprule
+Description & Value \\ 
+  \midrule
+Number of Observations & 61647 \\ 
+  Number of Individual Cases & 22526 \\ 
+  Mean HbA1c at Baseline &  64 \\ 
+  Standard Deviation of HbA1c at Baseline &  17 \\ 
+  Median HbA1c at Baseline &  59 \\ 
+  Minimum HbA1c at Baseline &   3 \\ 
+  Maximum HbA1c at Baseline & 182 \\ 
+  Total Removed Observations & 1599 \\ 
+  Low Outliers (HbA1c $<$ 30) &  33 \\ 
+  High Outliers (HbA1c $>$ 170) &   4 \\ 
+   \bottomrule
+\end{tabular}
+
