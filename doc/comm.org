@@ -356,12 +356,46 @@ Jason
 - [X] Continue working on interface
 * Meeting Chris<2019-08-16 Fri 11:00>
 daniel.barnett@auckland.ac.nz
-** Dissertation Work [0/3]
-- [ ] Rewrite to set table as mutating state
-- [ ] Write for dissertation
-- [ ] Include documentation in Appendix
-** Meeting Daniel
-   SCHEDULED: <2019-08-19 Mon 10:00>
+** Dissertation Work [3/3]
+- [X] Rewrite to set table as mutating state
+- [X] Write for dissertation
+- [X] Include documentation in Appendix
+** CLOSED Meeting Daniel
+   CLOSED: [2019-08-20 Tue 11:02] SCHEDULED: <2019-08-19 Mon 10:00>
 * Meeting Chris<2019-08-21 Wed 15:00>
+** Dissertation Work [1/4]
+   SCHEDULED: <2019-08-22 Thu>
+- [X] add insight mutate function
+- [ ] add visualisation
+- [ ] change to text in csvs
+- [ ] Emil Hvidtfeldt - word tree
+* Meeting Chris<2019-08-28 Wed 15:00>
+** Dissertation Work [0/1]
+- [ ]
+
+
+* Meeting Chris<2019-09-04 Wed 15:00>
+** Dissertation Work [0/1]
+- [ ]
+
+
+* Meeting Chris<2019-09-11 Wed 15:00>
+** Dissertation Work [0/1]
+- [ ]
+
+
+* Meeting Chris<2019-09-18 Wed 15:00>
+** Dissertation Work [0/1]
+- [ ]
+
+
+* Meeting Chris<2019-09-25 Wed 15:00>
+** Dissertation Work [0/1]
+- [ ]
+
+
+* Meeting Chris<2019-10-02 Wed 15:00>
+** Dissertation Work [0/1]
+- [ ]
 
 

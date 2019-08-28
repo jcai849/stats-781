@@ -1416,14 +1416,14 @@ enormous, though it may be implemented in the future.
   keywords_tr <- function(.data){
     relevent <- !is.na(.data)
     tr <- textrank::textrank_keywords(.data, relevent, p=+Inf)
-    score <- tr$pagerank$vector %>% tibble::enframe
+    score <- tr$pagerank$vector %>% tibble::enframe()
     data <- .data %>% tibble::enframe("number", "name")
     dplyr::full_join(data, score, by="name") %>%
       dplyr::pull(value)
   }
 #+end_src
 
-*** Word Sentiment [1/1]
+*** Term Sentiment [1/1]
 Sentiment has been discussed earlier. Effectively, for any text
 analytics it is essential. There are numerous sentiment dictionaries,
 but we will use AFINN for the nice numeric properties it has, allowing
@@ -1499,7 +1499,7 @@ just won't include them.
   #' @return vector with sentiment score of each word in the vector
   #'
   #' @export
-  word_sentiment <- function(.data, lexicon="afinn"){
+  term_sentiment <- function(.data, lexicon="afinn"){
     data <- tibble::enframe(.data, "number", "word")
     tidytext::get_sentiments(lexicon) %>%
       dplyr::select(word, value) %>%
@@ -1564,8 +1564,10 @@ but a warning will be required at the user end.
   #'
   #' @param aggregate_on vector to aggregate .data over; ideally, sentence_id
   #'
+  #' @return lexrank scores of aggregates
+  #'
   #' @export
-  key_sentences <- function(.data, aggregate_on){
+  key_aggregates <- function(.data, aggregate_on){
     ## prepare .data for lexrank
     base <-  tibble::tibble(word = !! .data, aggregate = aggregate_on)
     aggregated <- base %>%
@@ -1587,7 +1589,6 @@ but a warning will be required at the user end.
       dplyr::arrange(aggregate) %>%
       dplyr::pull(value)
   }
-
 #+end_src
 *** Aggregate Sentiment
 Like the added context that key sentences bring over key words, a
@@ -1607,11 +1608,11 @@ case, AFINN.
   #'   median, sd.
   #'
   #' @export
-  aggregate_sentiment <- function(.data, aggregate_on, statistic){
+  aggregate_sentiment <- function(.data, aggregate_on, statistic = mean){
     tibble::enframe(.data, "nil1", "word") %>%
       dplyr::bind_cols(tibble::enframe(aggregate_on, "nil2", "aggregate")) %>%
       dplyr::select(word, aggregate) %>%
-      dplyr::mutate(sentiment = word_sentiment(word)) %>%
+      dplyr::mutate(sentiment = term_sentiment(word)) %>%
       dplyr::group_by(aggregate) %>%
       dplyr::mutate(aggregate_sentiment =
 		      (function(.x){
@@ -1622,29 +1623,68 @@ case, AFINN.
 #+end_src
 *** TODO [#A] Term Frequency - Inverse Document Frequency (tf-idf)
 *** TODO [#A] Topic Modelling
-** TODO [#B] Wrapper
+** CLOSED [#B] Wrapper
+   CLOSED: [2019-08-22 Thu 18:09]
 The insights of choice can all be combined into a wrapper function,
 taking the forms and arguments of the insights and applying those
 chosen. Deprecated now that insight functions work vector-wise.
 
 TODO:
-- [ ] Take multiple insights
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/word-insight.R :eval never-export :exports both
-  ## ------------------------------ DEPRECATED ------------------------------
-  ## #' perform group-aware operation on the standard dataframe
-  ## #'
-  ## #' @param std_tib the standard dataframe given as the output of the format_data function
-  ## #'
-  ## #' @param operation insight function to be performed on the dataframe
-  ## #'
-  ## #' @return grouped output from the operation
-  ## get_insight <- function(std_tib, operation){
-  ##     std_tib %>%
-  ##         group_modify(~ {
-  ##             .x %>%
-  ##                 operation
-  ##         })
-  ## }
+- [X] Take multiple insights
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R :eval never-export :exports both
+  #' perform group-aware term operations on the data
+  #'
+  #' @param .data dataframe of terms as per output of text_prep
+  #'
+  #' @param operations character vector of term operations to perform
+  #'
+  #' @return .data with operation columns added
+  #'
+  #' @export
+  get_term_insight <- function(.data, operations){
+      opstable <- list("Term Frequency" = term_freq,
+                       "Bigrams" = get_bigram,
+                       "Key Words" = keywords_tr,
+                       "Term Sentiment" = term_sentiment)
+      ops <- opstable[operations]
+      lapply(seq(length(ops)),
+             function(x){
+                 name <- dplyr::sym(names(ops[x]))
+                 operation <- ops[x][[1]]
+                 df <- dplyr::mutate(.data,
+                                     !!name := operation(text))
+                 df[names(ops[x])]
+             }) %>%
+          dplyr::bind_cols(.data, .)
+  }
+
+  #' perform group-aware aggregate operations on the data
+  #'
+  #' @param .data dataframe of terms as per output of text_prep
+  #'
+  #' @param operations character vector of operations to perform
+  #'
+  #' @param aggregate_on character name of the column to perform aggregate operations on
+  #'
+  #' @return .data with operation columns added
+  #'
+  #' @export
+  get_aggregate_insight <- function(.data, operations, aggregate_on){
+      opstable <- list("Term Count" = term_count,
+                       "Key Sections" = key_aggregates,
+                       "Aggregated Sentiment" = aggregate_sentiment)
+      ops <- opstable[operations]
+      lapply(seq(length(ops)),
+             function(x){
+                 name <- dplyr::sym(names(ops[x]))
+                 operation <- ops[x][[1]]
+                 agg_on <- dplyr::sym(aggregate_on)
+                 df <- dplyr::mutate(.data,
+                                     !!name := operation(text, !! agg_on))
+                 df[names(ops[x])]
+             }) %>%
+          dplyr::bind_cols(.data, .)
+  }
 #+end_src
 * Program Layer: Visualisation
 I have grouped visualisations by their output intention, rather than
@@ -1677,7 +1717,7 @@ Additionally, this function takes too many arguments.
 TODO:
 - [ ] Find way to better order score
 - [ ] Find way to lower number of arguments
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R :eval never-export :exports both
+#+begin_src R :session rsession1 :tangle no :eval never-export :exports both
 #' output a bar graph of the top words from some insight function
 #'
 #' @param std_tib the standard dataframe, modified so the last column
@@ -1718,7 +1758,7 @@ word_bar <- function(std_tib, insight_name, insight_col,
 ** TODO Distribution [1/4]
 *** CLOSED Density
     CLOSED: [2019-07-13 Sat 23:20]
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R :eval never-export :exports both
+#+begin_src R :session rsession1 :tangle no :eval never-export :exports both
 #' output a histogram of the distribution of some function of words
 #'
 #' @param std_tib the standard dataframe, modified so the last column
@@ -1746,7 +1786,7 @@ std_tib %>%
 This is an attempt to create a group-aware visualisation,
 automatically facetting by group. I feel like it is not ideal, though
 haven't had any major bugs with it yet
-#+begin_src R :session rsession1 :tangle ~/stats-781/src/vis-insight.R :eval never-export :exports both
+#+begin_src R :session rsession1 :tangle no :eval never-export :exports both
 #' create a group-aware visualisation
 #'
 #' @param std_tib the standard dataframe, modified so the last column
@@ -1772,19 +1812,6 @@ get_vis <- function(std_tib, operation, ...){
  #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both :output nil
    library(inzightta)
  #+end_src
-
- #+RESULTS:
- | magrittr  |
- | tcltk2    |
- | tcltk     |
- | inzightta |
- | stats     |
- | graphics  |
- | grDevices |
- | utils     |
- | datasets  |
- | methods   |
- | base      |
 
 ** Ungrouped
 *** Preparation
@@ -2047,26 +2074,69 @@ imported %>%
 #+end_src
 * Shiny Frontend
 
-For the user interface, the obvious choice is shiny. We will use the
-following as our shiny app:
+For the user interface, the obvious choice is shiny.
+
+We first tried using an if statement to determine the data, as per
+ #+begin_src R :results output :colnames yes :hline yes :session rsession1 :tangle no :comments link :exports both :eval never-export
+       data <- reactive({
+          data <- inzightta::import_files(input$file1$datapath)
+          if (isTruthy(input$lemmatise) | isTruthy(input$stopwords)){
+              data <- data %>%
+                  text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+          }
+          if (isTruthy(input$filter_var) & isTruthy(input$filter_pred)){
+              data <- data %>%
+                  dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
+          }
+          if (isTruthy(input$group_var)){
+              data <- data %>%
+                  dplyr::group_by(!! dplyr::sym(input$group_var))
+          }
+          data
+      })
+#+end_src
+However, this led to variable selectors constantly changing, as they had to recompute the names of data() which ran through several states at every event.
+
+We will use the following as our shiny app:
 #+begin_src R :session rsession1 :tangle ~/inzightta-shiny/app.R :eval never-export :exports both
   library(shiny)
   library(inzightta)
-
+  library(rlang)
+  
   ui <- fluidPage(
-      titlePanel("Uploading Files"),
+      titlePanel("iNZight Text Analytics"),
       sidebarLayout(
           sidebarPanel(
+              tags$p("Import"),
               fileInput("file1", "Choose File(s)",
                         multiple = TRUE,
                         accept = c("text/csv",
                                    "text/comma-separated-values,text/plain",
                                    ".csv", ".xlsx", ".xls")),
+              tags$hr(),
+              tags$p("Process"),
+              checkboxInput("lemmatise", "Lemmatise"),
+              selectInput("sw_lexicon", "Stopword Lexicon", list("snowball")),
+              checkboxInput("stopwords", "Stopwords"),
               uiOutput("vars_to_filter"),
               textInput("filter_pred", "value to match", ""),
-              checkboxInput("lemmatise", "Lemmatise"),
-              checkboxInput("stopwords", "Stopwords"),
-              selectInput("sw_lexicon", "Stopword Lexicon", list("snowball"))
+              uiOutput("vars_to_group_on"),
+              tags$hr(),
+              tags$p("Term Insight"),
+              selectInput("term_insight",
+                          "Term Insight",
+                          list("Term Frequency", "Bigrams", "Key Words", "Term Sentiment"),
+                          multiple=TRUE),
+              actionButton("get_term_insight",
+                           "Get Term Insight"),
+              tags$p("Aggregate Insight"),
+              uiOutput("var_to_aggregate_insight_on"),
+              selectInput("aggregate_insight",
+                          "Aggregate Insight",
+                          list("Term Count", "Key Sections", "Aggregated Sentiment"),
+                          multiple=TRUE),
+              actionButton("get_aggregate_insight",
+                           "Get Aggregate Insight")
           ),
           mainPanel(
               tableOutput("table")
@@ -2076,20 +2146,66 @@ following as our shiny app:
 
 
   server <- function(input, output) {
-      data <- reactiveVal()
-      observe({data <-
-                   data() %>%
-                   inzightta::import_files(input$file1$datapath)})
-      observe({data() %>%
-              dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)})
-      observe({data() %>%
-              text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)})
+      imported <- reactive({
+          inzightta::import_files(input$file1$datapath)
+      })
+      prepped <- reactive({
+          data <- imported()
+          if (isTruthy(input$lemmatise) |
+              isTruthy(input$stopwords)){
+              data <- data %>%
+                  text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+          }
+          data
+      })
+      filtered <- reactive({
+          data <- prepped()
+          if (isTruthy(input$filter_var) &
+              isTruthy(input$filter_pred)){
+              data <- data %>%
+                  dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
+          }
+          data
+      })
+      grouped <- reactive({
+          data <- filtered()
+          if (isTruthy(input$group_var)){
+              data <- data %>%
+                  dplyr::group_by(!! dplyr::sym(input$group_var))
+          }
+          data
+      })
+      term_insights <- reactive({
+          data <- grouped()
+          if (isTruthy(input$get_term_insight) &
+              isTruthy(input$term_insight)){
+              data <- data %>%
+                  get_term_insight(input$term_insight)
+          }
+          data
+      })
+      aggregate_insights <- reactive({
+          data <- term_insights()
+          if (isTruthy(input$get_aggregate_insight) &
+              isTruthy(input$aggregate_insight) &
+              isTruthy(input$aggregate_var)){
+              data <- data %>%
+                  get_aggregate_insight(input$aggregate_insight, input$aggregate_var)
+          }
+          data
+      })
       output$table <- renderTable({
-              data()
+          aggregate_insights()
       })
       output$vars_to_filter <- renderUI(selectInput("filter_var",
-                                                    "select which columns to apply filtering to",
-                                                    names(data())))
+                                                    "select which column to apply filtering to",
+                                                    c("", names(prepped())) %||% c("")))
+      output$vars_to_group_on <- renderUI(selectInput("group_var",
+                                                     "select which columns to group on",
+                                                     c("", names(filtered())) %||% c("")))
+      output$var_to_aggregate_insight_on <- renderUI(selectInput("aggregate_var",
+                                                     "select which column to aggregate insight on",
+                                                     c("", names(grouped())) %||% c("")))
   }
 
   
@@ -2097,3 +2213,16 @@ following as our shiny app:
   shinyApp(ui, server)
 #+end_src
 
+todo:
+
+- [ ] Allow additional stopwords
+- [ ] Allow choice of stopword lexicon
+- [ ] allow multiple groups
+- [ ] fix document names
+- [ ] allow non-lemmatised or stopworded text preparation
+- [ ] add sectioning
+- [ ] aggregate sentiment choice of statistic
+- [ ] Have insights done automatically when creating visualisations
+- [ ] rearrange ui
+
+Interface chapter
