@@ -1689,12 +1689,14 @@ TODO:
 * Program Layer: Visualisation
 I have grouped visualisations by their output intention, rather than
 their implementation, as an ends-based focus, with the means being
-mere details. The following are the most useful visualisations. A
-present issue with visualisation is how grouping is performed; If I
-want to have a set of charts separated by group, performing by group
-creates as many separate charts as there are groups, as separate
-graphics. I want to make use of =facet_wrap= from ggplot, which
-requires some maneuvering with a wrapper function
+details. The following are the most useful visualisations. A present
+issue with visualisation is how grouping is performed; If I want to
+have a set of charts separated by group, performing by group creates
+as many separate charts as there are groups, as separate graphics. I
+want to make use of =facet_wrap= from ggplot, which requires some
+maneuvering with a wrapper function. Ultimately, I will have to create
+two forms of each chart; one grouped, one ungrouped. Potentially more,
+for differentiation between singly and multiply grouped charts.
 ** TODO Rank
 ** TODO Score
 *** TODO [#B] Barplot [0/2]
@@ -1776,34 +1778,60 @@ std_tib %>%
 *** TODO Histogram
 *** TODO Boxplot
 *** TODO Ungrouped Boxplot
-** TODO Structure
+** TODO Structure [1/2]
 *** TODO Time Series
-*** TODO [#A] ggpage
+*** CLOSED [#A] ggpage
+    CLOSED: [2019-09-02 Mon 17:34]
  ggpage allows us to show off the importance of our non-destructive
  editing - the original document can be displayed, with the insights
  highlighted. There was more discussion on ggpage under an earlier section.
+**** Ungrouped
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/visualisation.R :eval never-export :exports both
+  #' Colours a ggpage based on an insight function
+  #'
+  #' @param .data a dataframe containing "word" and insight columns as
+  #'     per the output of the get_(term|aggregate)_insight wrapper
+  #'     function
+  #'
+  #' @param col_name symbol name of the insight column intended to
+  #'     colour plot
+  #'
+  #' @return ggplot object as per ggpage
+  #'
+  #' @export
+  struct_ggpage_ungrouped <- function(.data, col_name){
+      q_col_name <- dplyr::enquo(col_name)
+      .data %>%
+          dplyr::pull(word) %>%
+          ggpage::ggpage_build() %>%
+          dplyr::bind_cols(.data) %>% 
+          ggpage::ggpage_plot(ggplot2::aes(fill = !! q_col_name)) ## +
+          ## ggplot2::labs(title = "")
+  }
+#+end_src
 ** TODO [#B] Wrapper
 This is an attempt to create a group-aware visualisation,
 automatically facetting by group. I feel like it is not ideal, though
 haven't had any major bugs with it yet
-#+begin_src R :session rsession1 :tangle no :eval never-export :exports both
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/visualisation.R :eval never-export :exports both
 #' create a group-aware visualisation
 #'
-#' @param std_tib the standard dataframe, modified so the last column
+#' @param .data the standard dataframe, modified so the last column
 #'     is the output of some insight function (eg. output from
 #'     term_freq)
 #'
-#' @param vis visualisation function
+#' @param vis character name of visualisation function
 #'
-#' @param ... visualisation function arguments
-get_vis <- function(std_tib, operation, ...){
-    if (is_grouped_df(std_tib)){
-        grouping <- group_vars(std_tib)
-        std_tib %>%
-            operation(...) + facet_wrap(syms(grouping), scales="free_x", labeller = "label_both") #
+#' @param col character name of the column to get insight from
+#'
+#' @export
+get_vis <- function(.data, vis, col, distribution=FALSE){
+    vistable <- list("struct_ggpage_ungrouped" = struct_ggpage_ungrouped)
+    if (dplyr::is_grouped_df(.data)){
+        grouping <- dplyr::group_vars(.data)
     } else {
-        std_tib %>%
-            operation(...)
+      col_name <- dplyr::sym(col)
+      vistable[[vis]](.data, !! col_name)
     }
 }
 #+end_src
@@ -1833,7 +1861,7 @@ get_vis <- function(std_tib, operation, ...){
     term_freq = term_freq(text),
     bigram = get_bigram(text),
     bigram_freq = term_freq(bigram),
-    word_sentiment = word_sentiment(text),
+    word_sentiment = term_sentiment(text),
     term_count_sentence = term_count(text, sentence_id),
     mean_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, mean),
     sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
@@ -1882,7 +1910,8 @@ get_vis <- function(std_tib, operation, ...){
     dplyr::top_n(n, bigram_freq) %>%
     dplyr::mutate(bigram = forcats::fct_reorder(bigram, dplyr::desc(bigram_freq))) %>%
     ggplot2::ggplot(ggplot2::aes(bigram, bigram_freq)) +
-    ggplot2::geom_col() +
+      ggplot2::geom_col() +
+      ggplot2::coord_flip() +
     ggplot2::labs(title = "Bigrams by Bigram Frequency")
 #+end_src
 ** Grouped
@@ -2072,8 +2101,78 @@ imported %>%
     ggpage_plot(aes(fill=score)) +
     scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0)
 #+end_src
+** shiny
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both
+  library(shiny)
+  library(inzightta)
+  library(rlang)
+  
+  input <- list(file1 = list(datapath = "~/stats-781/data/raw/conv.txt"),
+                lemmatise = TRUE,
+                stopwords = TRUE,
+                sw_lexicon = "snowball",
+                filter_var = NULL,
+                filter_pred = NULL,
+                group_var = NULL,
+                get_term_insight = TRUE,
+                term_insight = "Term Frequency",
+                get_aggregate_insight = NULL,
+                aggregate_insight = NULL,
+                aggregate_var = NULL,
+                vis = "struct_ggpage_ungrouped",
+                vis_col = "Term Frequency",
+                distribution = FALSE)
+  
+                                        # Import & Process
+  imported <- inzightta::import_files(input$file1$datapath)
+  prepped <- {
+      data <- imported
+          if (isTruthy(input$lemmatise) |
+              isTruthy(input$stopwords)){
+              data <- data %>%
+                  text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+          }
+      data}
+  filtered <- {
+      data <- prepped
+          if (isTruthy(input$filter_var) &
+              isTruthy(input$filter_pred)){
+              data <- data %>%
+                  dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
+          }
+          data
+  }
+  grouped <- {
+      data <- filtered
+      if (isTruthy(input$group_var)){
+          data <- data %>%
+              dplyr::group_by(!! dplyr::sym(input$group_var))
+      }
+      data
+  }
+  term_insights <- {
+      data <- grouped
+      if (isTruthy(input$get_term_insight) &
+          isTruthy(input$term_insight)){
+          data <- data %>%
+              get_term_insight(input$term_insight)
+      }
+      data
+  }
+      aggregate_insights <- {
+          data <- term_insights
+          if (isTruthy(input$get_aggregate_insight) &
+              isTruthy(input$aggregate_insight) &
+              isTruthy(input$aggregate_var)){
+              data <- data %>%
+                  get_aggregate_insight(input$aggregate_insight, input$aggregate_var)
+          }
+          data
+      }
+  get_vis(aggregate_insights, "struct_ggpage_ungrouped", input$vis_col, input$distribution)
+  
+#+end_src
 * Shiny Frontend
-
 For the user interface, the obvious choice is shiny.
 
 We first tried using an if statement to determine the data, as per
@@ -2098,53 +2197,70 @@ We first tried using an if statement to determine the data, as per
 However, this led to variable selectors constantly changing, as they had to recompute the names of data() which ran through several states at every event.
 
 We will use the following as our shiny app:
+** Library Calls
 #+begin_src R :session rsession1 :tangle ~/inzightta-shiny/app.R :eval never-export :exports both
   library(shiny)
   library(inzightta)
   library(rlang)
-  
-  ui <- fluidPage(
-      titlePanel("iNZight Text Analytics"),
-      sidebarLayout(
-          sidebarPanel(
-              tags$p("Import"),
-              fileInput("file1", "Choose File(s)",
-                        multiple = TRUE,
-                        accept = c("text/csv",
-                                   "text/comma-separated-values,text/plain",
-                                   ".csv", ".xlsx", ".xls")),
-              tags$hr(),
-              tags$p("Process"),
-              checkboxInput("lemmatise", "Lemmatise"),
-              selectInput("sw_lexicon", "Stopword Lexicon", list("snowball")),
-              checkboxInput("stopwords", "Stopwords"),
-              uiOutput("vars_to_filter"),
-              textInput("filter_pred", "value to match", ""),
-              uiOutput("vars_to_group_on"),
-              tags$hr(),
-              tags$p("Term Insight"),
-              selectInput("term_insight",
-                          "Term Insight",
-                          list("Term Frequency", "Bigrams", "Key Words", "Term Sentiment"),
-                          multiple=TRUE),
-              actionButton("get_term_insight",
-                           "Get Term Insight"),
-              tags$p("Aggregate Insight"),
-              uiOutput("var_to_aggregate_insight_on"),
-              selectInput("aggregate_insight",
-                          "Aggregate Insight",
-                          list("Term Count", "Key Sections", "Aggregated Sentiment"),
-                          multiple=TRUE),
-              actionButton("get_aggregate_insight",
-                           "Get Aggregate Insight")
-          ),
-          mainPanel(
-              tableOutput("table")
-          )
-      )
-  )
+#+end_src
+** UI
+   #+begin_src R :session rsession1 :tangle ~/inzightta-shiny/app.R :eval never-export :exports both
+     ui <- navbarPage("iNZight Text Analytics",
+                      tabPanel("Processing",
+                               sidebarLayout(
+                                   sidebarPanel(
+                                       tags$p("Import"),
+                                       fileInput("file1", "Choose File(s)",
+                                                 multiple = TRUE,
+                                                 accept = c("text/csv",
+                                                            "text/comma-separated-values,text/plain",
+                                                            ".csv", ".xlsx", ".xls")),
+                                       tags$hr(),
+                                       tags$p("Process"),
+                                       checkboxInput("lemmatise", "Lemmatise"),
+                                       selectInput("sw_lexicon", "Stopword Lexicon", list("snowball")),
+                                       checkboxInput("stopwords", "Stopwords"),
+                                       uiOutput("vars_to_filter"),
+                                       textInput("filter_pred", "value to match", ""),
+                                       uiOutput("vars_to_group_on"),
+                                       tags$hr(),
+                                       tags$p("Term Insight"),
+                                       selectInput("term_insight",
+                                                   "Term Insight",
+                                                   list("Term Frequency", "Bigrams", "Key Words", "Term Sentiment"),
+                                                   multiple=TRUE),
+                                       actionButton("get_term_insight",
+                                                    "Get Term Insight"),
+                                       tags$p("Aggregate Insight"),
+                                       uiOutput("var_to_aggregate_insight_on"),
+                                       selectInput("aggregate_insight",
+                                                   "Aggregate Insight",
+                                                   list("Term Count", "Key Sections", "Aggregated Sentiment"),
+                                                   multiple=TRUE),
+                                       actionButton("get_aggregate_insight",
+                                                    "Get Aggregate Insight")
+                                   ),
+                                   mainPanel(
+                                       tableOutput("table")
+                                   )
+                               )),
+                      tabPanel("Visualisation",
+                               sidebarLayout(
+                                   sidebarPanel(selectInput("vis",
+                                                            "Visualisation Type",
+                                                            list("struct_ggpage_ungrouped")),
+                                                uiOutput("var_to_visualise"),
+                                                checkboxInput("distribution",
+                                                              "Distribution")),
+                                   mainPanel(
+                                       plotOutput("plot")
+                                   )
+                               ))
+                      )
+#+end_src
 
-
+** Server
+#+begin_src R :session rsession1 :tangle ~/inzightta-shiny/app.R :eval never-export :exports both
   server <- function(input, output) {
       imported <- reactive({
           inzightta::import_files(input$file1$datapath)
@@ -2197,22 +2313,33 @@ We will use the following as our shiny app:
       output$table <- renderTable({
           aggregate_insights()
       })
+      output$plot <- renderPlot({
+          req(input$vis)
+          req(input$vis_col)  
+          get_vis(aggregate_insights(), input$vis, input$vis_col, input$distribution)
+      })
       output$vars_to_filter <- renderUI(selectInput("filter_var",
                                                     "select which column to apply filtering to",
                                                     c("", names(prepped())) %||% c("")))
       output$vars_to_group_on <- renderUI(selectInput("group_var",
-                                                     "select which columns to group on",
-                                                     c("", names(filtered())) %||% c("")))
+                                                      "select which columns to group on",
+                                                      c("", names(filtered())) %||% c("")))
       output$var_to_aggregate_insight_on <- renderUI(selectInput("aggregate_var",
-                                                     "select which column to aggregate insight on",
-                                                     c("", names(grouped())) %||% c("")))
+                                                                 "select which column to aggregate insight on",
+                                                                 c("", names(grouped())) %||% c("")))
+      output$var_to_visualise <- renderUI(selectInput("vis_col",
+                                                      "select which variable to visualise",
+                                                      c("", names(aggregate_insights())) %||% c("")))
   }
-
-  
-                                        # Create Shiny app ----
-  shinyApp(ui, server)
 #+end_src
 
+** Program Call
+
+#+begin_src R :session rsession1 :tangle ~/inzightta-shiny/app.R :eval never-export :exports both
+  # Create Shiny app ----
+  shinyApp(ui, server)
+#+end_src
+** Additional Functionality
 todo:
 
 - [ ] Allow additional stopwords

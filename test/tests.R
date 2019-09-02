@@ -12,7 +12,7 @@ insighted <- data %>%
   term_freq = term_freq(text),
   bigram = get_bigram(text),
   bigram_freq = term_freq(bigram),
-  word_sentiment = word_sentiment(text),
+  word_sentiment = term_sentiment(text),
   term_count_sentence = term_count(text, sentence_id),
   mean_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, mean),
   sd_aggregate_sentiment_sentence = aggregate_sentiment(text, sentence_id, sd)
@@ -56,7 +56,8 @@ insighted %>%
   dplyr::top_n(n, bigram_freq) %>%
   dplyr::mutate(bigram = forcats::fct_reorder(bigram, dplyr::desc(bigram_freq))) %>%
   ggplot2::ggplot(ggplot2::aes(bigram, bigram_freq)) +
-  ggplot2::geom_col() +
+    ggplot2::geom_col() +
+    ggplot2::coord_flip() +
   ggplot2::labs(title = "Bigrams by Bigram Frequency")
 
 imported <- import_files(tcltk::tk_choose.files())
@@ -226,3 +227,71 @@ imported %>%
     get_insight(word_sentiment_AFINN) %>%
     ggpage_plot(aes(fill=score)) +
     scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0)
+
+library(shiny)
+library(inzightta)
+library(rlang)
+
+input <- list(file1 = list(datapath = "~/stats-781/data/raw/conv.txt"),
+              lemmatise = TRUE,
+              stopwords = TRUE,
+              sw_lexicon = "snowball",
+              filter_var = NULL,
+              filter_pred = NULL,
+              group_var = NULL,
+              get_term_insight = TRUE,
+              term_insight = "Term Frequency",
+              get_aggregate_insight = NULL,
+              aggregate_insight = NULL,
+              aggregate_var = NULL,
+              vis = "struct_ggpage_ungrouped",
+              vis_col = "Term Frequency",
+              distribution = FALSE)
+
+                                      # Import & Process
+imported <- inzightta::import_files(input$file1$datapath)
+prepped <- {
+    data <- imported
+        if (isTruthy(input$lemmatise) |
+            isTruthy(input$stopwords)){
+            data <- data %>%
+                text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+        }
+    data}
+filtered <- {
+    data <- prepped
+        if (isTruthy(input$filter_var) &
+            isTruthy(input$filter_pred)){
+            data <- data %>%
+                dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
+        }
+        data
+}
+grouped <- {
+    data <- filtered
+    if (isTruthy(input$group_var)){
+        data <- data %>%
+            dplyr::group_by(!! dplyr::sym(input$group_var))
+    }
+    data
+}
+term_insights <- {
+    data <- grouped
+    if (isTruthy(input$get_term_insight) &
+        isTruthy(input$term_insight)){
+        data <- data %>%
+            get_term_insight(input$term_insight)
+    }
+    data
+}
+    aggregate_insights <- {
+        data <- term_insights
+        if (isTruthy(input$get_aggregate_insight) &
+            isTruthy(input$aggregate_insight) &
+            isTruthy(input$aggregate_var)){
+            data <- data %>%
+                get_aggregate_insight(input$aggregate_insight, input$aggregate_var)
+        }
+        data
+    }
+get_vis(aggregate_insights, "struct_ggpage_ungrouped", input$vis_col, input$distribution)
