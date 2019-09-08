@@ -340,8 +340,9 @@ to csv, with a wrapper around \mintinline{r}{readr::read_excel()}
 #' @param filepath a string indicating the relative or absolute
 #'     filepath of the file to import
 #'
-#' @return a [tibble][tibble::tibble-package] of each row corrresponding to a line of the text
-#'     file, with the column named "text"
+#' @return a [tibble][tibble::tibble-package] of each row
+#'     corrresponding to a line of the text file, with the column
+#'     named "text"
 import_excel <- function(filepath){
   readxl::read_excel(filepath) ## %>%
     ## table_textcol()
@@ -393,23 +394,27 @@ import_files <- function(filepaths){
     dplyr::bind_rows()
 }
 \end{minted}
-\subsection{Formatting}
+\subsection{Object Preparation}
 \label{sec:org9865b77}
-From the imported files, we work at formatting them into a lossless
-and efficient data structure that any analysis can make use of. Our
-solution to this constraint is to separate and ID by each word in a
-dataframe. To do this, we take the line ID, the sentence ID, then the
-word ID, producing a dataframe that takes the following form:
+From the imported files, we work at transforming their representations
+into a lossless and efficient data structure that any analysis can
+make use of. Our solution to the essential constraint of losslessness
+is to separate and ID by each word in a dataframe. To do this, we take
+the line ID, the sentence ID, then the word ID, producing a dataframe
+that takes the following form:
 
-\begin{center}
-\begin{tabular}{rrrl}
-line\textsubscript{id} & sentence\textsubscript{id} & word\textsubscript{id} & word\\
-\hline
-1 & 1 & 1 & the\\
-1 & 1 & 2 & quick\\
-2 & 1 & 3 & brown\\
-\end{tabular}
-\end{center}
+  \begin{table}[h]
+    \centering
+   
+  \begin{tabular}{rrrl}
+    line\_id & sentence\_id & word\_id & word\\
+    \toprule
+    1 & 1 & 1 & the\\
+    1 & 1 & 2 & quick\\
+    2 & 1 & 3 & brown\\
+  \end{tabular}  
+  \caption{Primary data structure format}\label{tab:data-base}
+\end{table}
 
 The reason for the ID columns is the preservation of the structure of
 the text; If required, the original text can be reconstructed in
@@ -418,29 +423,32 @@ automatically formats any data of the format returned by the initial
 import functions.
 
 \begin{minted}[frame=lines,fontsize=\scriptsize,xleftmargin=\parindent,linenos]{r}
-#' formats imported data into an analysis-ready format
-#'
+#' formats imported data into an analysis-ready format '
 #' @param data a tibble formatted with a text and (optional) group
 #'     column
 #'
-#' @return a [tibble][tibble::tibble-package] formatted such that columns correspond to
-#'     identifiers of group, line, sentence, word (groups ignored)
+#' @return a [tibble][tibble::tibble-package] formatted such that
+#'     columns correspond to identifiers of group, line, sentence,
+#'     word (groups ignored)
 #'
 #' @export
 format_data <- function(data){
   data %>%
     dplyr::mutate(line_id = dplyr::row_number()) %>% 
-    tidytext::unnest_tokens(output = sentence, input = text, token = "sentences", to_lower = FALSE) %>%
+      tidytext::unnest_tokens(output = sentence, input = text,
+			      token = "sentences", to_lower = FALSE) %>%
     dplyr::mutate(sentence_id = dplyr::row_number()) %>%
     dplyr::group_by(sentence_id, add=TRUE) %>%
     dplyr::group_modify(~ {
       .x %>%
-	tidytext::unnest_tokens(output = word, input = sentence, token = "words", to_lower=FALSE) %>%
+	  tidytext::unnest_tokens(output = word, input = sentence,
+				  token = "words", to_lower=FALSE) %>%
 	dplyr::mutate(word_id = dplyr::row_number())
     }) %>%
     ungroup_by("sentence_id")
 }
 \end{minted}
+
 \subsection{Filtering}
 \label{sec:orge4eec20}
 Filtering of text is implemented directly with the
@@ -483,6 +491,200 @@ stumps and morphemes. However, it may sometimes be useful when the
 lemmatisation model isn't working effectively, and textstem provides
 the capability with \mintinline{r}{stem_words()}. We have not implemented this
 yet, as it is not as essential to an analysis.
+
+\subsection{Stopwords}
+\label{sec:stopwords}
+We make use of dictionary-form stopwords, allowing for the input of
+both developed lexicons as well as user input. Two functions compose stopwords in the programl \mintinline{r}{get_sw()}, which gathers user input, queries the selected lexicon, and combines the two, and \mintinline{r}{determine_stopwords()}, which adds a boolean \mintinline{r}{TRUE | FALSE} column to the input dataframe. The following code fragment defines \mintinline{r}{get_sw()}:
+\begin{minted}[frame=lines,fontsize=\scriptsize,xleftmargin=\parindent,linenos]{r}
+#' Gets stopwords from a default list and user-provided list
+#'
+#' @param lexicon a string name of a stopword list, one of "smart",
+#'     "snowball", or "onix"
+#'
+#' @param addl user defined character vector of additional stopwords,
+#'     each element being a stopword
+#'
+#' @return a [tibble][tibble::tibble-package] with one column named "word"
+get_sw <- function(lexicon = "snowball", addl = NA){
+  addl_char <- as.character(addl)
+  tidytext::get_stopwords(source = lexicon) %>%
+    dplyr::select(word) %>%
+    dplyr::bind_rows(., tibble::tibble(word = addl_char)) %>%
+    stats::na.omit() %>%
+    purrr::as_vector() %>%
+    tolower() %>%
+    as.character()
+}
+\end{minted}
+
+With \mintinline{r}{determine_stopwords()} given by:
+\begin{minted}[frame=lines,fontsize=\scriptsize,xleftmargin=\parindent,linenos]{r}
+#' determine stopword status
+#'
+#' @param .data vector of words
+#'
+#' @param ... arguments of get_sw
+#'
+#' @return a [tibble][tibble::tibble-package] equivalent to the input
+#'   dataframe, with an additional stopword column
+#'
+#' @export
+determine_stopwords <- function(.data, ...){
+  sw_list <- get_sw(...)
+  .data %in% sw_list
+}
+\end{minted}
+
+\subsection{Formatting}
+\label{sec:formatting}
+
+The final component in preparation is to format the prepared object
+with the correct attributes to have formatting automated. We define a
+wrapper that takes all combinations of stopwords and lemmatisation
+options and intelligently connects them for the ``insight column'' in
+a dataframe, which the insight is performed upon. For the purpose of
+standard interoperability with, e.g., ggpage, we name this column
+``text''.
+
+At the heart of this function is an \mintinline{r}{ifexp()} that
+encodes the following logic involving the interaction of stopwords and
+lemmatisation, to enable the correct output text based on stopword and lemmatisation options;
+
+\begin{table}[h]
+  \centering
+  \begin{tabular}{p{20mm}|p{50mm}p{50mm}}
+  & Stopwords True & Stopwords False\\
+  \toprule
+Lemmatise True & Lemmatise, determine stopwords on lemmatisation, perform insight on lemmas sans stopwords & Lemmatise, perform insight on lemmas\\
+Lemmatise False & Determine stopwords on original words (no lemmatisation), perform insight on words sans stopwords & Perform insight on original words\\
+\end{tabular}
+
+\caption{Formatting Logic for Stopwords and Lemmatisation}\label{tab:formatting}
+\end{table}
+
+
+
+Based on the combination, stopword filtering and lemmatisation take
+place inside the function, defined as the following:
+
+\begin{minted}[frame=lines,fontsize=\scriptsize,xleftmargin=\parindent,linenos]{r}
+#' takes imported one-line-per-row data and prepares it for later analysis
+#'
+#' @param .data tibble with one line of text per row
+#'
+#' @param lemmatize boolean, whether to lemmatize or not
+#'
+#' @param stopwords boolean, whether to remove stopwords or not
+#'
+#' @param sw_lexicon string, lexicon with which to remove stopwords
+#'
+#' @param addl_stopwords char vector of user-supplied stopwords
+#'p
+#' @return a [tibble][tibble::tibble-package] with one token per line,
+#'   stopwords removed leaving NA values, column for analysis named
+#'   "text"
+#'
+#' @export
+text_prep <- function(.data, lemmatize=TRUE, stopwords=TRUE,
+		      sw_lexicon="snowball", addl_stopwords=NA){
+  formatted <- .data %>%
+    format_data()
+
+  text <- ifexp(lemmatize,
+		ifexp(stopwords,
+		      dplyr::mutate(formatted,
+				    lemma = tolower(textstem::lemmatize_words(word)),
+				    stopword = determine_stopwords(lemma,
+								   sw_lexicon,
+								   addl_stopwords),
+				    text = dplyr::if_else(stopword,
+						   as.character(NA),
+						   lemma)),
+		      dplyr::mutate(formatted,
+				    lemma = tolower(textstem::lemmatize_words(word)),
+				    text = lemma)),
+		ifexp(stopwords,
+		      dplyr::mutate(formatted,
+				    stopword = determine_stopwords(word,
+								   sw_lexicon,
+								   addl_stopwords),
+				    text = dplyr::if_else(stopword,
+						   as.character(NA),
+						   word)),
+		      dplyr::mutate(formatted, text = word)))
+  return(text)
+}
+\end{minted}
+
+\subsection{Sectioning}
+\label{sec:orgb5ccf72}
+Plaintext, as might exist as a Gutenberg Download, differs from more
+complex representations in many ways, including a lack of sectioning
+--- for example, chapters require a specific search in order to jump
+to them. Here, I compose a closure that searches and sections text
+based on a Regular Expression intended to capture a particular
+section. Several functions are created from that. In time, advanced
+users could be given the option to compose their own regular
+expressions for sectioning.
+\begin{minted}[frame=lines,fontsize=\scriptsize,xleftmargin=\parindent,linenos]{r}
+#' creates a search closure to section text
+#'
+#' @param search a string regexp for the term to seperate on, e.g. "Chapter"
+#'
+#' @return closure over search expression 
+get_search <- function(search){
+  function(.data){
+    .data %>%
+      stringr::str_detect(search) %>%
+      purrr::accumulate(sum, na.rm=TRUE)
+    }
+}
+
+#' sections text based on chapters
+#'
+#' @param .data vector to section
+#'
+#' @return vector of same length as .data with chapter numbers
+#'
+#' @export
+get_chapters <- get_search("^[\\s]*[Cc][Hh][Aa]?[Pp][Tt]([Ee][Rr])?")
+
+#' sections text based on parts
+#'
+#' @param .data vector to section
+#'
+#' @return vector of same length as .data with part numbers
+#'
+#' @export
+get_parts <- get_search("^[\\s]*[Pp]([Aa][Rr])?[Tt]")
+
+#' sections text based on sections
+#'
+#' @param .data vector to section
+#'
+#' @return vector of same length as .data with section numbers
+#'
+#' @export
+get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])")
+\end{minted}
+
+How to implement sectioning in a way that fits in a shiny UI is still
+to be decided. Presumably, after object preparation, the option to
+section would appear, followed by a group selection option.
+
+\subsection{Grouping}
+\label{sec:orga051982}
+Grouping is an essential, killer feature of our app. The
+implementation is to run a \mintinline{r}{dplyr::group_by()} command
+in the shiny server on the prepared object, over user-specified
+groups, and all further insights and visualisations are performed
+groupwise. This allows for immediate and clear comparisons between
+groups.
+
+Like filtering, after some initial analytics have been done in the
+insight layer, preparation can be returned to and the text can be
+grouped on based on the analytics.
 \section{Insight}
 \label{sec:insight}
 

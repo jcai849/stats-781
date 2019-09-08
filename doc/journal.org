@@ -968,8 +968,9 @@ to csv.
   #' @param filepath a string indicating the relative or absolute
   #'     filepath of the file to import
   #'
-  #' @return a [tibble][tibble::tibble-package] of each row corrresponding to a line of the text
-  #'     file, with the column named "text"
+  #' @return a [tibble][tibble::tibble-package] of each row
+  #'     corrresponding to a line of the text file, with the column
+  #'     named "text"
   import_excel <- function(filepath){
     readxl::read_excel(filepath) ## %>%
       ## table_textcol()
@@ -1047,24 +1048,26 @@ try to optimise this.
 grouping has been shifted to take place afterwards
 
 #+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R :eval never-export :exports both
-  #' formats imported data into an analysis-ready format
-  #'
+  #' formats imported data into an analysis-ready format '
   #' @param data a tibble formatted with a text and (optional) group
   #'     column
   #'
-  #' @return a [tibble][tibble::tibble-package] formatted such that columns correspond to
-  #'     identifiers of group, line, sentence, word (groups ignored)
+  #' @return a [tibble][tibble::tibble-package] formatted such that
+  #'     columns correspond to identifiers of group, line, sentence,
+  #'     word (groups ignored)
   #'
   #' @export
   format_data <- function(data){
     data %>%
       dplyr::mutate(line_id = dplyr::row_number()) %>% 
-      tidytext::unnest_tokens(output = sentence, input = text, token = "sentences", to_lower = FALSE) %>%
+        tidytext::unnest_tokens(output = sentence, input = text,
+                                token = "sentences", to_lower = FALSE) %>%
       dplyr::mutate(sentence_id = dplyr::row_number()) %>%
       dplyr::group_by(sentence_id, add=TRUE) %>%
       dplyr::group_modify(~ {
 	.x %>%
-	  tidytext::unnest_tokens(output = word, input = sentence, token = "words", to_lower=FALSE) %>%
+            tidytext::unnest_tokens(output = word, input = sentence,
+                                    token = "words", to_lower=FALSE) %>%
 	  dplyr::mutate(word_id = dplyr::row_number())
       }) %>%
       ungroup_by("sentence_id")
@@ -1182,21 +1185,29 @@ logic involving the interaction of stopwords and lemmatisation:
   #'   "text"
   #'
   #' @export
-  text_prep <- function(.data, lemmatize=TRUE, stopwords=TRUE, sw_lexicon="snowball", addl_stopwords=NA){
+  text_prep <- function(.data, lemmatize=TRUE, stopwords=TRUE,
+                        sw_lexicon="snowball", addl_stopwords=NA){
     formatted <- .data %>%
       format_data()
 
     text <- ifexp(lemmatize,
 		  ifexp(stopwords,
-			dplyr::mutate(formatted, lemma = tolower(textstem::lemmatize_words(word)),
-				      stopword = determine_stopwords(lemma, sw_lexicon, addl_stopwords),
+			dplyr::mutate(formatted,
+                                      lemma = tolower(textstem::lemmatize_words(word)),
+				      stopword = determine_stopwords(lemma,
+                                                                     sw_lexicon,
+                                                                     addl_stopwords),
 				      text = dplyr::if_else(stopword,
 						     as.character(NA),
 						     lemma)),
-			dplyr::mutate(formatted, lemma = tolower(textstem::lemmatize_words(word)),
+			dplyr::mutate(formatted,
+                                      lemma = tolower(textstem::lemmatize_words(word)),
 				      text = lemma)),
 		  ifexp(stopwords,
-			dplyr::mutate(formatted, stopword = determine_stopwords(word, sw_lexicon, addl_stopwords),
+			dplyr::mutate(formatted,
+                                      stopword = determine_stopwords(word,
+                                                                     sw_lexicon,
+                                                                     addl_stopwords),
 				      text = dplyr::if_else(stopword,
 						     as.character(NA),
 						     word)),
@@ -1252,6 +1263,23 @@ option to compose their own regular expressions for sectioning.
   #'
   #' @export
   get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])")
+
+  #' Adds section column to dataframe
+  #'
+  #' @param .data dataframe formatted as per output of prep process
+  #'
+  #' @param section_by character name of what to section over
+  #'
+  #' @return input dataframe with additional section column
+  #'
+  #' @export
+  section <- function(.data, section_by){
+      sec_table <- list("chapter" = get_chapters,
+                        "part" = get_parts,
+                        "section" = get_sections)
+      .data %>%
+          dplyr::mutate(!! section_by := sec_table[[section_by]](word))
+  }
 #+end_src
 
 How to implement sectioning in a way that fits in a shiny UI is still
@@ -1489,9 +1517,9 @@ just won't include them.
  TODO:
 - [X] Include option for additional dictionaries
 #+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
-  #' Determine sentiment of words
+  #' Determine sentiment of terms
   #'
-  #' @param .data vector of words
+  #' @param .data vector of terms
   #'
   #' @param lexicon sentiment lexicon to use, based on the corpus
   #'   provided by tidytext
@@ -1507,6 +1535,47 @@ just won't include them.
       dplyr::pull(value)
   }
 #+end_src
+*** Lagged Term Sentiment
+
+A statistical summary of a sentiment in time gives a more contextual
+picture of how sentiment is given in a text. Here we define a lagged
+term sentiment function, flexible enough to take any statistic or lag,
+and defaulting to be a moving average of 10. The first =lag= terms
+will be =NA=, and the number of =lag= is inclusive, matching R's
+indexing starting at 1.
+
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
+  #' Determine the lagged sentiment of terms
+  #'
+  #' @param .data vector of terms
+  #'
+  #' @param lexicon sentiment lexicon to use, based on the corpus
+  #'     provided by tidytext
+  #'
+  #' @param lag how many (inclusive) terms to compute statistic over
+  #'
+  #' @param statistic base statistic used to summarise the data, capable
+  #'     of taking an na.rm argument
+  #'
+  #' @return vector with lagged sentiment score of each term in the input vector
+  lagged_term_sentiment <- function(.data, lexicon="afinn", lag = 10, statistic = mean){
+      sents <- term_sentiment(.data, lexicon)
+      ## lagged_sents <- rep(NA, length(sents))
+      ## for (i in seq(lag, length(sents))){
+      ##     lagged_sents[i] <- statistic(sents[(seq(i - lag + 1, i))], na.rm = TRUE)
+      ## }
+      ## lagged_sents
+      c(rep(NA, lag - 1),
+        sapply(seq(lag, length(sents)),
+               function(i){x <- statistic(sents[(seq(i - lag + 1, i))],
+                                          na.rm = TRUE)
+                                          ifelse(is.nan(x),
+                                                 NA,
+                                                 x)
+               }))
+  }
+#+end_src
+
 *** TODO [#B] Word Correlation
 This is the word-level insight that will be the most difficult to
 perform, due to my requirements that the dataframe remains tidy and
@@ -1645,7 +1714,8 @@ TODO:
       opstable <- list("Term Frequency" = term_freq,
                        "Bigrams" = get_bigram,
                        "Key Words" = keywords_tr,
-                       "Term Sentiment" = term_sentiment)
+                       "Term Sentiment" = term_sentiment,
+                       "Lagged Term Sentiment" = lagged_term_sentiment)
       ops <- opstable[operations]
       lapply(seq(length(ops)),
              function(x){
@@ -1714,78 +1784,111 @@ facet for that group, leading to potential confusion
 [2019-07-15 Mon]: https://juliasilge.com/blog/reorder-within/ may be a solution
 
 Which I do want to fix, though it isn't necessarily /incorrect/.
-Additionally, this function takes too many arguments.
 
 TODO:
 - [ ] Find way to better order score
-- [ ] Find way to lower number of arguments
-#+begin_src R :session rsession1 :tangle no :eval never-export :exports both
-#' output a bar graph of the top words from some insight function
-#'
-#' @param std_tib the standard dataframe, modified so the last column
-#'     is the output of some insight function (eg. output from
-#'     term_freq)
-#'
-#' @param insight_name string name of the column insight
-#'     was performed on
-#' 
-#' @param insight_col string name of the column insight was
-#'     outputted to
-#'
-#' @param n number of bars to display
-#'
-#' @param desc bool: show bars in descending order
-#'
-word_bar <- function(std_tib, insight_name, insight_col,
-                     n = 15, desc = TRUE){
-    dist <- std_tib %>%
-        dplyr::distinct(word, .keep_all=TRUE)
-    if (desc) {
-        arr <-  dplyr::arrange(dist, desc(!! sym(insight_col)))
-    }else{
-        arr <- dplyr::arrange(dist, !! sym(insight_col))
-    }
-    arr %>%
-        group_modify(~{.x %>% head(n)}) %>%
-        ungroup() %>%
-        dplyr::mutate(!! sym(insight_name) := fct_reorder(!! sym(insight_name),
-                                                   !! sym(insight_col),
-                                                   .desc = desc)) %>%
-        ggplot(aes(x = !! sym(insight_name))) +
-        geom_col(aes(y = !! sym(insight_col)))
-}
+
+
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/visualisation.R :eval never-export :exports both
+  #' output a ggplot column graph of the top texts from some insight function
+  #'
+  #' @param .data a dataframe containing "text" and insight columns as
+  #'     per the output of the get_(term|aggregate)_insight wrapper
+  #'     function
+  #' 
+  #' @param col_name symbol name of the column insight was
+  #'     outputted to
+  #'
+  #' @param n number of bars to display
+  #'
+  #' @param desc bool: show bars in descending order
+  #'
+  #' @export
+  score_bar_ungrouped <- function(.data, col_name,
+                                  n = 15, desc = FALSE){
+      insight_col <- dplyr::enquo(col_name)
+      dist <- .data %>%
+          dplyr::distinct(text, .keep_all=TRUE)
+      ## if (desc) {
+      arr <-  dplyr::arrange(dist, dplyr::desc(!! insight_col))
+      ## } else {
+      ##     arr <- dplyr::arrange(dist, !! insight_col)
+      ## }
+      arr %>%
+          dplyr::group_modify(~{.x %>% head(n)}) %>%
+          dplyr::ungroup() %>%
+          dplyr::mutate(text = forcats::fct_reorder(text,
+                                                    !! insight_col,
+                                                    .desc = desc)) %>%
+          ggplot2::ggplot(ggplot2::aes(x = text)) +
+          ggplot2::geom_col(ggplot2::aes(y = !! insight_col)) +
+          ggplot2::coord_flip()
+  }
 #+end_src
 ** TODO [#C] Relation
 *** Correlation Matrix
-** TODO Distribution [1/4]
+** TODO Distribution [2/4]
 *** CLOSED Density
-    CLOSED: [2019-07-13 Sat 23:20]
-#+begin_src R :session rsession1 :tangle no :eval never-export :exports both
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/visualisation.R :eval never-export :exports both
 #' output a histogram of the distribution of some function of words
 #'
-#' @param std_tib the standard dataframe, modified so the last column
+#' @param .data the standard dataframe, modified so the last column
 #'     is the output of some insight function (eg. output from
 #'     term_freq)
 #'
-#' @param insight_col string name of the column insight was
+#' @param col_name symbol name of the column insight was
 #'     performed on
-word_dist <- function(std_tib, insight_col){
-std_tib %>%
-    ggplot(aes(x = !! sym(insight_col))) +
-    geom_density()
+dist_density_ungrouped <- function(.data, col_name){
+    q_col_name <- dplyr::enquo(col_name)
+    .data %>%
+        ggplot2::ggplot(ggplot2::aes(x = !! q_col_name)) +
+        ggplot2::geom_density()
 }
 #+end_src
-*** TODO Histogram
+*** CLOSED Histogram
+    CLOSED: [2019-09-08 Sun 14:21]
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/visualisation.R :eval never-export :exports both
+#' output a histogram of the distribution of some function of words
+#'
+#' @param .data the standard dataframe, modified so the last column
+#'     is the output of some insight function (eg. output from
+#'     term_freq)
+#'
+#' @param col_name symbol name of the column insight was
+#'     performed on
+dist_hist_ungrouped <- function(.data, col_name){
+    q_col_name <- dplyr::enquo(col_name)
+    .data %>%
+        ggplot2::ggplot(ggplot2::aes(x = !! q_col_name)) +
+        ggplot2::geom_histogram()
+}
+#+end_src
 *** TODO Boxplot
 *** TODO Ungrouped Boxplot
 ** TODO Structure [1/2]
 *** TODO Time Series
+Treating the text as a time series, running from the beginning of the
+text through to the end, with each term as a time point, reveals much
+about the structure, particularly trends that may not be visible
+otherwise.
+
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/visualisation.R :eval never-export :exports both
+  struct_ts_ungrouped <- function(.data, col_name){
+      q_col_name <- dplyr::enquo(col_name)
+      .data %>%
+          dplyr::filter(!is.na(!! q_col_name)) %>%
+          dplyr::mutate(term = seq_along(!! q_col_name)) %>%
+          ggplot2::ggplot(ggplot2::aes(term, !! q_col_name)) +
+          ggplot2::geom_line(na.rm = TRUE)
+  }
+#+end_src
+
 *** CLOSED [#A] ggpage
     CLOSED: [2019-09-02 Mon 17:34]
  ggpage allows us to show off the importance of our non-destructive
  editing - the original document can be displayed, with the insights
  highlighted. There was more discussion on ggpage under an earlier section.
-**** Ungrouped
+
 #+begin_src R :session rsession1 :tangle ~/inzightta/R/visualisation.R :eval never-export :exports both
   #' Colours a ggpage based on an insight function
   #'
@@ -1809,7 +1912,7 @@ std_tib %>%
           ## ggplot2::labs(title = "")
   }
 #+end_src
-** TODO [#B] Wrapper
+** Wrapper
 This is an attempt to create a group-aware visualisation,
 automatically facetting by group. I feel like it is not ideal, though
 haven't had any major bugs with it yet
@@ -1824,14 +1927,29 @@ haven't had any major bugs with it yet
 #'
 #' @param col character name of the column to get insight from
 #'
+#' @param facet_by character name of the column to facet by
+#'
+#' @param scale_fixed force scales to be fixed in a facet
+#'
 #' @export
-get_vis <- function(.data, vis, col, distribution=FALSE){
-    vistable <- list("struct_ggpage_ungrouped" = struct_ggpage_ungrouped)
-    if (dplyr::is_grouped_df(.data)){
-        grouping <- dplyr::group_vars(.data)
+get_vis <- function(.data, vis, col, facet_by="", scale_fixed = TRUE){
+    vistable <- list("struct_ggpage_ungrouped" = struct_ggpage_ungrouped,
+                     "struct_ts_ungrouped" = struct_ts_ungrouped,
+                     "score_bar_ungrouped" = score_bar_ungrouped,
+                     "dist_density_ungrouped" = dist_density_ungrouped,
+                     "dist_hist_ungrouped" = dist_hist_ungrouped)
+    col_name <- dplyr::sym(col)
+    chart <- vistable[[vis]](.data, !! col_name)
+    if (shiny::isTruthy(facet_by)){
+        facet_name <- dplyr::sym(facet_by)
+        q_facet_name <- dplyr::enquo(facet_name)
+        return(chart + ggplot2::facet_wrap(ggplot2::vars(!! q_facet_name),
+                                           scales = ifelse(vis == "struct_ggpage_ungrouped" | scale_fixed,
+                                                           "fixed",
+                                                           "free")))
+
     } else {
-      col_name <- dplyr::sym(col)
-      vistable[[vis]](.data, !! col_name)
+        return(chart)
     }
 }
 #+end_src
@@ -2107,49 +2225,64 @@ imported %>%
   library(inzightta)
   library(rlang)
   
-  input <- list(file1 = list(datapath = "~/stats-781/data/raw/conv.txt"),
+  input <- list(file1 = list(datapath = "~/stats-781/data/raw/11-0.txt"),
                 lemmatise = TRUE,
                 stopwords = TRUE,
                 sw_lexicon = "snowball",
                 filter_var = NULL,
                 filter_pred = NULL,
+                section_by = "chapter",
                 group_var = NULL,
                 get_term_insight = TRUE,
-                term_insight = "Term Frequency",
+                term_insight = "Lagged Term Sentiment",
                 get_aggregate_insight = NULL,
                 aggregate_insight = NULL,
                 aggregate_var = NULL,
-                vis = "struct_ggpage_ungrouped",
-                vis_col = "Term Frequency",
-                distribution = FALSE)
+                vis = "struct_ts_ungrouped", ###  "struct_ggpage_ungrouped" "dist_density_ungrouped" "score_bar_ungrouped" "dist_hist_ungrouped" "struct_ts_ungrouped"
+                vis_col = "Lagged Term Sentiment",
+                vis_facet = "chapter",
+                scale_fixed = TRUE)
   
                                         # Import & Process
   imported <- inzightta::import_files(input$file1$datapath)
+  
   prepped <- {
       data <- imported
-          if (isTruthy(input$lemmatise) |
-              isTruthy(input$stopwords)){
-              data <- data %>%
-                  text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
-          }
+      if (isTruthy(input$lemmatise) |
+          isTruthy(input$stopwords)){
+          data <- data %>%
+              text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+      }
       data}
+  
   filtered <- {
       data <- prepped
-          if (isTruthy(input$filter_var) &
-              isTruthy(input$filter_pred)){
-              data <- data %>%
-                  dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
-          }
-          data
+      if (isTruthy(input$filter_var) &
+          isTruthy(input$filter_pred)){
+          data <- data %>%
+              dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
+      }
+      data
   }
-  grouped <- {
+
+  sectioned <- {
       data <- filtered
+      if (isTruthy(input$section_by)){
+          data <- data %>%
+              section(input$section_by)
+      }
+      data
+  }
+  
+  grouped <- {
+      data <- sectioned
       if (isTruthy(input$group_var)){
           data <- data %>%
               dplyr::group_by(!! dplyr::sym(input$group_var))
       }
       data
   }
+  
   term_insights <- {
       data <- grouped
       if (isTruthy(input$get_term_insight) &
@@ -2159,19 +2292,22 @@ imported %>%
       }
       data
   }
-      aggregate_insights <- {
-          data <- term_insights
-          if (isTruthy(input$get_aggregate_insight) &
-              isTruthy(input$aggregate_insight) &
-              isTruthy(input$aggregate_var)){
-              data <- data %>%
-                  get_aggregate_insight(input$aggregate_insight, input$aggregate_var)
-          }
-          data
+  
+  aggregate_insights <- {
+      data <- term_insights
+      if (isTruthy(input$get_aggregate_insight) &
+          isTruthy(input$aggregate_insight) &
+          isTruthy(input$aggregate_var)){
+          data <- data %>%
+              get_aggregate_insight(input$aggregate_insight, input$aggregate_var)
       }
-  get_vis(aggregate_insights, "struct_ggpage_ungrouped", input$vis_col, input$distribution)
+      data
+  }
+  
+  get_vis(aggregate_insights, input$vis, input$vis_col, input$vis_facet, input$scale_fixed)
   
 #+end_src
+
 * Shiny Frontend
 For the user interface, the obvious choice is shiny.
 
@@ -2222,12 +2358,14 @@ We will use the following as our shiny app:
                                        checkboxInput("stopwords", "Stopwords"),
                                        uiOutput("vars_to_filter"),
                                        textInput("filter_pred", "value to match", ""),
+                                       selectInput("section_by", "Section By",
+                                                   list("", "chapter", "part", "section")),
                                        uiOutput("vars_to_group_on"),
                                        tags$hr(),
                                        tags$p("Term Insight"),
                                        selectInput("term_insight",
                                                    "Term Insight",
-                                                   list("Term Frequency", "Bigrams", "Key Words", "Term Sentiment"),
+                                                   list("Term Frequency", "Bigrams", "Key Words", "Term Sentiment", "Lagged Term Sentiment"),
                                                    multiple=TRUE),
                                        actionButton("get_term_insight",
                                                     "Get Term Insight"),
@@ -2248,10 +2386,14 @@ We will use the following as our shiny app:
                                sidebarLayout(
                                    sidebarPanel(selectInput("vis",
                                                             "Visualisation Type",
-                                                            list("struct_ggpage_ungrouped")),
+                                                            list("struct_ggpage_ungrouped",
+                                                                 "struct_ts_ungrouped",
+                                                                 "score_bar_ungrouped",
+                                                                 "dist_density_ungrouped",
+                                                                 "dist_hist_ungrouped")),
                                                 uiOutput("var_to_visualise"),
-                                                checkboxInput("distribution",
-                                                              "Distribution")),
+                                                uiOutput("vis_facet_by"),
+                                                checkboxInput("scale_fixed", "Scale Fixed", value=TRUE)),
                                    mainPanel(
                                        plotOutput("plot")
                                    )
@@ -2283,8 +2425,16 @@ We will use the following as our shiny app:
           }
           data
       })
-      grouped <- reactive({
+      sectioned <- reactive({
           data <- filtered()
+          if (isTruthy(input$section_by)){
+              data <- data %>%
+                  section(input$section_by)
+          }
+          data
+      })
+      grouped <- reactive({
+          data <- sectioned()
           if (isTruthy(input$group_var)){
               data <- data %>%
                   dplyr::group_by(!! dplyr::sym(input$group_var))
@@ -2311,25 +2461,28 @@ We will use the following as our shiny app:
           data
       })
       output$table <- renderTable({
-          aggregate_insights()
+          aggregate_insights() %>% head(300)
       })
       output$plot <- renderPlot({
           req(input$vis)
           req(input$vis_col)  
-          get_vis(aggregate_insights(), input$vis, input$vis_col, input$distribution)
+          get_vis(aggregate_insights(), input$vis, input$vis_col, input$vis_facet, input$scale_fixed)
       })
       output$vars_to_filter <- renderUI(selectInput("filter_var",
                                                     "select which column to apply filtering to",
                                                     c("", names(prepped())) %||% c("")))
       output$vars_to_group_on <- renderUI(selectInput("group_var",
                                                       "select which columns to group on",
-                                                      c("", names(filtered())) %||% c("")))
+                                                      c("", names(sectioned())) %||% c("")))
       output$var_to_aggregate_insight_on <- renderUI(selectInput("aggregate_var",
                                                                  "select which column to aggregate insight on",
                                                                  c("", names(grouped())) %||% c("")))
       output$var_to_visualise <- renderUI(selectInput("vis_col",
                                                       "select which variable to visualise",
                                                       c("", names(aggregate_insights())) %||% c("")))
+      output$vis_facet_by <- renderUI(selectInput("vis_facet",
+                                                  "select which variable to facet on",
+                                                  c("", names(aggregate_insights())) %||% c("")))
   }
 #+end_src
 
@@ -2344,12 +2497,16 @@ todo:
 
 - [ ] Allow additional stopwords
 - [ ] Allow choice of stopword lexicon
+- [ ] Allow additional arguments to insight functions in-app
 - [ ] allow multiple groups
 - [ ] fix document names
 - [ ] allow non-lemmatised or stopworded text preparation
 - [ ] add sectioning
 - [ ] aggregate sentiment choice of statistic
 - [ ] Have insights done automatically when creating visualisations
+- [ ] Add page view
 - [ ] rearrange ui
+- [ ] separation in scale ggpage for sentiment etc
+- [ ] automatic visualisation based on insight selection
 
 Interface chapter

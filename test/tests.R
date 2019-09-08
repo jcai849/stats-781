@@ -232,49 +232,64 @@ library(shiny)
 library(inzightta)
 library(rlang)
 
-input <- list(file1 = list(datapath = "~/stats-781/data/raw/conv.txt"),
+input <- list(file1 = list(datapath = "~/stats-781/data/raw/11-0.txt"),
               lemmatise = TRUE,
               stopwords = TRUE,
               sw_lexicon = "snowball",
               filter_var = NULL,
               filter_pred = NULL,
+              section_by = "chapter",
               group_var = NULL,
               get_term_insight = TRUE,
-              term_insight = "Term Frequency",
+              term_insight = "Lagged Term Sentiment",
               get_aggregate_insight = NULL,
               aggregate_insight = NULL,
               aggregate_var = NULL,
-              vis = "struct_ggpage_ungrouped",
-              vis_col = "Term Frequency",
-              distribution = FALSE)
+              vis = "struct_ts_ungrouped", ###  "struct_ggpage_ungrouped" "dist_density_ungrouped" "score_bar_ungrouped" "dist_hist_ungrouped" "struct_ts_ungrouped"
+              vis_col = "Lagged Term Sentiment",
+              vis_facet = "chapter",
+              scale_fixed = TRUE)
 
                                       # Import & Process
 imported <- inzightta::import_files(input$file1$datapath)
+
 prepped <- {
     data <- imported
-        if (isTruthy(input$lemmatise) |
-            isTruthy(input$stopwords)){
-            data <- data %>%
-                text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
-        }
+    if (isTruthy(input$lemmatise) |
+        isTruthy(input$stopwords)){
+        data <- data %>%
+            text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+    }
     data}
+
 filtered <- {
     data <- prepped
-        if (isTruthy(input$filter_var) &
-            isTruthy(input$filter_pred)){
-            data <- data %>%
-                dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
-        }
-        data
+    if (isTruthy(input$filter_var) &
+        isTruthy(input$filter_pred)){
+        data <- data %>%
+            dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
+    }
+    data
 }
-grouped <- {
+
+sectioned <- {
     data <- filtered
+    if (isTruthy(input$section_by)){
+        data <- data %>%
+            section(input$section_by)
+    }
+    data
+}
+
+grouped <- {
+    data <- sectioned
     if (isTruthy(input$group_var)){
         data <- data %>%
             dplyr::group_by(!! dplyr::sym(input$group_var))
     }
     data
 }
+
 term_insights <- {
     data <- grouped
     if (isTruthy(input$get_term_insight) &
@@ -284,14 +299,16 @@ term_insights <- {
     }
     data
 }
-    aggregate_insights <- {
-        data <- term_insights
-        if (isTruthy(input$get_aggregate_insight) &
-            isTruthy(input$aggregate_insight) &
-            isTruthy(input$aggregate_var)){
-            data <- data %>%
-                get_aggregate_insight(input$aggregate_insight, input$aggregate_var)
-        }
-        data
+
+aggregate_insights <- {
+    data <- term_insights
+    if (isTruthy(input$get_aggregate_insight) &
+        isTruthy(input$aggregate_insight) &
+        isTruthy(input$aggregate_var)){
+        data <- data %>%
+            get_aggregate_insight(input$aggregate_insight, input$aggregate_var)
     }
-get_vis(aggregate_insights, "struct_ggpage_ungrouped", input$vis_col, input$distribution)
+    data
+}
+
+get_vis(aggregate_insights, input$vis, input$vis_col, input$vis_facet, input$scale_fixed)
