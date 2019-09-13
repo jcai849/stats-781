@@ -24,3 +24,7 @@
 *.tdo
 *.toc
 *.glo
+/out/*
+*minted*
+*dissertation-template*
+*#journal.tex#*

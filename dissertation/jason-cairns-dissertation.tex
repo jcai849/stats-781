@@ -49,7 +49,7 @@ backref=true
   \vspace{1.5cm}
   Supervised by Chris Wild\\
   \vspace{1.5cm}
-  \begin{figure}[H]
+  \begin{figure}[h]
     \centering
     \includegraphics[scale=0.4]{img/logo.jpg}
   \end{figure}
@@ -85,7 +85,7 @@ backref=true
 \section{Intention}
 \label{sec:intention}
 
-Text Analytics serves to glean insight from a body of text. Within the
+Text Analytics serves to glean insights from a body of text. Within the
 broad category of text analytics, we seek to answer questions about
 what the text is communicating, what is felt about it, and how this
 information is structured. In this dissertation, we demonstrate the
@@ -117,20 +117,20 @@ utility, and are expanded upon in \autoref{cha:text-analyt-backgr};
   associated, through correlation, common sequences, visualisation of
   sections, etc.,\ allow for a clear high-level assessment of the
   associations between words. The higher level not only saves
-  individual efforts, but will demonstrate any emergent properties
+  individual efforts, but can demonstrate any emergent properties
   inherent to a text, in a way that a direct reading won't necessarily
   reveal.
 \item Summarisation: Automation of an executive summary, or a list of
   key words, typically falls under the purview of summarisation. The
   primary aim is to rank and select the most ``representative'' words
   or sentences from a text. A few major techniques dominate, being
-  somewhat complex in nature. The results are generally surprisingly
-  well representative of a text.
+  somewhat complex in nature. The results seem to be suprisingly
+  representative of a text.
 \item Feature Counts: The simplest quantitative measure is very often
   the most informative; from simple word counts, to selective counts
   of sentences within groups, counting features can reveal how much
   written weighting is given to various elements, aiding insight into
-  both structure and sentiment simultaneously.
+  content, structure, and sentiment simultaneously.
 \end{itemize}
 
 \subsection{Existing Systems}
@@ -140,8 +140,8 @@ computationally-dependent in nature. More recently, there has been
 increasing statistical interest. The existing systems reflect this;
 most older text analytics programs were Artificial Intelligence
 focussed, being experimental in nature, typically composed in lisp.
-More recently, major statistical programs hae been incorporating text
-analytic features, with a few smaller text analytics specific programs
+More recently, major statistical programs have been incorporating text
+analytic features, with a few smaller text-analytic specific programs
 appearing. SAS, SPSS, and R are all examples of major statistical
 processing systems, with recent additions of text analytics
 capabilities. An overview of R packages aiding in text analytics will
@@ -153,13 +153,13 @@ be given in \autoref{sec:liter-revi-exist}.
 \subsection{how our program fits in - shiny, inzight lite etc.}
 Our program will form part of the suite of modules extending iNZight.
 It provides a simple GUI interface to rapidly perform common text
-analyses. The primary audience are those learning the fundamentals of
-text analysis and statistics, which could include students of the
-traditional text analytics fields of Statistics and Computer Science,
-but can and should include students of Linguistics, Communications, Law,
-History, and any other text-based field. Beyond the educational
-aspects of the program, it is fully functional for actual use for
-general text analysis.
+analyses. The primary audience are those learning the fundamentals and
+potential of text analysis and statistics, which could include
+students of the traditional text analytics fields of Statistics and
+Computer Science, but can and should include students of Linguistics,
+Communications, Law, History, and any other text-based field. Beyond
+the educational aspects of the program, it is fully functional for
+practical use for general text analysis.
 \section{Literature Review (existing packages in R)}
 \label{sec:liter-revi-exist}
 
@@ -169,15 +169,33 @@ general text analysis.
 
 \section{Scope of work}
 \label{sec:scope-work}
-The total scope possible for text analytics is enormous; our time in
-creating this program is not, thus it is essential that we limit the
-scope. There are two primary areas with which we created the
+While the total scope possible for text analytics is enormous, our
+time in creating this program is not. Thus, it is essential that we
+limit the scope. There are two primary areas with which we created the
 limitations: Text type, and analysis type.\\
 
-By limiting the forms of text we work with, we can spend less effort on consideration of every single possible import and transformation case, and more time on the actual design of analysis. The simplest means with which to create the limitation exists in allowing only import of particular text files --- in this case, we allow for flat \texttt{.txt} files, as well as tabular \texttt{.csv} and \texttt{.xlsx} files. What we do not provide (though by design leaving open to the future possibility of including) is access in-program to common text sources through their API, such as Twitter or Project Gutenberg.\\
+By limiting the forms of text we work with, we can spend less effort
+on consideration of every single possible import and transformation
+case, and more time on the actual design of analysis. The simplest
+means with which to create the limitation exists in allowing only
+import of particular text files --- in this case, we allow for flat
+\texttt{.txt} files, as well as tabular \texttt{.csv} and
+\texttt{.xlsx} files. What we do not provide (though by design leaving
+open the future possibility of inclusion) is access in-program to
+common text sources through their API, such as Twitter or Project
+Gutenberg.\\
 
 Through focussing on dictionary-based, rather than model-based
-analyses, we have avoided much of the associated complexities. An example of this is given in that it is common to categorise words based on their grammatical category, then use models that take this into account. By avoiding that (again, keeping the design flexible enough to allow for this in the future), we have been able to get far more functionality implemented in a shorter amount of time, with the analyses still performing soundly. Additionally, we keep the focus on the general audience, as it is typically more advanced, linguistically-trained users who would make intelligent use of such analyses.
+analyses, we have avoided much of the associated complexities. An
+example of this follows. It is common to categorise words based on
+their grammatical category, then use models that take this into
+account. By avoiding that (again, keeping the design flexible enough
+to incorporate this in the future), we have been able to get far more
+functionality implemented in a shorter amount of time, with the
+analyses still performing soundly. Additionally, we focus on the
+general audience, as it is typically more advanced,
+linguistically-trained users who would make intelligent use of such
+analyses.
 
 \chapter{Text Analytics Prolusion}
 \label{cha:text-analyt-backgr}
@@ -273,8 +291,7 @@ of analysis, from which more complex items may be derived.
 \section{Preparation}
 \label{sec:import}
 The first step in all text analysis is to import the text data and
-capture it into a data structure that reasonable analysis can be
-performed on.
+wrangle it into a data structure suitable for statistical analysis.
 
 \subsection{Importing}
 \label{sec:importing}
@@ -286,7 +303,8 @@ primary differences are that each row of an imported \texttt{.txt}
 file corresponds to a single line, whereas each row of an imported
 tabular file corresponds to the row of the tabular file. Importantly
 for tabular files, the column of the text intended for analysis must
-be given the header of ``text'' prior to import.
+be given the header of ``text'' prior to import. This condition will
+be relaxed later.-
 
 \subsubsection{Import .txt}
 \label{sec:org0ff5f7d}
@@ -348,15 +366,17 @@ import_excel <- function(filepath){
     ## table_textcol()
 }
 \end{minted}
-\subsubsection{Import Wrapper}
+\subsubsection{Import Wrapper for Arbitrary Number of Files}
 \label{sec:orgf966fad}
 To have just one function required to import files, we define two
 functions; one that imports any file, and one making use of it to
-import multiple files.
+import multiple files. The import of multiple files is no trivial
+task; the program must shape them in such a way that they retain
+identification, and fit into the same datastructure together.
 
-The base wrapper function takes in the
-filename, and other relevent information, handling the importation
-process. It also stamps in the name of the document as a column.
+The base wrapper function takes in the filename, and other relevent
+information, handling the importation process. It also stamps in the
+name of the document as a column.
 \begin{minted}[frame=lines,fontsize=\scriptsize,xleftmargin=\parindent,linenos]{r}
 #' Base case for file import
 #'
@@ -452,11 +472,12 @@ format_data <- function(data){
 \subsection{Filtering}
 \label{sec:orge4eec20}
 Filtering of text is implemented directly with the
-\mintinline{r}{dplyr::filter()} function, directly in the server of the shiny
-app. Filtering can take place multiple times throughout an analysis.
-The program is flexible enough such that after some initial analytics
-have been done in the insight layer, preparation can be returned
-to and the text can be filtered on based on the analytics.
+\mintinline{r}{dplyr::filter()} function, directly in the server of
+the shiny app. Filtering can take place multiple times throughout an
+analysis. The program is flexible enough such that after some initial
+analytics have been done in the insight layer, preparation can be
+returned to and the text can be filtered on based on features seen in
+the analytics.
 \subsection{Lemmatisation}
 \label{sec:org33549e9}
 Lemmatisation is effectively the process of getting words into
@@ -477,7 +498,7 @@ completely by this single function in the server end of the shiny app.
 The package Udpipe was another option, but it requires downloading
 model files, and performs far more in depth linguistic determinations
 such as parts-of-speech tagging, that we don't need at this point.
-Worth noting is that, like stopwords, there are different dictionaries
+It is worth noting that, like stopwords, there are different dictionaries
 available for the lemmatisation process, but we will use the default,
 as testing has shown it to be the simplest to set up and just as
 reliable as the rest.
@@ -489,13 +510,19 @@ deterministic. It is not quite as effective, as the base word ending
 is not concatenated back on at the tail, so we are left with word
 stumps and morphemes. However, it may sometimes be useful when the
 lemmatisation model isn't working effectively, and textstem provides
-the capability with \mintinline{r}{stem_words()}. We have not implemented this
-yet, as it is not as essential to an analysis.
+the capability with \mintinline{r}{stem_words()}. We have not
+implemented this yet, as it is not as essential to an analysis when
+lemmatisation is already available.
 
 \subsection{Stopwords}
 \label{sec:stopwords}
 We make use of dictionary-form stopwords, allowing for the input of
-both developed lexicons as well as user input. Two functions compose stopwords in the programl \mintinline{r}{get_sw()}, which gathers user input, queries the selected lexicon, and combines the two, and \mintinline{r}{determine_stopwords()}, which adds a boolean \mintinline{r}{TRUE | FALSE} column to the input dataframe. The following code fragment defines \mintinline{r}{get_sw()}:
+both developed lexicons as well as user input. Two functions compose
+stopwords in the programl \mintinline{r}{get_sw()}, which gathers user
+input, queries the selected lexicon and combines the two, and
+\mintinline{r}{determine_stopwords()} which adds a boolean
+\mintinline{r}{TRUE | FALSE} column to the input dataframe. The
+following code fragment defines \mintinline{r}{get_sw()}:
 \begin{minted}[frame=lines,fontsize=\scriptsize,xleftmargin=\parindent,linenos]{r}
 #' Gets stopwords from a default list and user-provided list
 #'
@@ -544,12 +571,13 @@ with the correct attributes to have formatting automated. We define a
 wrapper that takes all combinations of stopwords and lemmatisation
 options and intelligently connects them for the ``insight column'' in
 a dataframe, which the insight is performed upon. For the purpose of
-standard interoperability with, e.g., ggpage, we name this column
+standard interoperability, e.g., with ggpage, we name this column
 ``text''.
 
 At the heart of this function is an \mintinline{r}{ifexp()} that
 encodes the following logic involving the interaction of stopwords and
-lemmatisation, to enable the correct output text based on stopword and lemmatisation options;
+lemmatisation, to enable the correct output text based on stopword and
+lemmatisation options;
 
 \begin{table}[h]
   \centering
@@ -624,8 +652,8 @@ complex representations in many ways, including a lack of sectioning
 --- for example, chapters require a specific search in order to jump
 to them. Here, I compose a closure that searches and sections text
 based on a Regular Expression intended to capture a particular
-section. Several functions are created from that. In time, advanced
-users could be given the option to compose their own regular
+section. Several functions are created from that. At a later date,
+advanced users could be given the option to compose their own regular
 expressions for sectioning.
 \begin{minted}[frame=lines,fontsize=\scriptsize,xleftmargin=\parindent,linenos]{r}
 #' creates a search closure to section text

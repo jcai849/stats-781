@@ -2492,21 +2492,37 @@ We will use the following as our shiny app:
   # Create Shiny app ----
   shinyApp(ui, server)
 #+end_src
-** Additional Functionality
-todo:
 
+** Additional Functionality
+   TODO:
+
+- [ ] automatic visualisation based on insight selection
+- [ ] Have insights done automatically when creating visualisations
+- [ ] Have *what* is being visualised befor *how* it is to be visualised
+- [ ] Allow additional arguments to insight functions in-app
+- [ ] allow non-lemmatised or stopworded text preparation
+- [ ] aggregate sentiment choice of statistic
+- [ ] Move Filter after Section
+- [ ] Add page view
+- [ ] separation in scale ggpage for sentiment etc
 - [ ] Allow additional stopwords
 - [ ] Allow choice of stopword lexicon
-- [ ] Allow additional arguments to insight functions in-app
 - [ ] allow multiple groups
 - [ ] fix document names
-- [ ] allow non-lemmatised or stopworded text preparation
-- [ ] add sectioning
-- [ ] aggregate sentiment choice of statistic
-- [ ] Have insights done automatically when creating visualisations
-- [ ] Add page view
-- [ ] rearrange ui
-- [ ] separation in scale ggpage for sentiment etc
-- [ ] automatic visualisation based on insight selection
 
-Interface chapter
+** Details for Insight Functions
+   :PROPERTIES:
+   :EXPORT_OPTIONS: title:nil toc:nil
+   :LaTeX_CLASS_OPTIONS: [a4paper,landscape]
+   :END:
+
+| Insight Function | Additional Arguments to Insight | Default Visualisation | Additional Arguments to Default Visualisation | Other Possible Visualisations | Summary |
+|------------------+---------------------------------+-----------------------+-----------------------------------------------+-------------------------------+---------|
+| Term Frequency      | Groups                          | Bar Chart             | Number of Terms, Facetting, Fixed Scale, Paging | Distribution, GGPage, Time Series |
+| Bigram (count)      | Groups, n-gram                  | Bar Chart             | Number of Terms, Facetting, Fixed Scale, Paging | Distribution, GGPage, Time Series |
+| Key Words           | Groups, Method                  | Bar Chart             | Number of terms, Facetting, Fixed Scale, Paging | Distribution, GGPage              |
+| Term Sentiment      | Groups, Lexicon                 | GGPage                | Paging, Colours                 |   Distribution                    |
+| MA Term Sentiment   | Groups, Lag, Lexicon            | Time Series           | Facetting, Fixed Scale                  |    Distribution, GGPage           |
+| Agg. Term Count     | Groups, Aggregation Var         | Bar Chart             | Number of Aggregations, Facetting, Fixed Scale, Paging |             Distribution, GGpage, Time Series |
+| Key Sections        |   Groups, Method, Aggregation Var  | Bar Chart            | Number of terms, Facetting, Fixed Scale, Paging | Distribution, GGPage              |
+| Aggregate Sentiment      | Groups, Lexicon, Aggregation Var | GGPage                | Paging, Colours                 |   Distribution                    |

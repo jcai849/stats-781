@@ -1,10 +1,12 @@
-% Created 2019-09-11 Wed 16:56
+% Created 2019-09-11 Wed 16:57
 % Intended LaTeX compiler: pdflatex
 \documentclass[a4paper, 11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage{grffile}
+\usepackage{booktabs}
+\usepackage{lscape}
 \usepackage{longtable}
 \usepackage{wrapfig}
 \usepackage{rotating}
@@ -30,8 +32,9 @@
  pdflang={English}}
 \begin{document}
 
-\begin{center}
-\begin{tabular}{llllll}
+
+\begin{landscape}
+\begin{tabular}{p{3cm}p{3cm}p{3cm}p{3cm}p{3cm}p{3cm}}
 Insight Function & Additional Arguments to Insight & Default Visualisation & Additional Arguments to Default Visualisation & Other Possible Visualisations & Summary\\
 \hline
 Term Frequency & Groups & Bar Chart & Number of Terms, Facetting, Fixed Scale, Paging & Distribution, GGPage, Time Series\\
@@ -43,5 +46,7 @@ Agg. Term Count & Groups, Aggregation Var & Bar Chart & Number of Aggregations, 
 Key Sections & Groups, Method, Aggregation Var & Bar Chart & Number of terms, Facetting, Fixed Scale, Paging & Distribution, GGPage\\
 Aggregate Sentiment & Groups, Lexicon, Aggregation Var & GGPage & Paging, Colours & Distribution\\
 \end{tabular}
-\end{center}
+\end{landscape}
+
+
 \end{document}
