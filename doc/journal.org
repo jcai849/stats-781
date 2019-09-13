@@ -1710,19 +1710,19 @@ TODO:
   #' @return .data with operation columns added
   #'
   #' @export
-  get_term_insight <- function(.data, operations){
+  get_term_insight <- function(.data, operations, ...){
       opstable <- list("Term Frequency" = term_freq,
                        "Bigrams" = get_bigram,
                        "Key Words" = keywords_tr,
                        "Term Sentiment" = term_sentiment,
-                       "Lagged Term Sentiment" = lagged_term_sentiment)
+                       "Moving Average Term Sentiment" = lagged_term_sentiment)
       ops <- opstable[operations]
       lapply(seq(length(ops)),
              function(x){
                  name <- dplyr::sym(names(ops[x]))
                  operation <- ops[x][[1]]
                  df <- dplyr::mutate(.data,
-                                     !!name := operation(text))
+                                     !!name := operation(text, ...))
                  df[names(ops[x])]
              }) %>%
           dplyr::bind_cols(.data, .)
@@ -1739,8 +1739,8 @@ TODO:
   #' @return .data with operation columns added
   #'
   #' @export
-  get_aggregate_insight <- function(.data, operations, aggregate_on){
-      opstable <- list("Term Count" = term_count,
+  get_aggregate_insight <- function(.data, operations, aggregate_on, ...){
+      opstable <- list("Aggregated Term Count" = term_count,
                        "Key Sections" = key_aggregates,
                        "Aggregated Sentiment" = aggregate_sentiment)
       ops <- opstable[operations]
@@ -1750,7 +1750,7 @@ TODO:
                  operation <- ops[x][[1]]
                  agg_on <- dplyr::sym(aggregate_on)
                  df <- dplyr::mutate(.data,
-                                     !!name := operation(text, !! agg_on))
+                                     !!name := operation(text, !! agg_on, ...))
                  df[names(ops[x])]
              }) %>%
           dplyr::bind_cols(.data, .)
@@ -1933,11 +1933,11 @@ haven't had any major bugs with it yet
 #'
 #' @export
 get_vis <- function(.data, vis, col, facet_by="", scale_fixed = TRUE){
-    vistable <- list("struct_ggpage_ungrouped" = struct_ggpage_ungrouped,
-                     "struct_ts_ungrouped" = struct_ts_ungrouped,
-                     "score_bar_ungrouped" = score_bar_ungrouped,
-                     "dist_density_ungrouped" = dist_density_ungrouped,
-                     "dist_hist_ungrouped" = dist_hist_ungrouped)
+    vistable <- list("Page View" = struct_ggpage_ungrouped,
+                     "Time Series" = struct_ts_ungrouped,
+                     "Bar" = score_bar_ungrouped,
+                     "Density" = dist_density_ungrouped,
+                     "Histogram" = dist_hist_ungrouped)
     col_name <- dplyr::sym(col)
     chart <- vistable[[vis]](.data, !! col_name)
     if (shiny::isTruthy(facet_by)){
@@ -2354,29 +2354,14 @@ We will use the following as our shiny app:
                                        tags$hr(),
                                        tags$p("Process"),
                                        checkboxInput("lemmatise", "Lemmatise"),
-                                       selectInput("sw_lexicon", "Stopword Lexicon", list("snowball")),
+                                       uiOutput("sw_lexicon"),
+                                       ## selectInput("sw_lexicon", "Stopword Lexicon", list("snowball")),
                                        checkboxInput("stopwords", "Stopwords"),
-                                       uiOutput("vars_to_filter"),
-                                       textInput("filter_pred", "value to match", ""),
+                                       actionButton("prep_button", "Prepare Text"),
                                        selectInput("section_by", "Section By",
                                                    list("", "chapter", "part", "section")),
-                                       uiOutput("vars_to_group_on"),
-                                       tags$hr(),
-                                       tags$p("Term Insight"),
-                                       selectInput("term_insight",
-                                                   "Term Insight",
-                                                   list("Term Frequency", "Bigrams", "Key Words", "Term Sentiment", "Lagged Term Sentiment"),
-                                                   multiple=TRUE),
-                                       actionButton("get_term_insight",
-                                                    "Get Term Insight"),
-                                       tags$p("Aggregate Insight"),
-                                       uiOutput("var_to_aggregate_insight_on"),
-                                       selectInput("aggregate_insight",
-                                                   "Aggregate Insight",
-                                                   list("Term Count", "Key Sections", "Aggregated Sentiment"),
-                                                   multiple=TRUE),
-                                       actionButton("get_aggregate_insight",
-                                                    "Get Aggregate Insight")
+                                                                              uiOutput("vars_to_filter"),
+                                       textInput("filter_pred", "value to match", "")
                                    ),
                                    mainPanel(
                                        tableOutput("table")
@@ -2384,16 +2369,29 @@ We will use the following as our shiny app:
                                )),
                       tabPanel("Visualisation",
                                sidebarLayout(
-                                   sidebarPanel(selectInput("vis",
-                                                            "Visualisation Type",
-                                                            list("struct_ggpage_ungrouped",
-                                                                 "struct_ts_ungrouped",
-                                                                 "score_bar_ungrouped",
-                                                                 "dist_density_ungrouped",
-                                                                 "dist_hist_ungrouped")),
-                                                uiOutput("var_to_visualise"),
+                                   sidebarPanel(selectInput("what_vis",
+                                                            "Select what you want to Visualise",
+                                                            list("Term Frequency",
+                                                                 "Bigrams",
+                                                                 "Key Words",
+                                                                 "Term Sentiment",
+                                                                 "Moving Average Term Sentiment",
+                                                                 "Aggregated Term Count",
+                                                                 "Key Sections",
+                                                                 "Aggregated Sentiment"
+                                                                 )),
+                                                uiOutput("group_by"),
+                                                uiOutput("insight_options"),
+                                                selectInput("vis_type",
+                                                            "Select how to Visualise it",
+                                                            list("Page View",
+                                                                 "Time Series",
+                                                                 "Bar",
+                                                                 "Density",
+                                                                 "Histogram")),
                                                 uiOutput("vis_facet_by"),
-                                                checkboxInput("scale_fixed", "Scale Fixed", value=TRUE)),
+                                                checkboxInput("scale_fixed", "Scale Fixed", value=TRUE),
+                                                actionButton("plot_button", "PLOT!!!")),
                                    mainPanel(
                                        plotOutput("plot")
                                    )
@@ -2407,17 +2405,20 @@ We will use the following as our shiny app:
       imported <- reactive({
           inzightta::import_files(input$file1$datapath)
       })
-      prepped <- reactive({
-          data <- imported()
-          if (isTruthy(input$lemmatise) |
-              isTruthy(input$stopwords)){
+      prepped <- eventReactive(input$prep_button, {
+          imported() %>%
+              text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+      })
+      sectioned <- reactive({
+          data <- prepped()
+          if (isTruthy(input$section_by)){
               data <- data %>%
-                  text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+                  section(input$section_by)
           }
           data
       })
       filtered <- reactive({
-          data <- prepped()
+          data <- sectioned()
           if (isTruthy(input$filter_var) &
               isTruthy(input$filter_pred)){
               data <- data %>%
@@ -2425,64 +2426,74 @@ We will use the following as our shiny app:
           }
           data
       })
-      sectioned <- reactive({
-          data <- filtered()
-          if (isTruthy(input$section_by)){
-              data <- data %>%
-                  section(input$section_by)
-          }
-          data
-      })
       grouped <- reactive({
-          data <- sectioned()
+          data <- filtered()
           if (isTruthy(input$group_var)){
               data <- data %>%
                   dplyr::group_by(!! dplyr::sym(input$group_var))
           }
           data
       })
-      term_insights <- reactive({
-          data <- grouped()
-          if (isTruthy(input$get_term_insight) &
-              isTruthy(input$term_insight)){
-              data <- data %>%
-                  get_term_insight(input$term_insight)
-          }
-          data
-      })
-      aggregate_insights <- reactive({
-          data <- term_insights()
-          if (isTruthy(input$get_aggregate_insight) &
-              isTruthy(input$aggregate_insight) &
-              isTruthy(input$aggregate_var)){
-              data <- data %>%
-                  get_aggregate_insight(input$aggregate_insight, input$aggregate_var)
-          }
-          data
-      })
       output$table <- renderTable({
-          aggregate_insights() %>% head(300)
+          filtered() %>% head(300)
       })
-      output$plot <- renderPlot({
-          req(input$vis)
-          req(input$vis_col)  
-          get_vis(aggregate_insights(), input$vis, input$vis_col, input$vis_facet, input$scale_fixed)
-      })
+      output$sw_lexicon <- renderUI(selectInput("sw_lexicon", "Select the Stopword Lexicon",
+                                                stopwords::stopwords_getsources()))
       output$vars_to_filter <- renderUI(selectInput("filter_var",
                                                     "select which column to apply filtering to",
-                                                    c("", names(prepped())) %||% c("")))
-      output$vars_to_group_on <- renderUI(selectInput("group_var",
-                                                      "select which columns to group on",
-                                                      c("", names(sectioned())) %||% c("")))
-      output$var_to_aggregate_insight_on <- renderUI(selectInput("aggregate_var",
-                                                                 "select which column to aggregate insight on",
-                                                                 c("", names(grouped())) %||% c("")))
-      output$var_to_visualise <- renderUI(selectInput("vis_col",
-                                                      "select which variable to visualise",
-                                                      c("", names(aggregate_insights())) %||% c("")))
+                                                    c("", names(sectioned())) %||% c("")))
+      output$group_by <- renderUI(selectInput("group_var",
+                                    "select which columns to group on",
+                                    c("", names(filtered())) %||% c("")))
+      output$insight_options <- renderUI({
+          switch(input$what_vis,
+                 "Bigrams" = tagList(sliderInput("n_gram",
+                                                 "n-gram count",
+                                                                            2, 8, 2)),
+                                                 "Key Words" = tagList(selectInput("summ_method",
+                                                                               "Method of summary generation",
+                                                                               list("TextRank", "LexRank"))),
+                                             "Term Sentiment" = tagList(selectInput("sent-lex",
+                                                                                    "Lexicon for Sentiment Dictionary",
+                                                                                    list("afinn", "bing",
+                                                                                         "loughran", "nrc"))),
+                                             "Moving Average Term Sentiment" = tagList(sliderInput("term_sent_lag",
+                                                                                                   "Lag Length for Calculation of Moving Average",
+                                                                                                   3,300,50),
+                                                                                       selectInput("sent-lex",
+                                                                                                   "Lexicon for Sentiment Dictionary",
+                                                                                                   list("afinn", "bing",
+                                                                                                        "loughran", "nrc"))),
+                                             "Aggregated Term Count" = tagList(selectInput("agg_var",
+                                                                                          "Select which variable to aggregate on",
+                                                                                          c("", names(grouped())) %||% c(""))),
+                                             "Key Sections" = tagList(selectInput("summ_method",
+                                                                               "Method of summary generation",
+                                                                               list("TextRank", "LexRank")),
+                                                                      selectInput("agg_var",
+                                                                                  "Select which variable to aggregate on",
+                                                                                  c("", names(grouped())) %||% c(""))),
+                                             "Aggregated Sentiment" = tagList(selectInput("sent-lex",
+                                                                                    "Lexicon for Sentiment Dictionary",
+                                                                                    list("afinn", "bing",
+                                                                                         "loughran", "nrc")),
+                                                                             selectInput("agg_var",
+                                                                                  "Select which variable to aggregate on",
+                                                                                  c("", names(grouped())) %||% c(""))))})
       output$vis_facet_by <- renderUI(selectInput("vis_facet",
                                                   "select which variable to facet on",
-                                                  c("", names(aggregate_insights())) %||% c("")))
+                                                  c("", names(grouped())) %||% c("")))
+      visualisation <- eventReactive(input$plot_button, {
+          grouped() %>%
+          switch(input$what_vis,
+                 "Term Frequency" = get_term_insight(., "Term Frequency")) %>%
+              get_vis(input$vis_type,)
+              
+      })
+
+      output$plot <- renderPlot({
+        visualisation()
+      })
   }
 #+end_src
 
