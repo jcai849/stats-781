@@ -1338,8 +1338,8 @@ words will always be syntactical glue, such as articles
     dplyr::pull(n)
   }
 #+end_src
-*** [#C] Bigrams [0/1]
-Bigrams are two words that occur in sequence. For example, in the
+*** [#C] n-grams [0/1]
+n-grams are words that occur in sequence. For example, in the
 phrase, "The quick brown dog.", the following bigrams exist: "The
 quick", "quick brown", "brown dog". This can be generalised to any
 number of sequential words as /n-grams/. They are useful in text
@@ -1365,8 +1365,7 @@ the first element in the second list.
   #'
   #' @export
   get_bigram <- function(.data){
-    1:length(.data) %>%
-      purrr::map_chr(index_bigram, .data, .data[-1])
+      concat_walk(.data, c(.data[-1], NA))
   }
 #+end_src
 
@@ -1375,22 +1374,34 @@ values. This beautiful recursive function (designed by myself) does
 just that:
 
 #+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
-  #' get bigram at index i of list1 & 2
+  #' concat list 1 and 2 at index, skipping NA values
   #'
-  #' @param i numeric index to attain bigram at
+  #' @param i numeric index to assess index at
+  #'
+  #' @param list1 list or vector for first token
+  #'
+  #' @param list2 list or vector for second token
+  #'
+  #' @return paste of list1 and list2 at index i, skipping NA's
+  concat_walk_i <- function(i, list1, list2){
+    ifelse(length(list2) < i | is.na(list1[i]),
+	    as.character(NA),
+    ifelse(!(is.na(list1[i]) | is.na(list2[i])),
+	   paste(list1[i], list2[i]),
+	   concat_walk_i(i,list1, list2[-1])))
+  }
+
+  #' concat list 1 and 2, moving past NA values
   #'
   #' @param list1 list or vector for first bigram token
   #'
   #' @param list2 list or vector for second bigram token
   #'
-  #' @return bigram of list1 and list2 at index i, skipping NA's
-  index_bigram <- function(i, list1, list2){
-    ifelse(length(list2) < i | is.na(list1[i]),
-	    as.character(NA),
-    ifelse(!(is.na(list1[i]) | is.na(list2[i])),
-	   paste(list1[i], list2[i]),
-	   index_bigram(i,list1, list2[-1])))
-  }
+  #' @return paste of list1 and list2, skipping NA's
+  concat_walk <- function(list1, list2){
+      stopifnot(length(list1) == length(list2))
+      sapply(seq_along(list1), concat_walk_i, list1, list2)
+  }  
 #+end_src
 
 It works as follows; if our list appears as (1 2 X 4 5 X 7 X), we
@@ -1425,6 +1436,43 @@ get_bigram(x)
 | nil |
 | nil |
 
+To generalise to n-grams, we use the following function, and
+gratuitous recursion. It isn't working as expected currently, as
+values following NA will repeat. I will fix this soon enough.
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
+  #' NOT FOR PRODUCTION - STILL IN TESING. Returns the n-grams, skipping NA values
+  #'
+  #' @param .data vector to get n-grams from
+  #'
+  #' @param n number of n-grams to attain
+  #'
+  #' @return n-gram vector without NA values
+  #'
+  #' @export
+  get_ngram <- function(.data, n){
+      if (n == 2){
+          concat_walk(.data, c(.data[-1], NA))
+      } else {
+          concat_walk(get_ngram(.data, n - 1), c(.data[-seq(n-1)], rep(NA, n-1)))
+      }
+  }
+#+end_src
+**** n-gram Count
+To explicitly count n-grams, we make use of the following simple function:
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
+  #' NOT FOR PRODUCTION - STILL IN TESING. Returns the count of n-grams, skipping NA values
+  #'
+  #' @param .data vector to get n-grams from
+  #'
+  #' @param n number of n-grams to attain
+  #'
+  #' @return count of each associated n-gram
+  #'
+  #' @export
+  ngram_freq <- function(.data, n){
+    term_freq(get_ngram(.data, n))
+  }
+#+end_src
 *** Key Words (TextRank)
 Key words are another killer feature of this app. The algorithm is
 explained previously. The =textrank= package is used to perform
@@ -1438,10 +1486,13 @@ enormous, though it may be implemented in the future.
   #'
   #' @param .data character vector of words
   #'
+  #' @param summ_method method to use for summarisation: textrank or
+  #'     lexrank. Doesn't do anything yet
+  #'
   #' @return vector of scores for each word
   #'
   #' @export
-  keywords_tr <- function(.data){
+  keywords_tr <- function(.data, summ_method){
     relevent <- !is.na(.data)
     tr <- textrank::textrank_keywords(.data, relevent, p=+Inf)
     score <- tr$pagerank$vector %>% tibble::enframe()
@@ -1631,12 +1682,15 @@ but a warning will be required at the user end.
   #'
   #' @param .data character vector of words
   #'
+  #' @param summ_method method to use for summarisation: textrank or
+  #'     lexrank. Doesn't do anything yet
+  #'
   #' @param aggregate_on vector to aggregate .data over; ideally, sentence_id
   #'
   #' @return lexrank scores of aggregates
   #'
   #' @export
-  key_aggregates <- function(.data, aggregate_on){
+  key_aggregates <- function(.data, aggregate_on, summ_method){
     ## prepare .data for lexrank
     base <-  tibble::tibble(word = !! .data, aggregate = aggregate_on)
     aggregated <- base %>%
@@ -1673,15 +1727,19 @@ case, AFINN.
   #' @param aggregate_on vector to aggregate .data over; ideally,
   #'   sentence_id, but could be chapter, document, etc.
   #'
+  #' @param lexicon as per term sentiment
+  #'
   #' @param statistic function that accepts na.rm argument; e.g. mean,
   #'   median, sd.
   #'
+  #' @return sentiment of same length as input vector aggregated over the aggregate_on vector
+  #'
   #' @export
-  aggregate_sentiment <- function(.data, aggregate_on, statistic = mean){
+  aggregate_sentiment <- function(.data, aggregate_on, lexicon = "afinn", statistic = mean){
     tibble::enframe(.data, "nil1", "word") %>%
       dplyr::bind_cols(tibble::enframe(aggregate_on, "nil2", "aggregate")) %>%
       dplyr::select(word, aggregate) %>%
-      dplyr::mutate(sentiment = term_sentiment(word)) %>%
+      dplyr::mutate(sentiment = term_sentiment(word, lexicon)) %>%
       dplyr::group_by(aggregate) %>%
       dplyr::mutate(aggregate_sentiment =
 		      (function(.x){
@@ -1696,8 +1754,8 @@ case, AFINN.
    CLOSED: [2019-08-22 Thu 18:09]
 The insights of choice can all be combined into a wrapper function,
 taking the forms and arguments of the insights and applying those
-chosen. Deprecated now that insight functions work vector-wise.
-
+chosen. Deprecated now that insight functions work vector-wise
+.
 TODO:
 - [X] Take multiple insights
 #+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R :eval never-export :exports both
@@ -1707,12 +1765,15 @@ TODO:
   #'
   #' @param operations character vector of term operations to perform
   #'
+  #' @param ... additional arguments to the operation - only sensible for singular operations 
+  #'
   #' @return .data with operation columns added
   #'
   #' @export
   get_term_insight <- function(.data, operations, ...){
       opstable <- list("Term Frequency" = term_freq,
-                       "Bigrams" = get_bigram,
+                       "n-grams" = get_ngram,
+                       "n-gram Frequency" = ngram_freq,
                        "Key Words" = keywords_tr,
                        "Term Sentiment" = term_sentiment,
                        "Moving Average Term Sentiment" = lagged_term_sentiment)
@@ -1735,6 +1796,8 @@ TODO:
   #' @param operations character vector of operations to perform
   #'
   #' @param aggregate_on character name of the column to perform aggregate operations on
+  #'
+  #' @param ... additional arguments to the operation - only sensible for singular operations 
   #'
   #' @return .data with operation columns added
   #'
@@ -1796,28 +1859,27 @@ TODO:
   #'     per the output of the get_(term|aggregate)_insight wrapper
   #'     function
   #' 
-  #' @param col_name symbol name of the column insight was
+  #' @param y symbol name of the column insight was
   #'     outputted to
+  #' 
+  #' @param x symbol name of column for insight labels
   #'
   #' @param n number of bars to display
   #'
   #' @param desc bool: show bars in descending order
   #'
   #' @export
-  score_bar_ungrouped <- function(.data, col_name,
-                                  n = 15, desc = FALSE){
-      insight_col <- dplyr::enquo(col_name)
+  score_bar_ungrouped <- function(.data, y, n = 15,
+                                  x = text, desc = FALSE){
+      text <- dplyr::enquo(x)
+      insight_col <- dplyr::enquo(y)
       dist <- .data %>%
-          dplyr::distinct(text, .keep_all=TRUE)
-      ## if (desc) {
+          dplyr::distinct(!! text, .keep_all=TRUE)
       arr <-  dplyr::arrange(dist, dplyr::desc(!! insight_col))
-      ## } else {
-      ##     arr <- dplyr::arrange(dist, !! insight_col)
-      ## }
       arr %>%
           dplyr::group_modify(~{.x %>% head(n)}) %>%
           dplyr::ungroup() %>%
-          dplyr::mutate(text = forcats::fct_reorder(text,
+          dplyr::mutate(text = forcats::fct_reorder(!! text,
                                                     !! insight_col,
                                                     .desc = desc)) %>%
           ggplot2::ggplot(ggplot2::aes(x = text)) +
@@ -1873,12 +1935,22 @@ about the structure, particularly trends that may not be visible
 otherwise.
 
 #+begin_src R :session rsession1 :tangle ~/inzightta/R/visualisation.R :eval never-export :exports both
-  struct_ts_ungrouped <- function(.data, col_name){
-      q_col_name <- dplyr::enquo(col_name)
+  #' output a ggplot time series plot of some insight function
+  #'
+  #' @param .data a dataframe containing "text" and insight columns as
+  #'     per the output of the get_(term|aggregate)_insight wrapper
+  #'     function
+  #' 
+  #' @param y symbol name of the column insight was
+  #'     outputted to
+  #'
+  #' @export
+    struct_ts_ungrouped <- function(.data, y){
+      q_y <- dplyr::enquo(y)
       .data %>%
-          dplyr::filter(!is.na(!! q_col_name)) %>%
-          dplyr::mutate(term = seq_along(!! q_col_name)) %>%
-          ggplot2::ggplot(ggplot2::aes(term, !! q_col_name)) +
+          dplyr::filter(!is.na(!! q_y)) %>%
+          dplyr::mutate(term = seq_along(!! q_y)) %>%
+          ggplot2::ggplot(ggplot2::aes(term, !! q_y)) +
           ggplot2::geom_line(na.rm = TRUE)
   }
 #+end_src
@@ -1899,17 +1971,20 @@ otherwise.
   #' @param col_name symbol name of the insight column intended to
   #'     colour plot
   #'
+  #' @param paging step through page by page (not yet implemented)
+  #'
+  #' @param palette determine coloration of palette (not yet implemented)
+  #' 
   #' @return ggplot object as per ggpage
   #'
   #' @export
-  struct_ggpage_ungrouped <- function(.data, col_name){
+  struct_ggpage_ungrouped <- function(.data, col_name, paging, palette){
       q_col_name <- dplyr::enquo(col_name)
       .data %>%
           dplyr::pull(word) %>%
           ggpage::ggpage_build() %>%
           dplyr::bind_cols(.data) %>% 
           ggpage::ggpage_plot(ggplot2::aes(fill = !! q_col_name)) ## +
-          ## ggplot2::labs(title = "")
   }
 #+end_src
 ** Wrapper
@@ -1930,16 +2005,18 @@ haven't had any major bugs with it yet
 #' @param facet_by character name of the column to facet by
 #'
 #' @param scale_fixed force scales to be fixed in a facet
+#'  
+#' @param ... additional arguments to the visualisation
 #'
 #' @export
-get_vis <- function(.data, vis, col, facet_by="", scale_fixed = TRUE){
+get_vis <- function(.data, vis, col, facet_by="", scale_fixed = TRUE, ...){
     vistable <- list("Page View" = struct_ggpage_ungrouped,
                      "Time Series" = struct_ts_ungrouped,
                      "Bar" = score_bar_ungrouped,
                      "Density" = dist_density_ungrouped,
                      "Histogram" = dist_hist_ungrouped)
-    col_name <- dplyr::sym(col)
-    chart <- vistable[[vis]](.data, !! col_name)
+    y <- dplyr::sym(col)
+    chart <- vistable[[vis]](.data, !! y, ...)
     if (shiny::isTruthy(facet_by)){
         facet_name <- dplyr::sym(facet_by)
         q_facet_name <- dplyr::enquo(facet_name)
@@ -2292,7 +2369,7 @@ imported %>%
       }
       data
   }
-  
+ get_term_insight(prepped, "Term Frequency") 
   aggregate_insights <- {
       data <- term_insights
       if (isTruthy(input$get_aggregate_insight) &
@@ -2308,6 +2385,27 @@ imported %>%
   
 #+end_src
 
+** Functions
+#+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both
+  datapath = "~/stats-781/data/raw/11-0.txt"
+  imported <- inzightta::import_files(datapath)
+  prepped <- text_prep(imported)
+  insighted <- get_term_insight(prepped, "Term Frequency")
+  insighted <- get_term_insight(insighted, c("n-grams", "n-gram Frequency"), 3)
+  get_term_insight(prepped, "Key Words", "sodfj")
+  get_term_insight(prepped, "Term Sentiment", "afinn")
+  get_term_insight(prepped, "Moving Average Term Sentiment", "afinn", 20)
+  get_aggregate_insight(prepped, "Aggregated Term Count", "sentence_id")
+  get_aggregate_insight(prepped, "Key Sections", "sentence_id")
+  get_aggregate_insight(prepped, "Aggregated Sentiment", "sentence_id", "afinn", mean)
+  get_vis(insighted, "Page View", "Term Frequency", facet_by = "", scale_fixed = TRUE, paging = "sfj", palette = "dosfj")
+  get_vis(insighted, "Time Series", "Term Frequency", facet_by = "", scale_fixed = TRUE)
+  get_vis(insighted, "Bar", "Term Frequency", facet_by = "", scale_fixed = TRUE, n = 20)
+  k <- "n-grams"
+  get_vis(insighted, "Bar", "n-gram Frequency", facet_by = "", scale_fixed = TRUE, n = 20, x = !! dplyr::sym(k))
+  get_vis(insighted, "Density", "Term Frequency", facet_by = "", scale_fixed = TRUE)
+  get_vis(insighted, "Histogram", "Term Frequency", facet_by = "", scale_fixed = TRUE)
+#+end_src
 * Shiny Frontend
 For the user interface, the obvious choice is shiny.
 
@@ -2355,47 +2453,33 @@ We will use the following as our shiny app:
                                        tags$p("Process"),
                                        checkboxInput("lemmatise", "Lemmatise"),
                                        uiOutput("sw_lexicon"),
-                                       ## selectInput("sw_lexicon", "Stopword Lexicon", list("snowball")),
                                        checkboxInput("stopwords", "Stopwords"),
                                        actionButton("prep_button", "Prepare Text"),
                                        selectInput("section_by", "Section By",
                                                    list("", "chapter", "part", "section")),
-                                                                              uiOutput("vars_to_filter"),
-                                       textInput("filter_pred", "value to match", "")
-                                   ),
+                                       uiOutput("vars_to_filter"),
+                                       textInput("filter_pred", "value to match", "")),
                                    mainPanel(
-                                       tableOutput("table")
-                                   )
-                               )),
+                                       tableOutput("table")))),
                       tabPanel("Visualisation",
                                sidebarLayout(
                                    sidebarPanel(selectInput("what_vis",
                                                             "Select what you want to Visualise",
                                                             list("Term Frequency",
-                                                                 "Bigrams",
+                                                                 "n-gram Frequency",
                                                                  "Key Words",
                                                                  "Term Sentiment",
                                                                  "Moving Average Term Sentiment",
                                                                  "Aggregated Term Count",
                                                                  "Key Sections",
-                                                                 "Aggregated Sentiment"
-                                                                 )),
+                                                                 "Aggregated Sentiment")),
                                                 uiOutput("group_by"),
                                                 uiOutput("insight_options"),
-                                                selectInput("vis_type",
-                                                            "Select how to Visualise it",
-                                                            list("Page View",
-                                                                 "Time Series",
-                                                                 "Bar",
-                                                                 "Density",
-                                                                 "Histogram")),
+                                                uiOutput("vis_options"),
                                                 uiOutput("vis_facet_by"),
-                                                checkboxInput("scale_fixed", "Scale Fixed", value=TRUE),
                                                 actionButton("plot_button", "PLOT!!!")),
                                    mainPanel(
-                                       plotOutput("plot")
-                                   )
-                               ))
+                                       plotOutput("plot"))))
                       )
 #+end_src
 
@@ -2403,97 +2487,162 @@ We will use the following as our shiny app:
 #+begin_src R :session rsession1 :tangle ~/inzightta-shiny/app.R :eval never-export :exports both
   server <- function(input, output) {
       imported <- reactive({
-          inzightta::import_files(input$file1$datapath)
-      })
+          inzightta::import_files(input$file1$datapath)})
       prepped <- eventReactive(input$prep_button, {
           imported() %>%
-              text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
-      })
+              text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)})
       sectioned <- reactive({
           data <- prepped()
           if (isTruthy(input$section_by)){
               data <- data %>%
-                  section(input$section_by)
-          }
-          data
-      })
+                  section(input$section_by)}
+          data})
       filtered <- reactive({
           data <- sectioned()
           if (isTruthy(input$filter_var) &
               isTruthy(input$filter_pred)){
               data <- data %>%
-                  dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
-          }
-          data
-      })
+                  dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)}
+          data})
       grouped <- reactive({
           data <- filtered()
           if (isTruthy(input$group_var)){
               data <- data %>%
-                  dplyr::group_by(!! dplyr::sym(input$group_var))
-          }
-          data
-      })
+                  dplyr::group_by(!! dplyr::sym(input$group_var))}
+          data})
       output$table <- renderTable({
-          filtered() %>% head(300)
-      })
+          filtered() %>% head(300)})
       output$sw_lexicon <- renderUI(selectInput("sw_lexicon", "Select the Stopword Lexicon",
                                                 stopwords::stopwords_getsources()))
       output$vars_to_filter <- renderUI(selectInput("filter_var",
                                                     "select which column to apply filtering to",
                                                     c("", names(sectioned())) %||% c("")))
       output$group_by <- renderUI(selectInput("group_var",
-                                    "select which columns to group on",
-                                    c("", names(filtered())) %||% c("")))
+                                              "select which columns to group on",
+                                              c("", names(filtered())) %||% c("")))
       output$insight_options <- renderUI({
           switch(input$what_vis,
-                 "Bigrams" = tagList(sliderInput("n_gram",
-                                                 "n-gram count",
-                                                                            2, 8, 2)),
-                                                 "Key Words" = tagList(selectInput("summ_method",
-                                                                               "Method of summary generation",
-                                                                               list("TextRank", "LexRank"))),
-                                             "Term Sentiment" = tagList(selectInput("sent-lex",
-                                                                                    "Lexicon for Sentiment Dictionary",
-                                                                                    list("afinn", "bing",
-                                                                                         "loughran", "nrc"))),
-                                             "Moving Average Term Sentiment" = tagList(sliderInput("term_sent_lag",
-                                                                                                   "Lag Length for Calculation of Moving Average",
-                                                                                                   3,300,50),
-                                                                                       selectInput("sent-lex",
-                                                                                                   "Lexicon for Sentiment Dictionary",
-                                                                                                   list("afinn", "bing",
-                                                                                                        "loughran", "nrc"))),
-                                             "Aggregated Term Count" = tagList(selectInput("agg_var",
-                                                                                          "Select which variable to aggregate on",
-                                                                                          c("", names(grouped())) %||% c(""))),
-                                             "Key Sections" = tagList(selectInput("summ_method",
-                                                                               "Method of summary generation",
-                                                                               list("TextRank", "LexRank")),
-                                                                      selectInput("agg_var",
-                                                                                  "Select which variable to aggregate on",
-                                                                                  c("", names(grouped())) %||% c(""))),
-                                             "Aggregated Sentiment" = tagList(selectInput("sent-lex",
-                                                                                    "Lexicon for Sentiment Dictionary",
-                                                                                    list("afinn", "bing",
-                                                                                         "loughran", "nrc")),
-                                                                             selectInput("agg_var",
-                                                                                  "Select which variable to aggregate on",
-                                                                                  c("", names(grouped())) %||% c(""))))})
-      output$vis_facet_by <- renderUI(selectInput("vis_facet",
-                                                  "select which variable to facet on",
-                                                  c("", names(grouped())) %||% c("")))
-      visualisation <- eventReactive(input$plot_button, {
-          grouped() %>%
+                 "Term Frequency" = selectInput("vis_type",
+                                                "Select how to Visualise it",
+                                                list("Bar",
+                                                     "Page View",
+                                                     "Time Series",
+                                                     "Density",
+                                                     "Histogram")),
+                 "n-gram Frequency" = tagList(selectInput("vis_type",
+                                                          "Select how to Visualise it",
+                                                          list("Bar",
+                                                               "Page View",
+                                                               "Time Series",
+                                                               "Density",
+                                                               "Histogram")),
+                                              sliderInput("n_gram",
+                                                          "n-gram count",
+                                                          2, 8, 2)),
+                 "Key Words" = tagList(selectInput("vis_type",
+                                                   "Select how to Visualise it",
+                                                   list("Bar",
+                                                        "Page View",
+                                                        "Time Series",
+                                                        "Density",
+                                                        "Histogram")),
+                                       selectInput("summ_method",
+                                                   "Method of summary generation",
+                                                   list("TextRank", "LexRank"))),
+                 "Term Sentiment" = tagList(selectInput("vis_type",
+                                                        "Select how to Visualise it",
+                                                        list("Page View",
+                                                             "Time Series",
+                                                             "Bar",
+                                                             "Density",
+                                                             "Histogram")),
+                                            selectInput("sent_lex",
+                                                        "Lexicon for Sentiment Dictionary",
+                                                        list("afinn", "bing",
+                                                             "loughran", "nrc"))),
+                 "Moving Average Term Sentiment" = tagList(selectInput("vis_type",
+                                                                       "Select how to Visualise it",
+                                                                       list("Time Series",
+                                                                            "Page View",
+                                                                            "Bar",
+                                                                            "Density",
+                                                                            "Histogram")),
+                                                           sliderInput("term_sent_lag",
+                                                                       "Lag Length for Calculation of Moving Average",
+                                                                       3,500,50),
+                                                           selectInput("sent_lex",
+                                                                       "Lexicon for Sentiment Dictionary",
+                                                                       list("afinn", "bing",
+                                                                            "loughran", "nrc"))),
+                 "Aggregated Term Count" = tagList(selectInput("vis_type",
+                                                               "Select how to Visualise it",
+                                                               list("Bar",
+                                                                    "Page View",
+                                                                    "Time Series",
+                                                                    "Density",
+                                                                    "Histogram")),
+                                                   selectInput("agg_var",
+                                                               "Select which variable to aggregate on",
+                                                               c("", names(grouped())) %||% c(""))),
+                 "Key Sections" = tagList(selectInput("vis_type",
+                                                      "Select how to Visualise it",
+                                                      list("Bar",
+                                                           "Page View",
+                                                           "Time Series",
+                                                           "Density",
+                                                           "Histogram")),
+                                          selectInput("summ_method",
+                                                      "Method of summary generation",
+                                                      list("TextRank", "LexRank")),
+                                          selectInput("agg_var",
+                                                      "Select which variable to aggregate on",
+                                                      c("", names(grouped())) %||% c(""))),
+                 "Aggregated Sentiment" = tagList(selectInput("vis_type",
+                                                              "Select how to Visualise it",
+                                                              list("Page View",
+                                                                   "Time Series",
+                                                                   "Bar",
+                                                                   "Density",
+                                                                   "Histogram")),
+                                                  selectInput("sent_lex",
+                                                              "Lexicon for Sentiment Dictionary",
+                                                              list("afinn", "bing",
+                                                                   "loughran", "nrc")),
+                                                  selectInput("agg_var",
+                                                              "Select which variable to aggregate on",
+                                                              c("", names(grouped())) %||% c(""))))})
+      insighted <- reactive({
           switch(input$what_vis,
-                 "Term Frequency" = get_term_insight(., "Term Frequency")) %>%
-              get_vis(input$vis_type,)
-              
-      })
-
+                 "Term Frequency" = get_term_insight(grouped(), input$what_vis),
+                 "n-gram Frequency" = get_term_insight(grouped(), c("n-grams", "n-gram Frequency"), input$n_gram),
+                 "Key Words" = get_term_insight(grouped(), input$what_vis, input$summ_method),
+                 "Term Sentiment" = get_term_insight(grouped(), input$what_vis, input$sent_lex),
+                 "Moving Average Term Sentiment" = get_term_insight(grouped(), input$what_vis, input$sent_lex, input$term_sent_lag),
+                 "Aggregated Term Count" = get_aggregate_insight(grouped(), input$what_vis, input$agg_var),
+                 "Key Sections" = get_aggregate_insight(grouped(), input$what_vis, input$agg_var, input$summ_method),
+                 "Aggregated Sentiment" = get_aggregate_insight(grouped(), input$what_vis, input$agg_var, input$sent_lex))})
+      output$vis_options <- renderUI({
+          switch(input$vis_type,
+                 "Page View" = tagList(selectInput("paging", "Select which page you want to view",
+                                                   list(1,2,3,4)),
+                                       selectInput("palette", "Select the colour palette type",
+                                                   list("Sequential", "Diverging"))),
+                 "Bar" = tagList(sliderInput("num_terms", "Select the number of terms to visualise",
+                                             2,50,15)))})
+      output$vis_facet_by <- renderUI(tagList(selectInput("vis_facet",
+                                                          "select which variable to facet on",
+                                                          c("", names(grouped())) %||% c("")),
+                                              checkboxInput("scale_fixed", "Scale Fixed", value=TRUE)))
+      visualisation <- reactive({switch(input$vis_type,
+                                        "Page View" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$paging, input$palette),
+                                        "Time Series" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed),
+                                        "Bar" = switch(input$what_vis,
+                                                       "n-gram Frequency" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms, x = `n-grams`),
+                                                       get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms)),
+                                        "Density" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed),
+                                        "Histogram" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed))})
       output$plot <- renderPlot({
-        visualisation()
-      })
+          visualisation()})
   }
 #+end_src
 
@@ -2527,13 +2676,13 @@ We will use the following as our shiny app:
    :LaTeX_CLASS_OPTIONS: [a4paper,landscape]
    :END:
 
-| Insight Function | Additional Arguments to Insight | Default Visualisation | Additional Arguments to Default Visualisation | Other Possible Visualisations | Summary |
-|------------------+---------------------------------+-----------------------+-----------------------------------------------+-------------------------------+---------|
-| Term Frequency      | Groups                          | Bar Chart             | Number of Terms, Facetting, Fixed Scale, Paging | Distribution, GGPage, Time Series |
-| Bigram (count)      | Groups, n-gram                  | Bar Chart             | Number of Terms, Facetting, Fixed Scale, Paging | Distribution, GGPage, Time Series |
-| Key Words           | Groups, Method                  | Bar Chart             | Number of terms, Facetting, Fixed Scale, Paging | Distribution, GGPage              |
-| Term Sentiment      | Groups, Lexicon                 | GGPage                | Paging, Colours                 |   Distribution                    |
-| MA Term Sentiment   | Groups, Lag, Lexicon            | Time Series           | Facetting, Fixed Scale                  |    Distribution, GGPage           |
-| Agg. Term Count     | Groups, Aggregation Var         | Bar Chart             | Number of Aggregations, Facetting, Fixed Scale, Paging |             Distribution, GGpage, Time Series |
-| Key Sections        |   Groups, Method, Aggregation Var  | Bar Chart            | Number of terms, Facetting, Fixed Scale, Paging | Distribution, GGPage              |
-| Aggregate Sentiment      | Groups, Lexicon, Aggregation Var | GGPage                | Paging, Colours                 |   Distribution                    |
+| Insight Function    | Additional Arguments to Insight  | Default Visualisation | Additional Arguments to Default Visualisation          | Other Possible Visualisations     | Summary |
+|---------------------+----------------------------------+-----------------------+--------------------------------------------------------+-----------------------------------+---------|
+| Term Frequency      | Groups                           | Bar Chart             | Number of Terms, Facetting, Fixed Scale, Paging        | Distribution, GGPage, Time Series |         |
+| Bigram (count)      | Groups, n-gram                   | Bar Chart             | Number of Terms, Facetting, Fixed Scale, Paging        | Distribution, GGPage, Time Series |         |
+| Key Words           | Groups, Method                   | Bar Chart             | Number of terms, Facetting, Fixed Scale, Paging        | Distribution, GGPage              |         |
+| Term Sentiment      | Groups, Lexicon                  | GGPage                | Paging, Colours                                        | Distribution                      |         |
+| MA Term Sentiment   | Groups, Lag, Lexicon             | Time Series           | Facetting, Fixed Scale                                 | Distribution, GGPage              |         |
+| Agg. Term Count     | Groups, Aggregation Var          | Bar Chart             | Number of Aggregations, Facetting, Fixed Scale, Paging | Distribution, GGpage, Time Series |         |
+| Key Sections        | Groups, Method, Aggregation Var  | Bar Chart             | Number of terms, Facetting, Fixed Scale, Paging        | Distribution, GGPage              |         |
+| Aggregate Sentiment | Groups, Lexicon, Aggregation Var | GGPage                | Paging, Colours                                        | Distribution                      |         |
