@@ -932,7 +932,7 @@ concept.
   #'   corrresponding to a line of the text file, with the column named
   #'   "text"
   import_txt <- function(filepath){
-    readr::read_lines(filepath) %>%
+    paste(readLines(filepath), collapse = "\n") %>%
       tibble::tibble(text=.)
   }
 #+end_src
@@ -1048,29 +1048,53 @@ try to optimise this.
 grouping has been shifted to take place afterwards
 
 #+begin_src R :session rsession1 :tangle ~/inzightta/R/preparation-format.R :eval never-export :exports both
+  ## #' formats imported data into an analysis-ready format '
+  ## #' @param data a tibble formatted with a text and (optional) group
+  ## #'     column
+  ## #'
+  ## #' @return a [tibble][tibble::tibble-package] formatted such that
+  ## #'     columns correspond to identifiers of group, line, sentence,
+  ## #'     word (groups ignored)
+  ## #'
+  ## #' @export
+  ## format_data <- function(data){
+  ##   data %>%
+  ##       dplyr::mutate(line_id = dplyr::row_number()) %>% 
+  ##       tidytext::unnest_tokens(output = sentence, input = text,
+  ##                               token = "sentences", to_lower = FALSE) %>%
+  ##       dplyr::mutate(sentence_id = dplyr::row_number()) %>%
+  ##       dplyr::group_by(sentence_id, add=TRUE) %>%
+  ##       dplyr::group_modify(~ {
+  ##           .x %>%
+  ##               tidytext::unnest_tokens(output = word, input = sentence,
+  ##                                       token = "words", to_lower=FALSE) %>%
+  ##               dplyr::mutate(word_id = dplyr::row_number())
+  ##       }) %>%
+  ##       ungroup_by("sentence_id")
+  ## }
+
   #' formats imported data into an analysis-ready format '
   #' @param data a tibble formatted with a text and (optional) group
   #'     column
   #'
   #' @return a [tibble][tibble::tibble-package] formatted such that
-  #'     columns correspond to identifiers of group, line, sentence,
+  #'     columns correspond to identifiers of group, sentence,
   #'     word (groups ignored)
   #'
   #' @export
   format_data <- function(data){
-    data %>%
-      dplyr::mutate(line_id = dplyr::row_number()) %>% 
+      data %>%
         tidytext::unnest_tokens(output = sentence, input = text,
                                 token = "sentences", to_lower = FALSE) %>%
-      dplyr::mutate(sentence_id = dplyr::row_number()) %>%
-      dplyr::group_by(sentence_id, add=TRUE) %>%
-      dplyr::group_modify(~ {
-	.x %>%
-            tidytext::unnest_tokens(output = word, input = sentence,
-                                    token = "words", to_lower=FALSE) %>%
-	  dplyr::mutate(word_id = dplyr::row_number())
-      }) %>%
-      ungroup_by("sentence_id")
+        dplyr::mutate(sentence_id = dplyr::row_number()) %>%
+        dplyr::group_by(sentence_id, add=TRUE) %>%
+        dplyr::group_modify(~ {
+            .x %>%
+                tidytext::unnest_tokens(output = word, input = sentence,
+                                        token = "words", to_lower=FALSE) %>%
+                dplyr::mutate(word_id = dplyr::row_number())
+        }) %>%
+        ungroup_by("sentence_id")
   }
 #+end_src
 ** TODO Filtering
@@ -1264,6 +1288,24 @@ option to compose their own regular expressions for sectioning.
   #' @export
   get_sections <- get_search("^[\\s]*([Ss][Ss])|([Ss][Ee][Cc][Tt][Ii][Oo][Nn])")
 
+  #' sections text based on cantos
+  #'
+  #' @param .data vector to section
+  #'
+  #' @return vector of same length as .data with canto numbers
+  #'
+  #' @export
+  get_cantos <- get_search("(?i)canto (XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$")
+
+  #' sections text based on book
+  #'
+  #' @param .data vector to section
+  #'
+  #' @return vector of same length as .data with book numbers
+  #'
+  #' @export
+  get_books <- get_search("(?i)book$")
+
   #' Adds section column to dataframe
   #'
   #' @param .data dataframe formatted as per output of prep process
@@ -1276,7 +1318,9 @@ option to compose their own regular expressions for sectioning.
   section <- function(.data, section_by){
       sec_table <- list("chapter" = get_chapters,
                         "part" = get_parts,
-                        "section" = get_sections)
+                        "section" = get_sections,
+                        "canto" = get_cantos,
+                        "book" = get_books)
       .data %>%
           dplyr::mutate(!! section_by := sec_table[[section_by]](word))
   }
@@ -1669,14 +1713,6 @@ indexing starting at 1.
   }
 #+end_src
 
-*** TODO [#B] Word Correlation
-This is the word-level insight that will be the most difficult to
-perform, due to my requirements that the dataframe remains tidy and
-lossless. The only way I can conceive of doing this is by adding
-columns for each distinct word, giving correlations there. The best
-form of visualisation would be individual words with their scores, a
-correlation matrix for some words, or a table and search like the one
-Cassidy created.
 ** TODO [#A] Aggregate Insight
 This should work effectively the same as the word-level insight,
 however the wrapper may have to be different. This is TBC. I think an
@@ -1755,6 +1791,7 @@ but a warning will be required at the user end.
       dplyr::pull(value)
   }
 #+end_src
+
 *** Aggregate Sentiment
 Like the added context that key sentences bring over key words, a
 similar situation is true of sentiment. I'll make it so that it can
@@ -1790,6 +1827,72 @@ case, AFINN.
       dplyr::pull(aggregate_sentiment)
   }
 #+end_src
+*** TODO [#B] Word Correlation
+ This is the word-level insight that will be the most difficult to
+ perform, due to my requirements that the dataframe remains tidy and
+ lossless. The only way I can conceive of doing this is by adding
+ columns for each distinct word, giving correlations there. The best
+ form of visualisation would be individual words with their scores, a
+ correlation matrix for some words, or a table and search like the one
+ Cassidy created. =widyr= implements a =pairwise_cor= function,
+ however it determines the correlations of every single word with each
+ other, creating far too large an object than what we need. Instead,
+ we will implement it directly, with the phi coeffiecient.
+ #+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
+   phi_coef <- function(n00, n01, n11, n10){
+       n0x <- n00 + n01
+       n1x <- n10 + n11
+       nx0 <- n00 + n10
+       nx1 <- n01 + n11
+       (n11 * n00 - n10 * n01) / sqrt(prod(n0x, n1x, nx0, nx1))
+   }
+
+   #' Determine term correlations - extremely slow
+   #'
+   #' @param .data character vector of terms
+   #'
+   #' @param term character to find correlations with
+   #'
+   #' @param aggregate_on vector to aggregate .data over; ideally,
+   #'   sentence_id, but could be chapter, document, etc.
+   #'
+   #' @return numeric vector of term correlations as per phi_coef
+   #'
+   #' @export
+   term_corr <- function(.data, term, aggregate_on){
+       corrs <- numeric(length(.data))
+       for (i in seq_along(.data)){
+           other_term <- .data[i]
+           n00 <- sum(tapply(.data, aggregate_on, function(x){!((term %in% x) | (other_term %in% x))}))
+           n01 <- sum(tapply(.data, aggregate_on, function(x){(term %in% x) & !(other_term %in% x)}))
+           n10 <- sum(tapply(.data, aggregate_on, function(x){!(term %in% x) & (other_term %in% x)}))
+           n11 <- sum(tapply(.data, aggregate_on, function(x){(term %in% x) & (other_term %in% x)}))
+           corrs[i] <- phi_coef(n00, n01, n11, n10)
+       }
+       return(corrs)
+   }
+
+   #' Determine term cooccurances - extremely slow
+   #'
+   #' @param .data character vector of terms
+   #'
+   #' @param term character to find correlations with
+   #'
+   #' @param aggregate_on vector to aggregate .data over; ideally,
+   #'   sentence_id, but could be chapter, document, etc.
+   #'
+   #' @return numeric vector of term correlations as per phi_coef
+   #'
+   #' @export
+   term_cooccurance <- function(.data, term, aggregate_on){
+       corrs <- numeric(length(.data))
+       for (i in seq_along(.data)){
+           other_term <- .data[i]
+           corrs[i] <- sum(tapply(.data, aggregate_on, function(x){(term %in% x) & (other_term %in% x)}))
+       }
+       return(corrs)
+   }
+ #+end_src
 *** TODO [#A] Term Frequency - Inverse Document Frequency (tf-idf)
 *** TODO [#A] Topic Modelling
 ** CLOSED [#B] Wrapper
@@ -1847,18 +1950,42 @@ TODO:
   get_aggregate_insight <- function(.data, operations, aggregate_on, ...){
       opstable <- list("Aggregated Term Count" = term_count,
                        "Key Sections" = key_aggregates,
-                       "Aggregated Sentiment" = aggregate_sentiment)
+                       "Aggregated Sentiment" = aggregate_sentiment,
+                       "Bound Aggregates" = bind_aggregation)
       ops <- opstable[operations]
       lapply(seq(length(ops)),
              function(x){
                  name <- dplyr::sym(names(ops[x]))
                  operation <- ops[x][[1]]
                  agg_on <- dplyr::sym(aggregate_on)
-                 df <- dplyr::mutate(.data,
-                                     !!name := operation(text, !! agg_on, ...))
+                 df <- if (names(ops[x]) == "Bound Aggregates"){
+                           dplyr::mutate(.data,
+                                         !!name := operation(word, !! agg_on))
+                       } else {
+                           dplyr::mutate(.data,
+                                         !!name := operation(text, !! agg_on, ...))
+                       }
                  df[names(ops[x])]
              }) %>%
           dplyr::bind_cols(.data, .)
+  }
+#+end_src
+
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-aggregate.R :eval never-export :exports both
+  #' bind aggregate terms together
+  #'
+  #' @param data vector of terms
+  #'
+  #' @param aggregate_on vector of aggregations
+  #'
+  #' @return data with every aggregation bound, as in a sentence
+  #'
+  #'
+  bind_aggregation <- function(data, aggregate_on){
+      tibble::tibble(data, agg = aggregate_on) %>%
+          dplyr::group_by(agg) %>%
+          dplyr::mutate(bound = paste(data, collapse = " ")) %>%
+          dplyr::pull(bound)
   }
 #+end_src
 * Program Layer: Visualisation
@@ -1913,6 +2040,7 @@ TODO:
   #' @export
   score_bar_ungrouped <- function(.data, y, n = 15,
                                   x = text, desc = FALSE){
+      wrap <- 50
       text <- dplyr::enquo(x)
       insight_col <- dplyr::enquo(y)
       .data %>%
@@ -1920,14 +2048,29 @@ TODO:
           dplyr::arrange(dplyr::desc(!! insight_col)) %>%
           dplyr::group_modify(~{.x %>% head(n)}) %>%
           dplyr::ungroup() %>%
-          dplyr::mutate(text = forcats::fct_reorder(!! text,
+          dplyr::mutate(text = forcats::fct_reorder(shorten(!! text, wrap),
                                                     !! insight_col,
                                                     .desc = desc)) %>%
           ggplot2::ggplot(ggplot2::aes(x = text)) +
           ggplot2::geom_col(ggplot2::aes(y = !! insight_col)) +
           ggplot2::coord_flip()
   }
+
+  #' Shorten some text up to n characters
+  #'
+  #' @param .data character vector
+  #' 
+  #' @param n wrap length of text
+  #'
+  #' @return shortened form of .data
+  #'
+  shorten <- function(.data, n){
+      ifelse(nchar(.data) > n,
+             paste(substr(.data, 1, n), "...", sep = ""),
+             .data)
+  }
 #+end_src
+
 *** Word Cloud
 What can I say about word clouds? They're even worse than pie charts
 for attaining any insight other than a rough idea of the highest
@@ -1960,7 +2103,7 @@ implements them exceedingly well.
           dplyr::arrange(dplyr::desc(!! insight_col)) %>%
           dplyr::group_modify(~{.x %>% head(n)}) %>%
           dplyr::ungroup() %>%
-          ggplot2::ggplot(ggplot2::aes(label = !! text, size = !! insight_col)) +
+          ggplot2::ggplot(ggplot2::aes(label = stringr::str_wrap(!! text, 30), size = !! insight_col)) +
           ggwordcloud::geom_text_wordcloud(shape = shape, rm_outside = TRUE) +
           ggplot2::scale_size_area(max_size = 24)
   }
@@ -2468,17 +2611,19 @@ imported %>%
 ** Functions
 #+begin_src R :session rsession1 :tangle ~/stats-781/test/tests.R :eval never-export :exports both
   datapath = "~/stats-781/data/raw/11-0.txt"
+  datapath = "~/stats-781/data/raw/Schonlau1.csv"
+  filepath = datapath
   imported <- inzightta::import_files(datapath)
   prepped <- text_prep(imported)
   insighted <- get_term_insight(prepped, "Term Frequency")
   insighted <- get_term_insight(insighted, c("n-grams", "n-gram Frequency"), 3)
+  insighted <- get_aggregate_insight(prepped, c("Bound Aggregates", "Aggregated Term Count"), "sentence_id")
 
-  get_ngram()
   get_term_insight(prepped, "Key Words", "sodfj")
   get_term_insight(prepped, "Term Sentiment", "afinn")
   get_term_insight(prepped, "n-gram Frequency", 3)
   get_term_insight(prepped, "Moving Average Term Sentiment", "afinn", 20)
-  get_aggregate_insight(prepped, "Aggregated Term Count", "sentence_id")
+
   get_aggregate_insight(prepped, "Key Sections", "sentence_id")
   get_aggregate_insight(prepped, "Aggregated Sentiment", "sentence_id", "afinn", mean)
   get_vis(insighted, "Page View", "Term Frequency", facet_by = "", scale_fixed = TRUE, num_terms = 10, term_index = 3, palette = "dosfj")
@@ -2539,7 +2684,7 @@ We will use the following as our shiny app:
                                        checkboxInput("stopwords", "Stopwords"),
                                        actionButton("prep_button", "Prepare Text"),
                                        selectInput("section_by", "Section By",
-                                                   list("", "chapter", "part", "section")),
+                                                   list("", "chapter", "part", "section", "canto", "book")),
                                        uiOutput("vars_to_filter"),
                                        textInput("filter_pred", "value to match", "")),
                                    mainPanel(
@@ -2704,25 +2849,55 @@ We will use the following as our shiny app:
                                                               c("", names(grouped())) %||% c(""))))})
       insighted <- reactive({
           switch(input$what_vis,
-                 "Term Frequency" = get_term_insight(grouped(), input$what_vis),
-                 "n-gram Frequency" = get_term_insight(grouped(), c("n-grams", "n-gram Frequency"), input$n_gram),
-                 "Key Words" = get_term_insight(grouped(), input$what_vis, input$summ_method),
-                 "Term Sentiment" = get_term_insight(grouped(), input$what_vis, input$sent_lex),
-                 "Moving Average Term Sentiment" = get_term_insight(grouped(), input$what_vis, input$sent_lex, input$term_sent_lag),
-                 "Aggregated Term Count" = get_aggregate_insight(grouped(), input$what_vis, input$agg_var),
-                 "Key Sections" = get_aggregate_insight(grouped(), input$what_vis, input$agg_var, input$summ_method),
-                 "Aggregated Sentiment" = get_aggregate_insight(grouped(), input$what_vis, input$agg_var, input$sent_lex))})
+                 "Term Frequency" = get_term_insight(grouped(),
+                                                     input$what_vis),
+                 "n-gram Frequency" = get_term_insight(grouped(),
+                                                       c("n-grams", "n-gram Frequency"),
+                                                       input$n_gram),
+                 "Key Words" = get_term_insight(grouped(),
+                                                input$what_vis,
+                                                input$summ_method),
+                 "Term Sentiment" = get_term_insight(grouped(),
+                                                     input$what_vis,
+                                                     input$sent_lex),
+                 "Moving Average Term Sentiment" = get_term_insight(grouped(),
+                                                                    input$what_vis,
+                                                                    input$sent_lex,
+                                                                    input$term_sent_lag),
+                 "Aggregated Term Count" = get_aggregate_insight(grouped(),
+                                                                 c("Bound Aggregates", input$what_vis),
+                                                                 input$agg_var),
+                 "Key Sections" = get_aggregate_insight(grouped(),
+                                                        c("Bound Aggregates", input$what_vis),
+                                                        input$agg_var,
+                                                        input$summ_method),
+                 "Aggregated Sentiment" = get_aggregate_insight(grouped(),
+                                                                c("Bound Aggregates", input$what_vis),
+                                                                input$agg_var,
+                                                                input$sent_lex))})
       output$vis_options <- renderUI({
           switch(input$vis_type,
-                 "Word Cloud" = tagList(sliderInput("num_terms", "Select the number of terms to visualise",
+                 "Word Cloud" = tagList(sliderInput("num_terms",
+                                                    "Select the number of terms to visualise",
                                                     3, 50, 15),
-                                        selectInput("wordcloud_shape", "Select the shape of the wordcloud",
-                                                    list("circle", "cardioid", "diamond", "square", "triangle-forward", "triangle-upright", "pentagon", "star"))),
-                 "Page View" = tagList(sliderInput("num_terms", "Select the number of terms to visualise",
+                                        selectInput("wordcloud_shape",
+                                                    "Select the shape of the wordcloud",
+                                                    list("circle",
+                                                         "cardioid",
+                                                         "diamond",
+                                                         "square",
+                                                         "triangle-forward",
+                                                         "triangle-upright",
+                                                         "pentagon",
+                                                         "star"))),
+                 "Page View" = tagList(sliderInput("num_terms",
+                                                   "Select the number of terms to visualise",
                                                    3, 400, 100),
-                                       sliderInput("term_index", "Select the point to begin visualisation from",
+                                       sliderInput("term_index",
+                                                   "Select the point to begin visualisation from",
                                                    1, nrow(insighted()), 1),
-                                       selectInput("palette", "Select the colour palette type",
+                                       selectInput("palette",
+                                                   "Select the colour palette type",
                                                    list("Sequential", "Diverging"))),
                  "Bar" = tagList(sliderInput("num_terms", "Select the number of terms to visualise",
                                              2,50,15)))})
@@ -2730,17 +2905,76 @@ We will use the following as our shiny app:
                                                           "select which variable to facet on",
                                                           c("", names(grouped())) %||% c("")),
                                               checkboxInput("scale_fixed", "Scale Fixed", value=TRUE)))
-      visualisation <- reactive({switch(input$vis_type,
-                                        "Word Cloud" = switch(input$what_vis,
-                                                       "n-gram Frequency" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms, x = `n-grams`, shape = input$wordcloud_shape),
-                                                       get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms, shape = input$wordcloud_shape)),
-                                        "Page View" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms, input$term_index, palette = input$palette),
-                                        "Time Series" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed),
-                                        "Bar" = switch(input$what_vis,
-                                                       "n-gram Frequency" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms, x = `n-grams`),
-                                                       get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms)),
-                                        "Density" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed),
-                                        "Histogram" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed))})
+      visualisation <- reactive({
+          switch(input$vis_type,
+                 "Word Cloud" = switch(input$what_vis,
+                                       "n-gram Frequency" = get_vis(
+                                           insighted(),
+                                           input$vis_type,
+                                           input$what_vis,
+                                           input$vis_facet,
+                                           input$scale_fixed,
+                                           input$num_terms,
+                                           x = `n-grams`,
+                                           shape = input$wordcloud_shape),
+                                       "Aggregated Term Count" =,
+                                       "Key Sections" =,
+                                       "Aggregated Sentiment" = get_vis(
+                                           insighted(),
+                                           input$vis_type,
+                                           input$what_vis,
+                                           input$vis_facet,
+                                           input$scale_fixed,
+                                           input$num_terms,
+                                           x = `Bound Aggregates`,
+                                           shape = input$wordcloud_shape),
+                                       get_vis(insighted(),
+                                               input$vis_type,
+                                               input$what_vis,
+                                               input$vis_facet,
+                                               input$scale_fixed,
+                                               input$num_terms,
+                                               shape = input$wordcloud_shape)),
+                 "Page View" = get_vis(insighted(), input$vis_type,
+                                       input$what_vis,
+                                       input$vis_facet,
+                                       input$scale_fixed,
+                                       input$num_terms,
+                                       input$term_index,
+                                       palette = input$palette),
+                 "Time Series" = get_vis(insighted(), input$vis_type,
+                                         input$what_vis,
+                                         input$vis_facet,
+                                         input$scale_fixed),
+                 "Bar" = switch(input$what_vis,
+                                "n-gram Frequency" = get_vis(insighted(),
+                                                             input$vis_type,
+                                                             input$what_vis,
+                                                             input$vis_facet,
+                                                             input$scale_fixed,
+                                                             input$num_terms,
+                                                             x = `n-grams`),
+                                "Aggregated Term Count" =,
+                                "Key Sections" =,
+                                "Aggregated Sentiment" = get_vis(insighted(),
+                                                                 input$vis_type,
+                                                                 input$what_vis,
+                                                                 input$vis_facet,
+                                                                 input$scale_fixed,
+                                                                 input$num_terms,
+                                                                 x = `Bound Aggregates`),
+                                get_vis(insighted(), input$vis_type,
+                                        input$what_vis,
+                                        input$vis_facet,
+                                        input$scale_fixed,
+                                        input$num_terms)),
+                 "Density" = get_vis(insighted(), input$vis_type,
+                                     input$what_vis, input$vis_facet,
+                                     input$scale_fixed),
+                 "Histogram" = get_vis(insighted(), input$vis_type,
+                                       input$what_vis,
+                                       input$vis_facet,
+                                       input$scale_fixed))})
       output$plot <- renderPlot({
           visualisation()})
   }
@@ -2756,17 +2990,17 @@ We will use the following as our shiny app:
 ** Additional Functionality
    TODO:
 
-- [ ] automatic visualisation based on insight selection
-- [ ] Have insights done automatically when creating visualisations
-- [ ] Have *what* is being visualised befor *how* it is to be visualised
-- [ ] Allow additional arguments to insight functions in-app
-- [ ] allow non-lemmatised or stopworded text preparation
+- [X] automatic visualisation based on insight selection
+- [X] Have insights done automatically when creating visualisations
+- [X] Have *what* is being visualised befor *how* it is to be visualised
+- [X] Allow additional arguments to insight functions in-app
+- [X] allow non-lemmatised or stopworded text preparation
 - [ ] aggregate sentiment choice of statistic
-- [ ] Move Filter after Section
-- [ ] Add page view
+- [X] Move Filter after Section
+- [X] Add page view
 - [ ] separation in scale ggpage for sentiment etc
 - [ ] Allow additional stopwords
-- [ ] Allow choice of stopword lexicon
+- [X] Allow choice of stopword lexicon
 - [ ] allow multiple groups
 - [ ] fix document names
 

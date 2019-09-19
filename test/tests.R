@@ -314,17 +314,19 @@ get_term_insight(prepped, "Term Frequency")
  get_vis(aggregate_insights, input$vis, input$vis_col, input$vis_facet, input$scale_fixed)
 
 datapath = "~/stats-781/data/raw/11-0.txt"
+datapath = "~/stats-781/data/raw/Schonlau1.csv"
+filepath = datapath
 imported <- inzightta::import_files(datapath)
 prepped <- text_prep(imported)
 insighted <- get_term_insight(prepped, "Term Frequency")
 insighted <- get_term_insight(insighted, c("n-grams", "n-gram Frequency"), 3)
+insighted <- get_aggregate_insight(prepped, c("Bound Aggregates", "Aggregated Term Count"), "sentence_id")
 
-get_ngram()
 get_term_insight(prepped, "Key Words", "sodfj")
 get_term_insight(prepped, "Term Sentiment", "afinn")
 get_term_insight(prepped, "n-gram Frequency", 3)
 get_term_insight(prepped, "Moving Average Term Sentiment", "afinn", 20)
-get_aggregate_insight(prepped, "Aggregated Term Count", "sentence_id")
+
 get_aggregate_insight(prepped, "Key Sections", "sentence_id")
 get_aggregate_insight(prepped, "Aggregated Sentiment", "sentence_id", "afinn", mean)
 get_vis(insighted, "Page View", "Term Frequency", facet_by = "", scale_fixed = TRUE, num_terms = 10, term_index = 3, palette = "dosfj")
