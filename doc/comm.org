@@ -363,8 +363,8 @@ daniel.barnett@auckland.ac.nz
 ** CLOSED Meeting Daniel
    CLOSED: [2019-08-20 Tue 11:02] SCHEDULED: <2019-08-19 Mon 10:00>
 * Meeting Chris<2019-08-21 Wed 15:00>
-** Dissertation Work [1/4]
-   SCHEDULED: <2019-08-22 Thu>
+** CLOSED Dissertation Work [1/4]
+   CLOSED: [2019-09-17 Tue 11:02] SCHEDULED: <2019-08-22 Thu>
 - [X] add insight mutate function
 - [ ] add visualisation
 - [ ] change to text in csvs

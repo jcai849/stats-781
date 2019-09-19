@@ -229,86 +229,108 @@ imported %>%
     scale_fill_gradient2(low = "red", high = "blue", mid = "grey", midpoint = 0)
 
 library(shiny)
-library(inzightta)
-library(rlang)
+ library(inzightta)
+ library(rlang)
 
-input <- list(file1 = list(datapath = "~/stats-781/data/raw/11-0.txt"),
-              lemmatise = TRUE,
-              stopwords = TRUE,
-              sw_lexicon = "snowball",
-              filter_var = NULL,
-              filter_pred = NULL,
-              section_by = "chapter",
-              group_var = NULL,
-              get_term_insight = TRUE,
-              term_insight = "Lagged Term Sentiment",
-              get_aggregate_insight = NULL,
-              aggregate_insight = NULL,
-              aggregate_var = NULL,
-              vis = "struct_ts_ungrouped", ###  "struct_ggpage_ungrouped" "dist_density_ungrouped" "score_bar_ungrouped" "dist_hist_ungrouped" "struct_ts_ungrouped"
-              vis_col = "Lagged Term Sentiment",
-              vis_facet = "chapter",
-              scale_fixed = TRUE)
+ input <- list(file1 = list(datapath = "~/stats-781/data/raw/11-0.txt"),
+               lemmatise = TRUE,
+               stopwords = TRUE,
+               sw_lexicon = "snowball",
+               filter_var = NULL,
+               filter_pred = NULL,
+               section_by = "chapter",
+               group_var = NULL,
+               get_term_insight = TRUE,
+               term_insight = "Lagged Term Sentiment",
+               get_aggregate_insight = NULL,
+               aggregate_insight = NULL,
+               aggregate_var = NULL,
+               vis = "struct_ts_ungrouped", ###  "struct_ggpage_ungrouped" "dist_density_ungrouped" "score_bar_ungrouped" "dist_hist_ungrouped" "struct_ts_ungrouped"
+               vis_col = "Lagged Term Sentiment",
+               vis_facet = "chapter",
+               scale_fixed = TRUE)
 
-                                      # Import & Process
-imported <- inzightta::import_files(input$file1$datapath)
+                                       # Import & Process
+ imported <- inzightta::import_files(input$file1$datapath)
 
-prepped <- {
-    data <- imported
-    if (isTruthy(input$lemmatise) |
-        isTruthy(input$stopwords)){
-        data <- data %>%
-            text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
-    }
-    data}
+ prepped <- {
+     data <- imported
+     if (isTruthy(input$lemmatise) |
+         isTruthy(input$stopwords)){
+         data <- data %>%
+             text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+     }
+     data}
 
-filtered <- {
-    data <- prepped
-    if (isTruthy(input$filter_var) &
-        isTruthy(input$filter_pred)){
-        data <- data %>%
-            dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
-    }
-    data
-}
+ filtered <- {
+     data <- prepped
+     if (isTruthy(input$filter_var) &
+         isTruthy(input$filter_pred)){
+         data <- data %>%
+             dplyr::filter(!! dplyr::sym(input$filter_var) == input$filter_pred)
+     }
+     data
+ }
 
-sectioned <- {
-    data <- filtered
-    if (isTruthy(input$section_by)){
-        data <- data %>%
-            section(input$section_by)
-    }
-    data
-}
+ sectioned <- {
+     data <- filtered
+     if (isTruthy(input$section_by)){
+         data <- data %>%
+             section(input$section_by)
+     }
+     data
+ }
 
-grouped <- {
-    data <- sectioned
-    if (isTruthy(input$group_var)){
-        data <- data %>%
-            dplyr::group_by(!! dplyr::sym(input$group_var))
-    }
-    data
-}
+ grouped <- {
+     data <- sectioned
+     if (isTruthy(input$group_var)){
+         data <- data %>%
+             dplyr::group_by(!! dplyr::sym(input$group_var))
+     }
+     data
+ }
 
-term_insights <- {
-    data <- grouped
-    if (isTruthy(input$get_term_insight) &
-        isTruthy(input$term_insight)){
-        data <- data %>%
-            get_term_insight(input$term_insight)
-    }
-    data
-}
+ term_insights <- {
+     data <- grouped
+     if (isTruthy(input$get_term_insight) &
+         isTruthy(input$term_insight)){
+         data <- data %>%
+             get_term_insight(input$term_insight)
+     }
+     data
+ }
+get_term_insight(prepped, "Term Frequency") 
+ aggregate_insights <- {
+     data <- term_insights
+     if (isTruthy(input$get_aggregate_insight) &
+         isTruthy(input$aggregate_insight) &
+         isTruthy(input$aggregate_var)){
+         data <- data %>%
+             get_aggregate_insight(input$aggregate_insight, input$aggregate_var)
+     }
+     data
+ }
 
-aggregate_insights <- {
-    data <- term_insights
-    if (isTruthy(input$get_aggregate_insight) &
-        isTruthy(input$aggregate_insight) &
-        isTruthy(input$aggregate_var)){
-        data <- data %>%
-            get_aggregate_insight(input$aggregate_insight, input$aggregate_var)
-    }
-    data
-}
+ get_vis(aggregate_insights, input$vis, input$vis_col, input$vis_facet, input$scale_fixed)
 
-get_vis(aggregate_insights, input$vis, input$vis_col, input$vis_facet, input$scale_fixed)
+datapath = "~/stats-781/data/raw/11-0.txt"
+imported <- inzightta::import_files(datapath)
+prepped <- text_prep(imported)
+insighted <- get_term_insight(prepped, "Term Frequency")
+insighted <- get_term_insight(insighted, c("n-grams", "n-gram Frequency"), 3)
+
+get_ngram()
+get_term_insight(prepped, "Key Words", "sodfj")
+get_term_insight(prepped, "Term Sentiment", "afinn")
+get_term_insight(prepped, "n-gram Frequency", 3)
+get_term_insight(prepped, "Moving Average Term Sentiment", "afinn", 20)
+get_aggregate_insight(prepped, "Aggregated Term Count", "sentence_id")
+get_aggregate_insight(prepped, "Key Sections", "sentence_id")
+get_aggregate_insight(prepped, "Aggregated Sentiment", "sentence_id", "afinn", mean)
+get_vis(insighted, "Page View", "Term Frequency", facet_by = "", scale_fixed = TRUE, num_terms = 10, term_index = 3, palette = "dosfj")
+get_vis(insighted, "Time Series", "Term Frequency", facet_by = "", scale_fixed = TRUE)
+get_vis(insighted, "Bar", "Term Frequency", facet_by = "", scale_fixed = TRUE, n = 20)
+k <- "n-grams"
+get_vis(insighted, "Bar", "n-gram Frequency", facet_by = "", scale_fixed = TRUE, n = 20, x = !! dplyr::sym(k))
+get_vis(insighted, "Density", "Term Frequency", facet_by = "", scale_fixed = TRUE)
+get_vis(insighted, "Histogram", "Term Frequency", facet_by = "", scale_fixed = TRUE)

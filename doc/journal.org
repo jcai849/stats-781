@@ -1363,8 +1363,7 @@ the first element in the second list.
   #'
   #' @return character vector of bigrams
   #'
-  #' @export
-  get_bigram <- function(.data){
+   get_bigram <- function(.data){
       concat_walk(.data, c(.data[-1], NA))
   }
 #+end_src
@@ -1438,9 +1437,27 @@ get_bigram(x)
 
 To generalise to n-grams, we use the following function, and
 gratuitous recursion. It isn't working as expected currently, as
-values following NA will repeat. I will fix this soon enough.
+values following NA will repeat. I know the cause but not the fix,
+though I will fix this soon enough.
+
 #+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
-  #' NOT FOR PRODUCTION - STILL IN TESING. Returns the n-grams, skipping NA values
+  # NOT FOR PRODUCTION - STILL IN TESING. Returns the n-grams, skipping NA values
+  ## get_ngram <- function(.data, n){
+  ##     if (n == 2){
+  ##         concat_walk(.data, c(.data[-1], NA))
+  ##     } else {
+  ##         concat_walk(get_ngram(.data, n - 1), c(.data[-seq(n-1)], rep(NA, n-1)))
+  ##     }
+  ## }
+#+end_src
+
+In the mean time, here is a self-contained imperative take.
+Determination of n-grams (skipping NA values) really is a task that is
+less cognitively taxing with an imperative pattern. I may convert this
+to be functional later as a fun challenge.
+
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
+  #' Returns the n-grams, skipping NA values
   #'
   #' @param .data vector to get n-grams from
   #'
@@ -1450,13 +1467,36 @@ values following NA will repeat. I will fix this soon enough.
   #'
   #' @export
   get_ngram <- function(.data, n){
-      if (n == 2){
-          concat_walk(.data, c(.data[-1], NA))
-      } else {
-          concat_walk(get_ngram(.data, n - 1), c(.data[-seq(n-1)], rep(NA, n-1)))
+      main_n <- n
+      ngrams <- rep(NA_character_, length(.data))
+      for (i in seq_along(.data)){
+          if (i - 1 >  length(.data) - n) break
+          if (is.na(.data[i])){
+              next
+          } else {
+              ngram <- .data[i]
+          }
+          j <- i + 1
+          while(n > 1){
+              if (j >  length(.data)){
+                  ngram <- NA_character_
+                  break
+              }
+              if (is.na(.data[j])){
+                  j <- j + 1
+              } else {
+                  ngram <- paste(ngram, .data[j])
+                  n <- n - 1
+                  j <- j + 1
+              }
+          }
+          ngrams[i] <- ngram
+          n <- main_n
       }
+      return(ngrams)
   }
 #+end_src
+
 **** n-gram Count
 To explicitly count n-grams, we make use of the following simple function:
 #+begin_src R :session rsession1 :tangle ~/inzightta/R/insight-term.R :eval never-export :exports both
@@ -1609,6 +1649,8 @@ indexing starting at 1.
   #'     of taking an na.rm argument
   #'
   #' @return vector with lagged sentiment score of each term in the input vector
+  #'
+  #' @export
   lagged_term_sentiment <- function(.data, lexicon="afinn", lag = 10, statistic = mean){
       sents <- term_sentiment(.data, lexicon)
       ## lagged_sents <- rep(NA, length(sents))
@@ -1772,8 +1814,8 @@ TODO:
   #' @export
   get_term_insight <- function(.data, operations, ...){
       opstable <- list("Term Frequency" = term_freq,
-                       "n-grams" = get_ngram,
                        "n-gram Frequency" = ngram_freq,
+                       "n-grams" = get_ngram,
                        "Key Words" = keywords_tr,
                        "Term Sentiment" = term_sentiment,
                        "Moving Average Term Sentiment" = lagged_term_sentiment)
@@ -1831,8 +1873,8 @@ maneuvering with a wrapper function. Ultimately, I will have to create
 two forms of each chart; one grouped, one ungrouped. Potentially more,
 for differentiation between singly and multiply grouped charts.
 ** TODO Rank
-** TODO Score
-*** TODO [#B] Barplot [0/2]
+** Score
+*** Barplot
 There are issues with the barplot, as documented by:
 #+begin_quote
 [2019-07-01 Mon] After implementing grouping, the issue with arranging
@@ -1873,10 +1915,9 @@ TODO:
                                   x = text, desc = FALSE){
       text <- dplyr::enquo(x)
       insight_col <- dplyr::enquo(y)
-      dist <- .data %>%
-          dplyr::distinct(!! text, .keep_all=TRUE)
-      arr <-  dplyr::arrange(dist, dplyr::desc(!! insight_col))
-      arr %>%
+      .data %>%
+          dplyr::distinct(!! text, .keep_all=TRUE) %>%
+          dplyr::arrange(dplyr::desc(!! insight_col)) %>%
           dplyr::group_modify(~{.x %>% head(n)}) %>%
           dplyr::ungroup() %>%
           dplyr::mutate(text = forcats::fct_reorder(!! text,
@@ -1887,8 +1928,43 @@ TODO:
           ggplot2::coord_flip()
   }
 #+end_src
-** TODO [#C] Relation
-*** Correlation Matrix
+*** Word Cloud
+What can I say about word clouds? They're even worse than pie charts
+for attaining any insight other than a rough idea of the highest
+scoring items. I must admit though, they do look good. And [[https://lepennec.github.io/ggwordcloud/index.html][ggwordcloud]]
+implements them exceedingly well.
+
+#+begin_src R :session rsession1 :tangle ~/inzightta/R/visualisation.R :eval never-export :exports both
+  #' output a ggplot wordcloud graph of the top texts from some insight function
+  #'
+  #' @param .data a dataframe containing "text" and insight columns as
+  #'     per the output of the get_(term|aggregate)_insight wrapper
+  #'     function
+  #' 
+  #' @param y symbol name of the column insight was
+  #'     outputted to
+  #' 
+  #' @param x symbol name of column for insight labels
+  #'
+  #' @param n number of words to display
+  #'
+  #' @param shape character: shape of the wordcloud
+  #'
+  #' @export
+  score_wordcloud_ungrouped <- function(.data, y, n = 15,
+                                  x = text, shape = "circle"){
+      text <- dplyr::enquo(x)
+      insight_col <- dplyr::enquo(y)
+      .data %>%
+          dplyr::distinct(!! text, .keep_all=TRUE) %>%
+          dplyr::arrange(dplyr::desc(!! insight_col)) %>%
+          dplyr::group_modify(~{.x %>% head(n)}) %>%
+          dplyr::ungroup() %>%
+          ggplot2::ggplot(ggplot2::aes(label = !! text, size = !! insight_col)) +
+          ggwordcloud::geom_text_wordcloud(shape = shape, rm_outside = TRUE) +
+          ggplot2::scale_size_area(max_size = 24)
+  }
+#+end_src
 ** TODO Distribution [2/4]
 *** CLOSED Density
 #+begin_src R :session rsession1 :tangle ~/inzightta/R/visualisation.R :eval never-export :exports both
@@ -1971,21 +2047,24 @@ otherwise.
   #' @param col_name symbol name of the insight column intended to
   #'     colour plot
   #'
-  #' @param paging step through page by page (not yet implemented)
+  #' @param num_terms the number of terms to visualise
+  #'
+  #' @param term_index which term to start the visualisation from
   #'
   #' @param palette determine coloration of palette (not yet implemented)
   #' 
   #' @return ggplot object as per ggpage
   #'
   #' @export
-  struct_ggpage_ungrouped <- function(.data, col_name, paging, palette){
+  struct_ggpage_ungrouped <- function(.data, col_name, num_terms, term_index, palette){
+      end <- min(nrow(.data), term_index + num_terms)
       q_col_name <- dplyr::enquo(col_name)
-      .data %>%
+      .data[seq(term_index, end),] %>%
           dplyr::pull(word) %>%
           ggpage::ggpage_build() %>%
-          dplyr::bind_cols(.data) %>% 
+          dplyr::bind_cols(.data[seq(term_index, end),]) %>% 
           ggpage::ggpage_plot(ggplot2::aes(fill = !! q_col_name)) ## +
-  }
+  } 
 #+end_src
 ** Wrapper
 This is an attempt to create a group-aware visualisation,
@@ -2014,7 +2093,8 @@ get_vis <- function(.data, vis, col, facet_by="", scale_fixed = TRUE, ...){
                      "Time Series" = struct_ts_ungrouped,
                      "Bar" = score_bar_ungrouped,
                      "Density" = dist_density_ungrouped,
-                     "Histogram" = dist_hist_ungrouped)
+                     "Histogram" = dist_hist_ungrouped,
+                     "Word Cloud" = score_wordcloud_ungrouped)
     y <- dplyr::sym(col)
     chart <- vistable[[vis]](.data, !! y, ...)
     if (shiny::isTruthy(facet_by)){
@@ -2392,13 +2472,16 @@ imported %>%
   prepped <- text_prep(imported)
   insighted <- get_term_insight(prepped, "Term Frequency")
   insighted <- get_term_insight(insighted, c("n-grams", "n-gram Frequency"), 3)
+
+  get_ngram()
   get_term_insight(prepped, "Key Words", "sodfj")
   get_term_insight(prepped, "Term Sentiment", "afinn")
+  get_term_insight(prepped, "n-gram Frequency", 3)
   get_term_insight(prepped, "Moving Average Term Sentiment", "afinn", 20)
   get_aggregate_insight(prepped, "Aggregated Term Count", "sentence_id")
   get_aggregate_insight(prepped, "Key Sections", "sentence_id")
   get_aggregate_insight(prepped, "Aggregated Sentiment", "sentence_id", "afinn", mean)
-  get_vis(insighted, "Page View", "Term Frequency", facet_by = "", scale_fixed = TRUE, paging = "sfj", palette = "dosfj")
+  get_vis(insighted, "Page View", "Term Frequency", facet_by = "", scale_fixed = TRUE, num_terms = 10, term_index = 3, palette = "dosfj")
   get_vis(insighted, "Time Series", "Term Frequency", facet_by = "", scale_fixed = TRUE)
   get_vis(insighted, "Bar", "Term Frequency", facet_by = "", scale_fixed = TRUE, n = 20)
   k <- "n-grams"
@@ -2525,6 +2608,7 @@ We will use the following as our shiny app:
                  "Term Frequency" = selectInput("vis_type",
                                                 "Select how to Visualise it",
                                                 list("Bar",
+                                                     "Word Cloud",
                                                      "Page View",
                                                      "Time Series",
                                                      "Density",
@@ -2532,6 +2616,7 @@ We will use the following as our shiny app:
                  "n-gram Frequency" = tagList(selectInput("vis_type",
                                                           "Select how to Visualise it",
                                                           list("Bar",
+                                                               "Word Cloud",
                                                                "Page View",
                                                                "Time Series",
                                                                "Density",
@@ -2542,6 +2627,7 @@ We will use the following as our shiny app:
                  "Key Words" = tagList(selectInput("vis_type",
                                                    "Select how to Visualise it",
                                                    list("Bar",
+                                                        "Word Cloud",
                                                         "Page View",
                                                         "Time Series",
                                                         "Density",
@@ -2552,6 +2638,7 @@ We will use the following as our shiny app:
                  "Term Sentiment" = tagList(selectInput("vis_type",
                                                         "Select how to Visualise it",
                                                         list("Page View",
+                                                             "Word Cloud",
                                                              "Time Series",
                                                              "Bar",
                                                              "Density",
@@ -2563,6 +2650,7 @@ We will use the following as our shiny app:
                  "Moving Average Term Sentiment" = tagList(selectInput("vis_type",
                                                                        "Select how to Visualise it",
                                                                        list("Time Series",
+                                                                            "Word Cloud",
                                                                             "Page View",
                                                                             "Bar",
                                                                             "Density",
@@ -2577,6 +2665,7 @@ We will use the following as our shiny app:
                  "Aggregated Term Count" = tagList(selectInput("vis_type",
                                                                "Select how to Visualise it",
                                                                list("Bar",
+                                                                    "Word Cloud",
                                                                     "Page View",
                                                                     "Time Series",
                                                                     "Density",
@@ -2587,6 +2676,7 @@ We will use the following as our shiny app:
                  "Key Sections" = tagList(selectInput("vis_type",
                                                       "Select how to Visualise it",
                                                       list("Bar",
+                                                           "Word Cloud",
                                                            "Page View",
                                                            "Time Series",
                                                            "Density",
@@ -2600,6 +2690,7 @@ We will use the following as our shiny app:
                  "Aggregated Sentiment" = tagList(selectInput("vis_type",
                                                               "Select how to Visualise it",
                                                               list("Page View",
+                                                                   "Word Cloud",
                                                                    "Time Series",
                                                                    "Bar",
                                                                    "Density",
@@ -2623,8 +2714,14 @@ We will use the following as our shiny app:
                  "Aggregated Sentiment" = get_aggregate_insight(grouped(), input$what_vis, input$agg_var, input$sent_lex))})
       output$vis_options <- renderUI({
           switch(input$vis_type,
-                 "Page View" = tagList(selectInput("paging", "Select which page you want to view",
-                                                   list(1,2,3,4)),
+                 "Word Cloud" = tagList(sliderInput("num_terms", "Select the number of terms to visualise",
+                                                    3, 50, 15),
+                                        selectInput("wordcloud_shape", "Select the shape of the wordcloud",
+                                                    list("circle", "cardioid", "diamond", "square", "triangle-forward", "triangle-upright", "pentagon", "star"))),
+                 "Page View" = tagList(sliderInput("num_terms", "Select the number of terms to visualise",
+                                                   3, 400, 100),
+                                       sliderInput("term_index", "Select the point to begin visualisation from",
+                                                   1, nrow(insighted()), 1),
                                        selectInput("palette", "Select the colour palette type",
                                                    list("Sequential", "Diverging"))),
                  "Bar" = tagList(sliderInput("num_terms", "Select the number of terms to visualise",
@@ -2634,7 +2731,10 @@ We will use the following as our shiny app:
                                                           c("", names(grouped())) %||% c("")),
                                               checkboxInput("scale_fixed", "Scale Fixed", value=TRUE)))
       visualisation <- reactive({switch(input$vis_type,
-                                        "Page View" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$paging, input$palette),
+                                        "Word Cloud" = switch(input$what_vis,
+                                                       "n-gram Frequency" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms, x = `n-grams`, shape = input$wordcloud_shape),
+                                                       get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms, shape = input$wordcloud_shape)),
+                                        "Page View" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms, input$term_index, palette = input$palette),
                                         "Time Series" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed),
                                         "Bar" = switch(input$what_vis,
                                                        "n-gram Frequency" = get_vis(insighted(), input$vis_type, input$what_vis, input$vis_facet, input$scale_fixed, input$num_terms, x = `n-grams`),
