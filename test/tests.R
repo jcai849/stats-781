@@ -5,7 +5,7 @@ lemmatize <- TRUE
 stopwords <- TRUE
 sw_lexicon <- "snowball"
 addl_stopwords <- NA
-data <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
+data <- format_data(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
 
 insighted <- data %>%
   dplyr::mutate(
@@ -65,7 +65,7 @@ lemmatize <- TRUE
 stopwords <- TRUE
 sw_lexicon <- "snowball"
 addl_stopwords <- NA
-prepped <- text_prep(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
+prepped <- format_data(imported, lemmatize, stopwords, sw_lexicon, addl_stopwords)
 sectioned <- prepped %>% dplyr::mutate(chapter = get_chapters(text))
 data <- sectioned %>%
   dplyr::group_by(doc_id, chapter)
@@ -208,7 +208,7 @@ imported %>%
 stopwords <- get_sw()
 
 imported <- import_txt(filename) %>%
-    format_data() %>%
+    text_prep() %>%
     remove_stopwords(stopwords) %>%
     reconstruct()
 
@@ -241,12 +241,12 @@ library(shiny)
                section_by = "chapter",
                group_var = NULL,
                get_term_insight = TRUE,
-               term_insight = "Lagged Term Sentiment",
+               term_insight = "Moving Average Term Sentiment",
                get_aggregate_insight = NULL,
                aggregate_insight = NULL,
                aggregate_var = NULL,
-               vis = "struct_ts_ungrouped", ###  "struct_ggpage_ungrouped" "dist_density_ungrouped" "score_bar_ungrouped" "dist_hist_ungrouped" "struct_ts_ungrouped"
-               vis_col = "Lagged Term Sentiment",
+               vis = "struct_time_series", ###  "struct_pageview" "dist_density" "score_barplot" "dist_hist" "struct_time_series"
+               vis_col = "Moving Average Term Sentiment",
                vis_facet = "chapter",
                scale_fixed = TRUE)
 
@@ -258,7 +258,7 @@ library(shiny)
      if (isTruthy(input$lemmatise) |
          isTruthy(input$stopwords)){
          data <- data %>%
-             text_prep(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
+             format_data(input$lemmatise, input$stopwords, input$sw_lexicon, NA)
      }
      data}
 
@@ -317,7 +317,7 @@ datapath = "~/stats-781/data/raw/11-0.txt"
 datapath = "~/stats-781/data/raw/Schonlau1.csv"
 filepath = datapath
 imported <- inzightta::import_files(datapath)
-prepped <- text_prep(imported)
+prepped <- format_data(imported)
 insighted <- get_term_insight(prepped, "Term Frequency")
 insighted <- get_term_insight(insighted, c("n-grams", "n-gram Frequency"), 3)
 insighted <- get_aggregate_insight(prepped, c("Bound Aggregates", "Aggregated Term Count"), "sentence_id")

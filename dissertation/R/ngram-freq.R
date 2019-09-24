@@ -1,0 +1,1 @@
+/home/user/inzightta/R/ngram-freq.R
