@@ -25,7 +25,7 @@ backref=true
 \usepackage{caption}
 \usepackage{parskip}
 
-
+\graphicspath{ {./img/} }
 
 \newglossaryentry{term}{ name={term}, description={``a
     word or expression that has a precise meaning in some uses or is
@@ -636,6 +636,84 @@ get_bigram(x)
 \inputminted[frame=lines,fontsize=\scriptsize,xleftmargin=\parindent,linenos]{R}{R/app.R}
 \captionof{listing}{UI and Server of Shiny Application\label{lst:app}}
 
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{visualisation-overview.png}
+\caption{Visualisation screen\label{fig:visualisation-overview}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.7]{processing-import-process.png}
+\caption{Importing a document\label{fig:processing-import-pro}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{processing-overview.png}
+\caption{Processing screen\label{fig:processing-overview}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.7]{processing-section.png}
+\caption{Processing options\label{fig:processing-section}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{visualisation-agg-sent-pageview.png}
+\caption{Aggregate Sentiment visualised with Page View\label{fig:visualisation-agg-sent-pageview}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{visualisation-agg-term-count-density.png}
+\caption{Aggregate Term Count over sentences visualised as a density\label{fig:visualisation-agg-term-count-density}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{visualisation-facetting.png}
+\caption{Visualisation of facetting\label{fig:visualisation-facetting}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{visualisation-keywords-wordcloud.png}
+\caption{Key words visualised with Word Cloud\label{fig:visualisation-keywords-wordcloud}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{visualisation-ma-overview.png}
+\caption{Moving average term sentiment visualised with Time Series\label{fig:visualisation-ma-overview}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{visualisation-n-gram-facet.png}
+\caption{n-gram visualisation with facetting by chapter\label{fig:visualisation-n-gram-facet}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.7]{visualisation-n-gram-options.PNG}
+\caption{Options for n-gram\label{fig:visualisation-n-gram-options}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{visualisation-term-sentiment-hist-facet.png}
+\caption{Term Sentiment visualised with histograms, facetted by chapter\label{fig:visualisation-term-sentiment-hist-facet}}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{visualisation-term-sentiment.png}
+\caption{Term sentiment visualised with bar plot\label{fig:visualisation-term-sentiment}}
+\end{figure}
+
 \chapter{Conclusion}\label{cha:conclusion}
 
 \section{Summary}\label{sec:summary}
@@ -655,7 +733,7 @@ The following pages are a copy of the documentation for the R package
 created as a part of this dissertation. They were automatically
 generated through the Roxygen2 system.
 
-\includepdf[pages=-]{inzightta_manual.pdf}
+% \includepdf[pages=-]{inzightta_manual.pdf}
 
 % \backmatter
 \addcontentsline{toc}{chapter}{Glossary}
