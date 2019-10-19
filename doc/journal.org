@@ -26,8 +26,6 @@
 
 * Dissertation Due                                                 :noexport:
   DEADLINE: <2019-10-29 Tue>
-* COLOPHON                                                         :noexport:
-Work was all done in emacs, with the code in R, tangled through org mode
 * Initial Survey
 ** Prescribed Reading
 - [[https://www.tidytextmining.com][Text Mining with R]]: [[./text_mining_with_r.org][notes]]
@@ -774,15 +772,15 @@ then processing. In detail:
  attained after the transformation. It is non-Injective, and
  non-invertible. Thus, when certain changes are required, an earlier
  state is needed. Tidytext has made the decision to encourage
- destructive edits, which is acceptable when the user is a programmer
- with full control over every possible variable assignment, but not for
- a GUI user. Hence, we have made the explicit decision to have
- non-destructive transformations only, after hitting repeated
- roadblocks related to Destructive edits. Memory is cheap for
- computers, and summarisation functions can always be delayed, to
- retain as much information, as many degrees of freedom as possible.
- The concept of nondestructive edits is not new; graphic design relies
- upon it, with an example given for photoshop at the [[https://helpx.adobe.com/photoshop/using/nondestructive-editing.html][Adobe Website]]
+ destructive edits, which is acceptable when the user is in an
+ interactive R session with full control over every possible variable
+ assignment, but not for development for a GUI user. Hence, we have
+ made the explicit decision to have non-destructive transformations
+ only, after hitting repeated roadblocks related to Destructive edits.
+ Memory is cheap for computers, and summarisation functions can always
+ be delayed, to retain as much information as possible. The concept of
+ nondestructive edits is not new; graphic design relies upon it, with
+ an example given for photoshop at the [[https://helpx.adobe.com/photoshop/using/nondestructive-editing.html][Adobe Website]]
 ** [2019-07-25 Thu] Notes
 Present thoughts on visualisation: It should be a manual process, with
 intentionality behind it, rather than scrolling through pre-made
