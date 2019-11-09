@@ -1,0 +1,43 @@
+\documentclass[a4paper]{article}
+\usepackage{booktabs}
+\usepackage{lscape}
+
+\begin{document}
+
+\begin{landscape}
+\begin{table}
+  \centering
+  \begin{tabular}{ll}
+    \toprule
+    \multicolumn{1}{c}{What to Show}        & \multicolumn{1}{c}{How to Show it}                                         \\
+    \midrule
+    \multicolumn{2}{l}{\underline{Slides}}                                                                               \\
+    General overview                        & Introduction slide                                                         \\
+    Text analytics background               & Single sentence glossary slide, or ``explain as I go''                     \\
+    Program structure                       & Architecture diagram. Include table from dissertation?                     \\
+                                            &                                                                            \\
+    \multicolumn{2}{l}{\underline{Program Demo}}                                                                         \\
+    Varied input forms                      & Demonstrate on both free-response \texttt{csv} and unstructured text novel \\
+    Internal data structure \& losslessness & Explain rendered dataframe                                                 \\
+    Processing: lemmatisation \& stopwords  & Show with free response                                                    \\
+    Processing: sectioning                  & Show with novel                                                            \\
+    Insights (Visualisations)               & Frequent words (bar)                                                       \\
+                                            & Keywords (bar, word cloud)                                                 \\
+                                            & Moving average sentiment (time series)                                     \\
+                                            & aggregate sentiment (page view, histograms, density)                       \\
+                  \bottomrule
+  \end{tabular}
+\end{table}
+
+Additionally:
+
+\begin{itemize}
+\item Demonstration of facetting \& grouping
+\item Lead with the free response file
+\item Free response: Frequent words, Keywords. Novel: Moving average
+  sentiment, aggregate sentiment
+\end{itemize}
+
+\end{landscape}
+
+\end{document}
