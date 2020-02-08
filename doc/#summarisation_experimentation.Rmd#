@@ -1,0 +1,112 @@
+```{r}
+library(tidytext)
+library(textrank)
+library(lexRankr)
+```
+
+```{r}
+setwd("../data/")
+source("data_import.R")
+```
+
+We will start with the "Dante" data. First, we will just look at the first canto:
+
+```{r}
+str_to_detect <-
+  "Canto"
+
+canto_id <-
+  dante %>%
+  mutate(chapter_id = cumsum(str_detect(text, str_to_detect)))
+
+canto_names <-
+  dante %>%
+  filter(str_detect(text, str_to_detect)) %>%
+  mutate(chapter_id = row_number()) %>%
+  select(chapter = text, chapter_id)
+
+dante_cantos <-
+  inner_join(canto_id, canto_names, by = "chapter_id")
+
+canto_1 <-
+  dante_cantos %>%
+  filter(chapter_id == 1)
+```
+
+We transform to a dataframe of sentence-observations
+
+```{r}
+dante_sentences <-
+  canto_1 %>%
+  unnest_tokens(sentence, text, token = "sentences") %>%
+  mutate(sentence_id = row_number()) %>%
+  select(sentence_id, sentence)
+```
+
+Tokenise to attain words, but keep sentence id, and remove stopwords
+
+```{r}
+dante_words <- dante_sentences %>%
+  unnest_tokens(word, sentence) %>%
+  anti_join(stop_words, by = "word")
+```
+
+Textrank
+
+```{r}
+dante_summary <- textrank_sentences(data = dante_sentences, 
+                                      terminology = dante_words)
+dante_summary
+```
+
+lexRank
+
+```{r}
+lexsentences <-
+  lexRank(dante_sentences$sentence, sentencesAsDocs = TRUE, n = 5)
+lexsummary <-
+  lexsentences %>%
+  arrange(docId) %>%
+  select(sentence)
+lexsummary
+```
+
+They produce slightly different outputs. Dante's inferno is a little difficult to
+comprehend - I'll put it away for now until we get to sentiment analysis. Let's
+use an article instead. I'm struggling to understand how lexRank works; perhaps we can
+summarise it?
+
+```{r}
+article <-
+  paste0(readLines("./raw/lex-text.txt"), collapse="\n")
+
+
+article_sentences <- tibble(text = article) %>%
+  unnest_tokens(sentence, text, token = "sentences") %>%
+  mutate(sentence_id = row_number()) %>%
+  select(sentence_id, sentence)
+
+article_words <- article_sentences %>%
+  unnest_tokens(word, sentence)
+
+article_words <- article_words %>%
+  anti_join(stop_words, by = "word")
+
+## article_summary <- textrank_sentences(data = article_sentences, 
+##                                       terminology = article_words)
+
+## article_summary
+```
+
+```{r}
+article_lexsentences <-
+  lexRank(article_sentences$sentence, sentencesAsDocs = TRUE, n = 8)
+article_lexsummary <-
+  article_lexsentences %>%
+  arrange(docId) %>%
+  select(sentence)
+article_lexsummary
+```
+
+Almost surprisingly, this actually seems to contain a reasonable summary of the article.
+

@@ -1,0 +1,299 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{csquotes}
+
+\begin{document}
+\section{Enabling Text Analytics}
+\label{sec:enabl-text-analyt}
+\begin{itemize}
+\item Greeting
+\item Self
+\item Project
+\item Supervisor
+\end{itemize}
+
+\section{Introduction}
+\label{sec:introduction}
+\begin{itemize}
+\item The aims of this project were \dots{} (from slide)
+\end{itemize}
+\enquote{\dots{} attractive output quickly}
+\begin{itemize}
+\item in the form of charts and tables
+\end{itemize}
+\enquote{\dots{} range of text formats}
+\begin{itemize}
+\item as may occur in novels and free-response survey data, among
+  others
+\end{itemize}
+\enquote{\dots{} with a similar user base}
+\begin{itemize}
+\item so for the sake of compatibility, must be built with the
+  statistical programming language \texttt{R}, and the well-regarded
+  \texttt{Shiny} package in R for creating interactive web-apps.
+\end{itemize}
+\begin{description}
+\item[segue] To motivate what and how, let's ask, ``why?''
+\end{description}
+
+\section{Why Perform Text Analysis?}
+\label{sec:why-perform-text}
+(from slide)\\
+\enquote{\dots{} patterns \dots{}}
+\begin{itemize}
+\item such as common phrases and keywords
+\end{itemize}
+\enquote{structure}
+\begin{itemize}
+\item especially in files with no inherent structure
+\end{itemize}
+\enquote{emotional}
+\begin{itemize}
+\item following the emotional trajectory of a novel, or the tone of
+  free-form responses in a survey
+\end{itemize}
+\enquote{summaries}
+\begin{itemize}
+\item for when we just want the spark-notes version
+\end{itemize}
+\enquote{differences}
+\begin{itemize}
+\item see the ``outliers'' in text, so to speak.
+\item I'll demonstrate that the application can perform all of the above, with the novel \textit{Alice in Wonderland} serving as the text to analyse.
+\end{itemize}
+\begin{description}
+\item[segue] Let's consider the app itself
+\end{description}
+
+\section{App Overview}
+\label{sec:app-overview}
+\begin{itemize}
+\item The program takes the form of a web application, allowing it to
+  run in a browser
+\item It consists of two tabs. The first is processing, where the user
+  can dictate the tidying to be performed on the text data. The next
+  is visualisation, where the desired analysis is declared and the
+  output is generated
+\item Mouse-driven, simple and intuitive to use
+\item Follows a tidy framework with text represented in tabular form,
+  specifically, \dots{} (read from slides)
+\end{itemize}
+\begin{description}
+\item[segue] We will now look at the program in more detail
+\end{description}
+
+\section{Text Preparation}
+\label{sec:text-preparation}
+\begin{itemize}
+\item The first part of every analysis is processing --- text is
+  especially messy data
+\item The application provides the ability to simplify words to their
+  dictionary form, so we can compare like with like, in a process
+  called \textit{lemmatisation}
+\item We can also remove words that create more noise than signal.
+  Words like ``the'', ``a'', or ``and''. These are called
+  \textit{stop-words}, and are removed in a dictionary method by
+  matching them up to a stop-word lexicon, with a few different
+  lexicons provided in-app, with a drop-down allowing user choice of
+  lexicon.
+\end{itemize}
+\begin{description}
+\item[segue] Once processing is complete, we can move on to the
+  visualisation tab
+\end{description}
+
+\section{Visualisation}
+\label{sec:visualisation}
+\begin{itemize}
+\item The section asks the user (from slide) \enquote{What do you want
+    to see, and how do you want to see it?}
+\item What you want to see is the output of an \textit{insight
+    measure}, which is a particular analysis performed on the text. In
+  this case, the default is term frequency, the count of how many
+  times each word appears in the text.
+\item \enquote{How to see} refers to the visualisation of that
+  \textit{insight measure}. Here, it is through a bar plot, but the
+  user can change this by a drop-down list to any other visualisation.
+  For example, a word-cloud, as demonstrated in the following video
+  (\(\triangleright \triangleright \triangleright\))
+\item The size of each word in a word-cloud is proportional to it's frequency
+\item We can see there is a lot of talking, and a character named \enquote{Alice}
+\end{itemize}
+\begin{description}
+\item[segue] But, how do these words relate to each other?
+\end{description}
+
+\section{N-grams}
+\label{sec:n-grams}
+\begin{itemize}
+\item We can begin to answer that by looking at n-grams. N-grams are
+  (from slides) sequences of \(n\) words occurring in order in a text.
+  The insight measure can be changed by a drop-down list like so
+  (\(\triangleright \triangleright \triangleright\) continue talking
+  during playing) and n-grams are computed. N can be changed by
+  dragging a slider.
+\item We can see that the most common 2-grams relate to the characters
+  in the story, as well as the distributor, \textit{Project Gutenberg}
+\end{itemize}
+\begin{description}
+\item[segue] Interestingly, the most frequent 4-grams showed
+  repetitive phrases from songs in the book. To find important
+  sentences though, there is a better way.
+\end{description}
+
+\section{Key Sentences}
+\label{sec:key-sentences}
+(from slides)
+\begin{itemize}
+\item We ran LexRank on it's own introduction paper, generating a
+  surprisingly good summary of itself in just 5 sentences.
+\end{itemize}
+\begin{description}
+\item[segue] We aren't limited only to sentences
+\end{description}
+
+\section{Key Words}
+\label{sec:key-words}
+(from slides)
+\begin{itemize}
+\item Key words are similar, but different to the highest frequency
+  words --- often the most frequent words are localised in a text and
+  not representative of the text as a whole
+\end{itemize}
+\begin{description}
+\item[segue] And considering that the whole is not always the sum of
+  it's parts, we should also consider analyses in the aggregate
+\end{description}
+
+\section{Distribution of Sentence Lengths}
+\label{sec:distr-sent-lengths}
+\begin{itemize}
+\item Here is an aggregating function looking at the number of words
+  within some aggregating variable. In this case, the variable is
+  sentences
+\item  The default visualisation is a histogram, showing a
+  fairly interesting distribution
+\end{itemize}
+\begin{description}
+\item[segue] It would be worthwhile aggregating this further, seeing
+  how the distribution changes throughout sections of the text
+\end{description}
+
+\section{Sectioning}
+\label{sec:sectioning}
+\begin{itemize}
+\item For that to take place, further processing must be done
+\item Plain-text files are unstructured in the absolute, and the
+  application includes a tool that will infer sections based on user
+  selection, and create an aggregating variable --- here, we'll select
+  \enquote{chapter}
+\end{itemize}
+\begin{description}
+\item[segue] Switching back to the visualisation tab \dots{}
+\end{description}
+
+\section{Grouping}
+\label{sec:grouping}
+\begin{itemize}
+\item We can now look at the sentence lengths of each chapter, this
+  time visualised by density estimate plots for the sake of
+  comparability
+\item Note here that the sectioning has picked up a chapter 0, which
+  is the long legal preamble regarding licensing of the work --- the
+  story begins with chapter 1.
+\item That zeroth chapter is interesting in it's own right, bearing a
+  different distribution to the rest of the novel, reflecting that it
+  is just legal language regarding the licensing of the work, with
+  separate authorship to the writer of \textit{Alice in Wonderland},
+  Lewis Carroll. This same method of looking at sentence length
+  distributions has been used to cast doubt on the authorship of some
+  of Shakespeare's plays, stirring up some very interesting
+  controversy
+\item We can see here that the story starts slow, with long sentences
+  in chapter 1. A quicker pace develops with the shortest sentences
+  occurring in the middle, returning to normality toward the end,
+  straight out of a \textit{Hero's Journey}
+\end{itemize}
+\begin{description}
+\item[segue] It is also worth exploring how all of this is coloured by the
+  changing mood of the story
+\end{description}
+
+\section{Moving Average Term Sentiment}
+\label{sec:sentiment}
+\begin{itemize}
+\item Each word of the story can have some number assigned to it by a
+  dictionary method to indicate the direction and magnitude of it's
+  positive or negative emotional charge. There exist many different
+  dictionaries, or \enquote{sentiment lexicons}, with some provided in
+  the app.
+\item The visualisation here is a time series plot of the moving
+  average of word sentiment, with a variable window length controlled
+  by a slider as an option.
+\item It is worth noting that dictionary methods are not the only
+  means of determining sentiment, with more advanced models also
+  capable of inferring sentiment and dealing with the complexities of
+  words in context including situations involving negation,
+  amplification, and the like.
+\end{itemize}
+\begin{description}
+\item[segue] It would be interesting to know what that trough is at
+  the \(\frac{2}{3}\) mark \dots{}
+\end{description}
+
+\section{Split by Chapter}
+\label{sec:split-chapter}
+\begin{itemize}
+\item And sectioning as before, we can see that the trough of negative
+  sentiment occurs in chapter 9, which corresponds to a game of
+  croquet with the Queen gone terribly wrong, involving demands for
+  beheading --- it seems that the sentiment analysis picked that up
+  quite well
+\item This splitting and grouping is also especially useful for
+  free-response survey data. An example data-set we used in testing the
+  app was a portion the New Zealand Quality of Healthcare Survey, and
+  we found some distinct patterns when grouping by individual doctors
+  and assessing the distribution of sentiments relating to each of
+  them.
+\end{itemize}
+\begin{description}
+\item[segue] So we have managed to briefly pick apart the novel with
+  the application. Let's have a look at how I made the app.
+\end{description}
+
+\section{Program Architecture}
+\label{sec:program-architecture}
+(from slides)\\
+\begin{itemize}
+\item The shiny app is decoupled into server and UI functions,
+  controlling run-time instructions and appearance, respectively
+\end{itemize}
+\enquote{Near-purely functional}
+\begin{itemize}
+\item In the programming paradigm sense of the word
+\item The package maintains high procedural and functional cohesion
+  within the processing, insight, and visualisation sections. The
+  server in the app is intelligent enough to automatically match
+  insight functions with visualisations, so the user only has to
+  maintain the conception of processing and visualisation
+\item In all, the program makes use of about 1200 expressive lines of
+  code
+\item In terms of external \texttt{R} libraries, the app is standing
+  on the shoulders of giants, such as \texttt{ggplot} for the
+  visualisations, but we have been trying to minimise dependencies,
+  after a few bad encounters involving packages updating and not
+  maintaining backwards compatibility
+\end{itemize}
+\begin{description}
+\item[segue] The program is extremely modular, allowing plenty of room
+  for future work through it's generality
+\end{description}
+
+\section{Future Development}
+\label{sec:future-development}
+(explain sub-items)
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+\end{document}

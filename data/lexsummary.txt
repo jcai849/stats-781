@@ -1,0 +1,14 @@
+First is how to define similarity between two sentences. Second is how
+to compute the overall centrality of a sentence given its similarity
+to other sentences. A simple way of assessing sentence centrality by
+looking at the graphs in figure 3 is to count the number of similar
+sentences for each sentence. We define degree centrality of a sentence
+as the degree of the corresponding node in the similarity graph. 3.3
+continuous lexrank the similarity graphs we have constructed to
+compute degree centrality and lexrank are unweighted. 4.1 data set and
+evaluation method we used duc 2003 and 2004 data sets in our
+experiments. Figure 5 shows the effect of threshold for degree and
+lexrank centrality on duc 2004 task 2 data. The centrality of a
+sentence is measured by looking at the overall interaction of the
+sentence within the cluster rather than the local value of the
+sentence in its document.

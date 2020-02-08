@@ -77,25 +77,25 @@ use an article instead. I'm struggling to understand how lexRank works; perhaps 
 summarise it?
 
 ```{r}
-article <-
-  read_table("./data/raw/lex-text.txt", col_names = FALSE)$X1 %>%
-  paste(collapse = "\n")
+## article <-
+##   paste0(readLines("./raw/lex-text.txt"), collapse="\n")
 
-article_sentences <- tibble(text = article) %>%
-  unnest_tokens(sentence, text, token = "sentences") %>%
-  mutate(sentence_id = row_number()) %>%
-  select(sentence_id, sentence)
 
-article_words <- article_sentences %>%
-  unnest_tokens(word, sentence)
+## article_sentences <- tibble(text = article) %>%
+##   unnest_tokens(sentence, text, token = "sentences") %>%
+##   mutate(sentence_id = row_number()) %>%
+##   select(sentence_id, sentence)
 
-article_words <- article_words %>%
-  anti_join(stop_words, by = "word")
+## article_words <- article_sentences %>%
+##   unnest_tokens(word, sentence)
 
-article_summary <- textrank_sentences(data = article_sentences, 
-                                      terminology = article_words)
+## article_words <- article_words %>%
+##   anti_join(stop_words, by = "word")
 
-article_summary
+## article_summary <- textrank_sentences(data = article_sentences, 
+##                                       terminology = article_words)
+
+## article_summary
 ```
 
 ```{r}
